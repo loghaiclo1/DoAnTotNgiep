@@ -3,7 +3,7 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - eStore Bootstrap Template</title>
+  <title>DATN</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -808,21 +808,23 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center">
-                    <h2>Join Our Newsletter</h2>
-                    <p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
-                    <form action=#" method="post" class="php-email-form">
+                    <h2>Tham Gia Bản Tin Của Chúng Tôi</h2>
+                    <p>Đăng ký để nhận ưu đãi đặc biệt, quà tặng miễn phí và những chương trình khuyến mãi hiếm có.</p>
+                    <form action="#" method="post" class="php-email-form">
                         <div class="newsletter-form d-flex">
-                            <input type="email" name="email" placeholder="Your email address" required="">
-                            <button type="submit">Subscribe</button>
+                            <input type="email" name="email" placeholder="Địa chỉ email của bạn" required="">
+                            <button type="submit">Đăng ký</button>
                         </div>
-                        <div class="loading">Loading</div>
+                        <div class="loading">Đang xử lý...</div>
                         <div class="error-message"></div>
-                        <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+                        <div class="sent-message">Yêu cầu đăng ký của bạn đã được gửi. Cảm ơn bạn!</div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+
 
     <div class="footer-main">
         <div class="container">
@@ -932,18 +934,18 @@
 
 
   <!-- Vendor JS Files -->
-  <script src="./js/bootstrap.bundle.min.js.tải xuống"></script>
-  <script src="./js/validate.js.tải xuống"></script>
-  <script src="./js/swiper-bundle.min.js.tải xuống"></script>
-  <script src="./js/aos.js.tải xuống"></script>
-  <script src="./js/imagesloaded.pkgd.min.js.tải xuống"></script>
-  <script src="./js/isotope.pkgd.min.js.tải xuống"></script>
-  <script src="./js/glightbox.min.js.tải xuống"></script>
-  <script src="./js/Drift.min.js.tải xuống"></script>
-  <script src="./js/purecounter_vanilla.js.tải xuống"></script>
+  <script src="./js/bootstrap.bundle.min.js"></script>
+  {{-- <script src="./js/validate.js"></script> --}}
+  <script src="./js/swiper-bundle.min.js"></script>
+  <script src="./js/aos.js"></script>
+  <script src="./js/imagesloaded.pkgd.min.js"></script>
+  <script src="./js/isotope.pkgd.min.js"></script>
+  <script src="./js/glightbox.min.js"></script>
+  <script src="./js/Drift.min.js"></script>
+  <script src="./js/purecounter_vanilla.js"></script>
 
   <!-- Main JS File -->
-  <script src="./js/main.js.tải xuống"></script>
+  <script src="./js/main.js"></script>
 
 <script defer="" src="./js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9490ba9f9852409c&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.5.0&quot;,&quot;token&quot;:&quot;68c5ca450bae485a842ff76066d69420&quot;}" crossorigin="anonymous"></script>
 

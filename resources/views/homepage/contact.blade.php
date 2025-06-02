@@ -1,97 +1,109 @@
 @extends('layout.main')
 
-@section('title', 'eStore - Home')
+@section('title', 'eStore - Liên hệ')
+
 @section('content')
-  <main class="main">
-
-    <!-- Page Title -->
+<main class="main">
     <div class="page-title light-background">
-      <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1 class="mb-2 mb-lg-0">Contact</h1>
-        <nav class="breadcrumbs">
-          <ol>
-            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html">Home</a></li>
-            <li class="current">Contact</li>
-          </ol>
-        </nav>
-      </div>
-    </div><!-- End Page Title -->
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h1 class="mb-2 mb-lg-0">Liên hệ</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li>Trang chủ</li>
+                    <li class="current">Liên hệ</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
-    <!-- Contact 2 Section -->
     <section id="contact-2" class="contact-2 section">
-
-      <div class="container aos-init aos-animate" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="row gy-4">
-
-          <div class="col-lg-6">
-            <div class="info-item d-flex flex-column justify-content-center align-items-center aos-init aos-animate" data-aos="fade-up" data-aos-delay="200">
-              <i class="bi bi-geo-alt"></i>
-              <h3>Address</h3>
-              <p>A108 Adam Street, New York, NY 535022</p>
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="row gy-4">
+                <div class="col-lg-6">
+                    <div class="info-item text-center" data-aos="fade-up" data-aos-delay="200">
+                        <i class="bi bi-geo-alt"></i>
+                        <h3>Địa chỉ</h3>
+                        <p>{{ $thongTinChung->dia_chi ?? 'Không có dữ liệu' }}</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="info-item text-center" data-aos="fade-up" data-aos-delay="300">
+                        <i class="bi bi-telephone"></i>
+                        <h3>Gọi cho chúng tôi</h3>
+                        <p>{{ $thongTinChung->dien_thoai ?? 'Không có dữ liệu' }}</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="info-item text-center" data-aos="fade-up" data-aos-delay="400">
+                        <i class="bi bi-envelope"></i>
+                        <h3>Email</h3>
+                        <p>{{ $thongTinChung->email ?? 'Không có dữ liệu' }}</p>
+                    </div>
+                </div>
             </div>
-          </div><!-- End Info Item -->
 
-          <div class="col-lg-3 col-md-6">
-            <div class="info-item d-flex flex-column justify-content-center align-items-center aos-init aos-animate" data-aos="fade-up" data-aos-delay="300">
-              <i class="bi bi-telephone"></i>
-              <h3>Call Us</h3>
-              <p>+1 5589 55488 55</p>
+            <div class="row gy-4 mt-4">
+                <div class="col-12 text-center">
+                    <form id="contactForm" action="{{ route('contact.store') }}" method="POST" class="php-email-form" data-aos="fade-up" data-aos-delay="400" novalidate>
+                        @csrf
+                        <div class="row gy-4">
+                            <div class="col-md-6">
+                                <input type="text" name="ho_ten" id="ho_ten" class="form-control" placeholder="Tên của bạn" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Email của bạn" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-12">
+                                <input type="text" name="chu_de" id="chu_de" class="form-control" placeholder="Chủ đề" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-12">
+                                <textarea name="noi_dung" id="noi_dung" rows="6" class="form-control" placeholder="Nội dung tin nhắn" required></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">Gửi tin nhắn</button>
+                            </div>
+                        </div>
+                        @if (session('success'))
+                        <div class="alert alert-success text-center mt-3" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; border-radius: 5px;">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    </form>
+                </div>
             </div>
-          </div><!-- End Info Item -->
-
-          <div class="col-lg-3 col-md-6">
-            <div class="info-item d-flex flex-column justify-content-center align-items-center aos-init aos-animate" data-aos="fade-up" data-aos-delay="400">
-              <i class="bi bi-envelope"></i>
-              <h3>Email Us</h3>
-              <p>info@example.com</p>
-            </div>
-          </div><!-- End Info Item -->
-
         </div>
+    </section>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('contactForm');
 
-        <div class="row gy-4 mt-1">
-          <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up" data-aos-delay="300">
-            <iframe src="./Contact - eStore Bootstrap Template_files/embed.html" frameborder="0" style="border:0; width: 100%; height: 400px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div><!-- End Google Maps -->
+        form.addEventListener('submit', function (e) {
+            let isValid = true;
 
-          <div class="col-lg-6">
-            <form action="https://bootstrapmade.com/content/demo/eStore/forms/contact.php" method="post" class="php-email-form aos-init aos-animate" data-aos="fade-up" data-aos-delay="400">
-              <div class="row gy-4">
+            const inputs = form.querySelectorAll('input[required], textarea[required]');
+            inputs.forEach(input => {
+                const feedback = input.nextElementSibling;
+                if (!input.value.trim()) {
+                    input.classList.add('is-invalid');
+                    feedback.style.display = 'block';
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                    feedback.style.display = 'none';
+                }
+            });
 
-                <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                </div>
+            if (!isValid) {
+                e.preventDefault(); // Ngăn gửi form nếu có lỗi
+            }
+        });
+    });
+</script>
 
-                <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                </div>
-
-                <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                </div>
-
-                <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                </div>
-
-                <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                  <button type="submit">Send Message</button>
-                </div>
-
-              </div>
-            </form>
-          </div><!-- End Contact Form -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Contact 2 Section -->
-
-  </main>
 @endsection
