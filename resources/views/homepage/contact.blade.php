@@ -21,21 +21,21 @@
             <div class="row gy-4">
                 <div class="col-lg-6">
                     <div class="info-item text-center" data-aos="fade-up" data-aos-delay="200">
-                        <i class="bi bi-geo-alt"></i>
+                        <i class="bi bi-geo-alt d-block mx-auto"></i>
                         <h3>Địa chỉ</h3>
                         <p>{{ $thongTinChung->dia_chi ?? 'Không có dữ liệu' }}</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="info-item text-center" data-aos="fade-up" data-aos-delay="300">
-                        <i class="bi bi-telephone"></i>
+                        <i class="bi bi-geo-alt d-block mx-auto"></i>
                         <h3>Gọi cho chúng tôi</h3>
                         <p>{{ $thongTinChung->dien_thoai ?? 'Không có dữ liệu' }}</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="info-item text-center" data-aos="fade-up" data-aos-delay="400">
-                        <i class="bi bi-envelope"></i>
+                        <i class="bi bi-geo-alt d-block mx-auto"></i>
                         <h3>Email</h3>
                         <p>{{ $thongTinChung->email ?? 'Không có dữ liệu' }}</p>
                     </div>
@@ -67,12 +67,9 @@
                                 <button type="submit" class="btn btn-primary" id="submitBtn">Gửi tin nhắn</button>
                             </div>
                         </div>
-                        @if (session('success'))
-                        <div class="alert alert-success text-center mt-3" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; border-radius: 5px;">
-                            {{ session('success') }}
+                        <div id="sendMessage" class="alert alert-success text-center mt-3" style="display:none;">
+                            Thông tin liên hệ của bạn đã được gửi. Cảm ơn bạn!
                         </div>
-                    @endif
-
                     </form>
                 </div>
             </div>
@@ -82,16 +79,21 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('contactForm');
+        const sendMessage = document.getElementById('sendMessage');
 
         form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Ngăn gửi form theo cách truyền thống
+
             let isValid = true;
 
+            // Kiểm tra các trường bắt buộc
             const inputs = form.querySelectorAll('input[required], textarea[required]');
             inputs.forEach(input => {
                 const feedback = input.nextElementSibling;
                 if (!input.value.trim()) {
                     input.classList.add('is-invalid');
                     feedback.style.display = 'block';
+                    feedback.textContent = 'Trường này không được để trống.';
                     isValid = false;
                 } else {
                     input.classList.remove('is-invalid');
@@ -99,11 +101,64 @@
                 }
             });
 
-            if (!isValid) {
-                e.preventDefault(); // Ngăn gửi form nếu có lỗi
+            // Kiểm tra định dạng email
+            const emailInput = form.querySelector('input[type="email"]');
+            const emailFeedback = emailInput.nextElementSibling;
+            const emailValue = emailInput.value.trim();
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailValue && !emailPattern.test(emailValue)) {
+                emailInput.classList.add('is-invalid');
+                emailFeedback.style.display = 'block';
+                emailFeedback.textContent = 'Email không đúng định dạng.';
+                isValid = false;
+            } else if(emailValue) {
+                emailInput.classList.remove('is-invalid');
+                emailFeedback.style.display = 'none';
             }
+
+            if (!isValid) {
+                return; // Nếu có lỗi, dừng gửi
+            }
+
+            // Tạo dữ liệu gửi đi
+            const formData = new FormData(form);
+
+            // Gửi AJAX với fetch API
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Nếu server trả lỗi, ném ra để catch bắt
+                    throw new Error('Lỗi khi gửi form');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Hiển thị thông báo thành công
+                sendMessage.style.display = 'block';
+
+                // Reset form
+                form.reset();
+
+                // Ẩn thông báo sau 5 giây
+                setTimeout(() => {
+                    sendMessage.style.display = 'none';
+                }, 5000);
+            })
+            .catch(error => {
+                alert('Đã xảy ra lỗi khi gửi thông tin. Vui lòng thử lại.');
+                console.error(error);
+            });
         });
     });
-</script>
+    </script>
 
 @endsection

@@ -9,9 +9,7 @@ class ContactController extends Controller
     public function index()
     {
         return view('homepage.contact');
-    }
-
-    public function store(Request $request)
+    }public function store(Request $request)
     {
         $validated = $request->validate([
             'ho_ten' => 'required|string|max:255',
@@ -20,12 +18,11 @@ class ContactController extends Controller
             'noi_dung' => 'required|string',
         ]);
 
+        // Lưu thông tin vào CSDL
         Contact::create($validated);
 
-        if ($request->expectsJson()) {
-            return response()->json(['success' => true]);
-        }
-
-        return redirect()->route('contact.index')->with('success', 'Thông tin liên hệ của bạn đã được gửi. Cảm ơn bạn!');
+        // Trả về JSON response cho JS
+        return response()->json(['message' => 'Gửi liên hệ thành công']);
     }
+
 }
