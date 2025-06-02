@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0056)https://bootstrapmade.com/content/demo/eStore/index.html -->
+<!-- saved from url=(0056)# -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Index - eStore Bootstrap Template</title>
   <meta name="description" content="">
@@ -79,24 +79,24 @@
           <div class="col-lg-4 d-none d-lg-block">
             <div class="d-flex justify-content-end">
               <div class="top-bar-item dropdown me-3">
-                <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                <a href="##" class="dropdown-toggle" data-bs-toggle="dropdown">
                   <i class="bi bi-translate me-2"></i>EN
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="https://bootstrapmade.com/content/demo/eStore/index.html#"><i class="bi bi-check2 me-2 selected-icon"></i>English</a></li>
-                  <li><a class="dropdown-item" href="https://bootstrapmade.com/content/demo/eStore/index.html#">Español</a></li>
-                  <li><a class="dropdown-item" href="https://bootstrapmade.com/content/demo/eStore/index.html#">Français</a></li>
-                  <li><a class="dropdown-item" href="https://bootstrapmade.com/content/demo/eStore/index.html#">Deutsch</a></li>
+                  <li><a class="dropdown-item" href="##"><i class="bi bi-check2 me-2 selected-icon"></i>English</a></li>
+                  <li><a class="dropdown-item" href="##">Español</a></li>
+                  <li><a class="dropdown-item" href="##">Français</a></li>
+                  <li><a class="dropdown-item" href="##">Deutsch</a></li>
                 </ul>
               </div>
               <div class="top-bar-item dropdown">
-                <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                <a href="##" class="dropdown-toggle" data-bs-toggle="dropdown">
                   <i class="bi bi-currency-dollar me-2"></i>USD
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="https://bootstrapmade.com/content/demo/eStore/index.html#"><i class="bi bi-check2 me-2 selected-icon"></i>USD</a></li>
-                  <li><a class="dropdown-item" href="https://bootstrapmade.com/content/demo/eStore/index.html#">EUR</a></li>
-                  <li><a class="dropdown-item" href="https://bootstrapmade.com/content/demo/eStore/index.html#">GBP</a></li>
+                  <li><a class="dropdown-item" href="##"><i class="bi bi-check2 me-2 selected-icon"></i>USD</a></li>
+                  <li><a class="dropdown-item" href="##">EUR</a></li>
+                  <li><a class="dropdown-item" href="##">GBP</a></li>
                 </ul>
               </div>
             </div>
@@ -111,7 +111,7 @@
         <div class="d-flex py-3 align-items-center justify-content-between">
 
           <!-- Logo -->
-          <a href="https://bootstrapmade.com/content/demo/eStore/index.html" class="logo d-flex align-items-center">
+          <a href="#" class="logo d-flex align-items-center">
             <!-- Uncomment the line below if you also wish to use an image logo -->
             <!-- <img src="assets/img/logo.webp" alt=""> -->
             <h1 class="sitename">eStore</h1>
@@ -146,38 +146,38 @@
                   <p class="mb-0">Access account &amp; manage orders</p>
                 </div>
                 <div class="dropdown-body">
-                  <a class="dropdown-item d-flex align-items-center" href="https://bootstrapmade.com/content/demo/eStore/account.html">
+                  <a class="dropdown-item d-flex align-items-center" href="#">
                     <i class="bi bi-person-circle me-2"></i>
                     <span>My Profile</span>
                   </a>
-                  <a class="dropdown-item d-flex align-items-center" href="https://bootstrapmade.com/content/demo/eStore/account.html">
+                  <a class="dropdown-item d-flex align-items-center" href="#">
                     <i class="bi bi-bag-check me-2"></i>
                     <span>My Orders</span>
                   </a>
-                  <a class="dropdown-item d-flex align-items-center" href="https://bootstrapmade.com/content/demo/eStore/account.html">
+                  <a class="dropdown-item d-flex align-items-center" href="#">
                     <i class="bi bi-heart me-2"></i>
                     <span>My Wishlist</span>
                   </a>
-                  <a class="dropdown-item d-flex align-items-center" href="https://bootstrapmade.com/content/demo/eStore/account.html">
+                  <a class="dropdown-item d-flex align-items-center" href="#">
                     <i class="bi bi-gear me-2"></i>
                     <span>Settings</span>
                   </a>
                 </div>
                 <div class="dropdown-footer">
-                  <a href="https://bootstrapmade.com/content/demo/eStore/login-register.html" class="btn btn-primary w-100 mb-2">Sign In</a>
-                  <a href="https://bootstrapmade.com/content/demo/eStore/login-register.html" class="btn btn-outline-primary w-100">Register</a>
+                  <a href="#" class="btn btn-primary w-100 mb-2">Sign In</a>
+                  <a href="#" class="btn btn-outline-primary w-100">Register</a>
                 </div>
               </div>
             </div>
 
             <!-- Wishlist -->
-            <a href="https://bootstrapmade.com/content/demo/eStore/account.html" class="header-action-btn d-none d-md-block">
+            <a href="#" class="header-action-btn d-none d-md-block">
               <i class="bi bi-heart"></i>
               <span class="badge">0</span>
             </a>
 
             <!-- Cart -->
-            <a href="https://bootstrapmade.com/content/demo/eStore/cart.html" class="header-action-btn">
+            <a href="#" class="header-action-btn">
               <i class="bi bi-cart3"></i>
               <span class="badge">3</span>
             </a>
@@ -202,71 +202,71 @@
               <li><a href=" {{ url('/productdetail') }} ">Product Details</a></li>
               <li><a href=" {{ url('/cart') }} ">Cart</a></li>
               <li><a href=" {{ url('/checkout') }} ">Checkout</a></li>
-              <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="dropdown"><a href="##"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                 <ul>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dropdown 1</a></li>
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li><a href="##">Dropdown 1</a></li>
+                  <li class="dropdown"><a href="##"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Deep Dropdown 1</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Deep Dropdown 2</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Deep Dropdown 3</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Deep Dropdown 4</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Deep Dropdown 5</a></li>
+                      <li><a href="##">Deep Dropdown 1</a></li>
+                      <li><a href="##">Deep Dropdown 2</a></li>
+                      <li><a href="##">Deep Dropdown 3</a></li>
+                      <li><a href="##">Deep Dropdown 4</a></li>
+                      <li><a href="##">Deep Dropdown 5</a></li>
                     </ul>
                   </li>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dropdown 2</a></li>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dropdown 3</a></li>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dropdown 4</a></li>
+                  <li><a href="##">Dropdown 2</a></li>
+                  <li><a href="##">Dropdown 3</a></li>
+                  <li><a href="##">Dropdown 4</a></li>
                 </ul>
               </li>
 
               <!-- Products Mega Menu 1 -->
-              <li class="products-megamenu-1"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Megamenu 1</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="products-megamenu-1"><a href="##"><span>Megamenu 1</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
 
                 <!-- Products Mega Menu 1 Mobile View -->
                 <ul class="mobile-megamenu">
 
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Featured Products</a></li>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">New Arrivals</a></li>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sale Items</a></li>
+                  <li><a href="##">Featured Products</a></li>
+                  <li><a href="##">New Arrivals</a></li>
+                  <li><a href="##">Sale Items</a></li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Clothing</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Clothing</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Men's Wear</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Women's Wear</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Kids Collection</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sportswear</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Accessories</a></li>
+                      <li><a href="##">Men's Wear</a></li>
+                      <li><a href="##">Women's Wear</a></li>
+                      <li><a href="##">Kids Collection</a></li>
+                      <li><a href="##">Sportswear</a></li>
+                      <li><a href="##">Accessories</a></li>
                     </ul>
                   </li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Electronics</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Electronics</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Smartphones</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Laptops</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Audio Devices</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Smart Home</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Accessories</a></li>
+                      <li><a href="##">Smartphones</a></li>
+                      <li><a href="##">Laptops</a></li>
+                      <li><a href="##">Audio Devices</a></li>
+                      <li><a href="##">Smart Home</a></li>
+                      <li><a href="##">Accessories</a></li>
                     </ul>
                   </li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Home &amp; Living</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Home &amp; Living</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Furniture</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Decor</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Kitchen</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Bedding</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Lighting</a></li>
+                      <li><a href="##">Furniture</a></li>
+                      <li><a href="##">Decor</a></li>
+                      <li><a href="##">Kitchen</a></li>
+                      <li><a href="##">Bedding</a></li>
+                      <li><a href="##">Lighting</a></li>
                     </ul>
                   </li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Beauty</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Beauty</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Skincare</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Makeup</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Haircare</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Fragrances</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Personal Care</a></li>
+                      <li><a href="##">Skincare</a></li>
+                      <li><a href="##">Makeup</a></li>
+                      <li><a href="##">Haircare</a></li>
+                      <li><a href="##">Fragrances</a></li>
+                      <li><a href="##">Personal Care</a></li>
                     </ul>
                   </li>
 
@@ -305,7 +305,7 @@
                           <div class="product-info">
                             <h5>Premium Headphones</h5>
                             <p class="price">$129.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -315,7 +315,7 @@
                           <div class="product-info">
                             <h5>Smart Watch</h5>
                             <p class="price">$199.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -325,7 +325,7 @@
                           <div class="product-info">
                             <h5>Wireless Earbuds</h5>
                             <p class="price">$89.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -335,7 +335,7 @@
                           <div class="product-info">
                             <h5>Bluetooth Speaker</h5>
                             <p class="price">$79.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                       </div>
@@ -352,7 +352,7 @@
                           <div class="product-info">
                             <h5>Fitness Tracker</h5>
                             <p class="price">$69.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -363,7 +363,7 @@
                           <div class="product-info">
                             <h5>Wireless Charger</h5>
                             <p class="price">$39.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -374,7 +374,7 @@
                           <div class="product-info">
                             <h5>Smart Bulb Set</h5>
                             <p class="price">$49.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -385,7 +385,7 @@
                           <div class="product-info">
                             <h5>Portable Power Bank</h5>
                             <p class="price">$59.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                       </div>
@@ -402,7 +402,7 @@
                           <div class="product-info">
                             <h5>Wireless Keyboard</h5>
                             <p class="price"><span class="original-price">$89.99</span> $62.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -413,7 +413,7 @@
                           <div class="product-info">
                             <h5>Gaming Mouse</h5>
                             <p class="price"><span class="original-price">$59.99</span> $44.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -424,7 +424,7 @@
                           <div class="product-info">
                             <h5>Desk Lamp</h5>
                             <p class="price"><span class="original-price">$49.99</span> $29.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                         <div class="product-card">
@@ -435,7 +435,7 @@
                           <div class="product-info">
                             <h5>USB-C Hub</h5>
                             <p class="price"><span class="original-price">$39.99</span> $31.99</p>
-                            <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-view">View Product</a>
+                            <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
                       </div>
@@ -447,41 +447,41 @@
                         <div class="category-column">
                           <h4>Clothing</h4>
                           <ul>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Men's Wear</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Women's Wear</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Kids Collection</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sportswear</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Accessories</a></li>
+                            <li><a href="##">Men's Wear</a></li>
+                            <li><a href="##">Women's Wear</a></li>
+                            <li><a href="##">Kids Collection</a></li>
+                            <li><a href="##">Sportswear</a></li>
+                            <li><a href="##">Accessories</a></li>
                           </ul>
                         </div>
                         <div class="category-column">
                           <h4>Electronics</h4>
                           <ul>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Smartphones</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Laptops</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Audio Devices</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Smart Home</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Accessories</a></li>
+                            <li><a href="##">Smartphones</a></li>
+                            <li><a href="##">Laptops</a></li>
+                            <li><a href="##">Audio Devices</a></li>
+                            <li><a href="##">Smart Home</a></li>
+                            <li><a href="##">Accessories</a></li>
                           </ul>
                         </div>
                         <div class="category-column">
                           <h4>Home &amp; Living</h4>
                           <ul>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Furniture</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Decor</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Kitchen</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Bedding</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Lighting</a></li>
+                            <li><a href="##">Furniture</a></li>
+                            <li><a href="##">Decor</a></li>
+                            <li><a href="##">Kitchen</a></li>
+                            <li><a href="##">Bedding</a></li>
+                            <li><a href="##">Lighting</a></li>
                           </ul>
                         </div>
                         <div class="category-column">
                           <h4>Beauty</h4>
                           <ul>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Skincare</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Makeup</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Haircare</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Fragrances</a></li>
-                            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Personal Care</a></li>
+                            <li><a href="##">Skincare</a></li>
+                            <li><a href="##">Makeup</a></li>
+                            <li><a href="##">Haircare</a></li>
+                            <li><a href="##">Fragrances</a></li>
+                            <li><a href="##">Personal Care</a></li>
                           </ul>
                         </div>
                       </div>
@@ -493,54 +493,54 @@
 
               </li><!-- End Products Mega Menu 1 -->
               <!-- Products Mega Menu 2 -->
-              <li class="products-megamenu-2"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Megamenu 2</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="products-megamenu-2"><a href="##"><span>Megamenu 2</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
 
                 <!-- Products Mega Menu 2 Mobile View -->
                 <ul class="mobile-megamenu">
 
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Women</a></li>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Men</a></li>
-                  <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Kids'</a></li>
+                  <li><a href="##">Women</a></li>
+                  <li><a href="##">Men</a></li>
+                  <li><a href="##">Kids'</a></li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Clothing</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Clothing</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Shirts &amp; Tops</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Coats &amp; Outerwear</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Underwear</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sweatshirts</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dresses</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Swimwear</a></li>
+                      <li><a href="##">Shirts &amp; Tops</a></li>
+                      <li><a href="##">Coats &amp; Outerwear</a></li>
+                      <li><a href="##">Underwear</a></li>
+                      <li><a href="##">Sweatshirts</a></li>
+                      <li><a href="##">Dresses</a></li>
+                      <li><a href="##">Swimwear</a></li>
                     </ul>
                   </li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Shoes</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Shoes</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Boots</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sandals</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Heels</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Loafers</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Slippers</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Oxfords</a></li>
+                      <li><a href="##">Boots</a></li>
+                      <li><a href="##">Sandals</a></li>
+                      <li><a href="##">Heels</a></li>
+                      <li><a href="##">Loafers</a></li>
+                      <li><a href="##">Slippers</a></li>
+                      <li><a href="##">Oxfords</a></li>
                     </ul>
                   </li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Accessories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Accessories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Handbags</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Eyewear</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Hats</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Watches</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Jewelry</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Belts</a></li>
+                      <li><a href="##">Handbags</a></li>
+                      <li><a href="##">Eyewear</a></li>
+                      <li><a href="##">Hats</a></li>
+                      <li><a href="##">Watches</a></li>
+                      <li><a href="##">Jewelry</a></li>
+                      <li><a href="##">Belts</a></li>
                     </ul>
                   </li>
 
-                  <li class="dropdown"><a href="https://bootstrapmade.com/content/demo/eStore/index.html#"><span>Specialty Sizes</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <li class="dropdown"><a href="##"><span>Specialty Sizes</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Plus Size</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Petite</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Wide Shoes</a></li>
-                      <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Narrow Shoes</a></li>
+                      <li><a href="##">Plus Size</a></li>
+                      <li><a href="##">Petite</a></li>
+                      <li><a href="##">Wide Shoes</a></li>
+                      <li><a href="##">Narrow Shoes</a></li>
                     </ul>
                   </li>
 
@@ -579,46 +579,46 @@
 
                           <div class="category-links">
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Shirts &amp; Tops</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Boots</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Handbags</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Plus Size</a>
+                              <a href="##">Shirts &amp; Tops</a>
+                              <a href="##">Boots</a>
+                              <a href="##">Handbags</a>
+                              <a href="##">Plus Size</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Coats &amp; Outerwear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sandals</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Eyewear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Petite</a>
+                              <a href="##">Coats &amp; Outerwear</a>
+                              <a href="##">Sandals</a>
+                              <a href="##">Eyewear</a>
+                              <a href="##">Petite</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Underwear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Heels</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Hats</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Wide Shoes</a>
+                              <a href="##">Underwear</a>
+                              <a href="##">Heels</a>
+                              <a href="##">Hats</a>
+                              <a href="##">Wide Shoes</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sweatshirts</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Loafers</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Watches</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Narrow Shoes</a>
+                              <a href="##">Sweatshirts</a>
+                              <a href="##">Loafers</a>
+                              <a href="##">Watches</a>
+                              <a href="##">Narrow Shoes</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dresses</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Slippers</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Jewelry</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">Dresses</a>
+                              <a href="##">Slippers</a>
+                              <a href="##">Jewelry</a>
+                              <a href="##"></a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Swimwear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Oxfords</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Belts</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">Swimwear</a>
+                              <a href="##">Oxfords</a>
+                              <a href="##">Belts</a>
+                              <a href="##"></a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">View all</a>
+                              <a href="##">View all</a>
+                              <a href="##">View all</a>
+                              <a href="##"></a>
                             </div>
                           </div>
                         </div>
@@ -627,7 +627,7 @@
                             <img src="./image/product-f-1.webp" alt="Women&#39;s Heels Collection">
                             <div class="featured-content">
                               <h3>Women's<br>Bags<br>Collection</h3>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-shop">Shop now</a>
+                              <a href="##" class="btn-shop">Shop now</a>
                             </div>
                           </div>
                         </div>
@@ -647,46 +647,46 @@
 
                           <div class="category-links">
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Shirts &amp; Polos</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sneakers</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Watches</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Big &amp; Tall</a>
+                              <a href="##">Shirts &amp; Polos</a>
+                              <a href="##">Sneakers</a>
+                              <a href="##">Watches</a>
+                              <a href="##">Big &amp; Tall</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Jackets &amp; Coats</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Boots</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Belts</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Slim Fit</a>
+                              <a href="##">Jackets &amp; Coats</a>
+                              <a href="##">Boots</a>
+                              <a href="##">Belts</a>
+                              <a href="##">Slim Fit</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Underwear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Loafers</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Ties</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Wide Shoes</a>
+                              <a href="##">Underwear</a>
+                              <a href="##">Loafers</a>
+                              <a href="##">Ties</a>
+                              <a href="##">Wide Shoes</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Hoodies</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dress Shoes</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Wallets</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Extended Sizes</a>
+                              <a href="##">Hoodies</a>
+                              <a href="##">Dress Shoes</a>
+                              <a href="##">Wallets</a>
+                              <a href="##">Extended Sizes</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Suits</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sandals</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sunglasses</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">Suits</a>
+                              <a href="##">Sandals</a>
+                              <a href="##">Sunglasses</a>
+                              <a href="##"></a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Activewear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Slippers</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Hats</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">Activewear</a>
+                              <a href="##">Slippers</a>
+                              <a href="##">Hats</a>
+                              <a href="##"></a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">View all</a>
+                              <a href="##">View all</a>
+                              <a href="##">View all</a>
+                              <a href="##"></a>
                             </div>
                           </div>
                         </div>
@@ -695,7 +695,7 @@
                             <img src="./image/product-m-4.webp" alt="Men&#39;s Footwear Collection">
                             <div class="featured-content">
                               <h3>Men's<br>Footwear<br>Collection</h3>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-shop">Shop now</a>
+                              <a href="##" class="btn-shop">Shop now</a>
                             </div>
                           </div>
                         </div>
@@ -715,46 +715,46 @@
 
                           <div class="category-links">
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">T-shirts &amp; Tops</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sneakers</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Backpacks</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Babies (0-24 months)</a>
+                              <a href="##">T-shirts &amp; Tops</a>
+                              <a href="##">Sneakers</a>
+                              <a href="##">Backpacks</a>
+                              <a href="##">Babies (0-24 months)</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Outerwear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Boots</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Hats &amp; Caps</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Toddlers (2-4 years)</a>
+                              <a href="##">Outerwear</a>
+                              <a href="##">Boots</a>
+                              <a href="##">Hats &amp; Caps</a>
+                              <a href="##">Toddlers (2-4 years)</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Pajamas</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sandals</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Socks</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Kids (4-7 years)</a>
+                              <a href="##">Pajamas</a>
+                              <a href="##">Sandals</a>
+                              <a href="##">Socks</a>
+                              <a href="##">Kids (4-7 years)</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sweatshirts</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Slippers</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Gloves</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Older Kids (8-14 years)</a>
+                              <a href="##">Sweatshirts</a>
+                              <a href="##">Slippers</a>
+                              <a href="##">Gloves</a>
+                              <a href="##">Older Kids (8-14 years)</a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Dresses</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">School Shoes</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Scarves</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">Dresses</a>
+                              <a href="##">School Shoes</a>
+                              <a href="##">Scarves</a>
+                              <a href="##"></a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Swimwear</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Sports Shoes</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Hair Accessories</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">Swimwear</a>
+                              <a href="##">Sports Shoes</a>
+                              <a href="##">Hair Accessories</a>
+                              <a href="##"></a>
                             </div>
                             <div class="link-row">
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#">View all</a>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#"></a>
+                              <a href="##">View all</a>
+                              <a href="##">View all</a>
+                              <a href="##">View all</a>
+                              <a href="##"></a>
                             </div>
                           </div>
                         </div>
@@ -763,7 +763,7 @@
                             <img src="./image/product-9.webp" alt="Kids&#39; New Arrivals">
                             <div class="featured-content">
                               <h3>Kids<br>New<br>Arrivals</h3>
-                              <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="btn-shop">Shop now</a>
+                              <a href="##" class="btn-shop">Shop now</a>
                             </div>
                           </div>
                         </div>
@@ -801,170 +801,135 @@
   </header>
 
    @yield('content')
-  
-  <footer id="footer" class="footer">
+
+
+   <footer id="footer" class="footer">
     <div class="footer-newsletter">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-8 text-center">
-            <h2>Join Our Newsletter</h2>
-            <p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
-            <form action="https://bootstrapmade.com/content/demo/eStore/forms/newsletter.php" method="post" class="php-email-form">
-              <div class="newsletter-form d-flex">
-                <input type="email" name="email" placeholder="Your email address" required="">
-                <button type="submit">Subscribe</button>
-              </div>
-              <div class="loading">Loading</div>
-              <div class="error-message"></div>
-              <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-            </form>
-          </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2>Join Our Newsletter</h2>
+                    <p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
+                    <form action=#" method="post" class="php-email-form">
+                        <div class="newsletter-form d-flex">
+                            <input type="email" name="email" placeholder="Your email address" required="">
+                            <button type="submit">Subscribe</button>
+                        </div>
+                        <div class="loading">Loading</div>
+                        <div class="error-message"></div>
+                        <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="footer-main">
-      <div class="container">
-        <div class="row gy-4">
-          <div class="col-lg-3 col-md-6 col-sm-12">
-            <div class="footer-widget footer-about">
-              <a href="https://bootstrapmade.com/content/demo/eStore/index.html" class="logo">
-                <span class="sitename">eStore</span>
-              </a>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in nibh vehicula, facilisis magna ut, consectetur lorem.</p>
-              <div class="footer-contact mt-4">
-                <div class="contact-item">
-                  <i class="bi bi-geo-alt"></i>
-                  <span>123 Fashion Street, New York, NY 10001</span>
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="footer-widget footer-about">
+                        <a href=" #" class="logo">
+                            @if(isset($thongTinChung) && $thongTinChung->logo_url)
+                            <img src="{{ asset($thongTinChung->logo_url) }}" alt="{{ $thongTinChung->ten_cong_ty ?? 'Logo' }}" class="sitename">
+                        @else
+                            <span class="sitename">DEMO</span>
+                        @endif
+                        </a>
+                        @if(isset($thongTinChung))
+                            <p>{{ $thongTinChung->mo_ta }}</p>
+                            <div class="footer-contact mt-4">
+                                <div class="contact-item">
+                                    <i class="bi bi-geo-alt"></i>
+                                    <span>{{ $thongTinChung->dia_chi }}</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="bi bi-telephone"></i>
+                                    <span>{{ $thongTinChung->dien_thoai }}</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>{{ $thongTinChung->email }}</span>
+                                </div>
+                            </div>
+                        @else
+                            <p>Không có dữ liệu</p>
+                        @endif
+                    </div>
                 </div>
-                <div class="contact-item">
-                  <i class="bi bi-telephone"></i>
-                  <span>+1 (555) 123-4567</span>
+
+                <!-- Shop (Dịch Vụ) -->
+                <div class="col-lg-2 col-md-6 col-sm-6">
+                    <div class="footer-widget">
+                        <h4>Dịch Vụ</h4>
+                        <ul class="footer-links">
+                            @if(isset($duLieuChanTrang['Dịch Vụ']))
+                                @foreach($duLieuChanTrang['Dịch Vụ'] as $item)
+                                    <li><a href="{{ $item->duong_dan ?? '#' }}">{{ $item->noi_dung }}</a></li>
+                                @endforeach
+                            @else
+                                <li>Không có dữ liệu</li>
+                            @endif
+                        </ul>
+                    </div>
                 </div>
-                <div class="contact-item">
-                  <i class="bi bi-envelope"></i>
-                  <span>hello@example.com</span>
+
+                <!-- Support (Hỗ Trợ) -->
+                <div class="col-lg-2 col-md-6 col-sm-6">
+                    <div class="footer-widget">
+                        <h4>Hỗ Trợ</h4>
+                        <ul class="footer-links">
+                            @if(isset($duLieuChanTrang['Hỗ Trợ']))
+                                @foreach($duLieuChanTrang['Hỗ Trợ'] as $item)
+                                    <li><a href="{{ $item->duong_dan ?? '#' }}">{{ $item->noi_dung }}</a></li>
+                                @endforeach
+                            @else
+                                <li>Không có dữ liệu</li>
+                            @endif
+                        </ul>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="col-lg-2 col-md-6 col-sm-6">
-            <div class="footer-widget">
-              <h4>Shop</h4>
-              <ul class="footer-links">
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/category.html">New Arrivals</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/category.html">Bestsellers</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/category.html">Women's Clothing</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/category.html">Men's Clothing</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/category.html">Accessories</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/category.html">Sale</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="col-lg-2 col-md-6 col-sm-6">
-            <div class="footer-widget">
-              <h4>Support</h4>
-              <ul class="footer-links">
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/support.html">Help Center</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/account.html">Order Status</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/shiping-info.html">Shipping Info</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/return-policy.html">Returns &amp; Exchanges</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html#">Size Guide</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/contact.html">Contact Us</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="col-lg-2 col-md-6 col-sm-6">
-            <div class="footer-widget">
-              <h4>Company</h4>
-              <ul class="footer-links">
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/about.html">About Us</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/about.html">Careers</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/about.html">Press</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/about.html">Affiliates</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/about.html">Responsibility</a></li>
-                <li><a href="https://bootstrapmade.com/content/demo/eStore/about.html">Investors</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="footer-widget">
-              <h4>Download Our App</h4>
-              <p>Shop on the go with our mobile app</p>
-              <div class="app-buttons">
-                <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="app-btn">
-                  <i class="bi bi-apple"></i>
-                  <span>App Store</span>
-                </a>
-                <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" class="app-btn">
-                  <i class="bi bi-google-play"></i>
-                  <span>Google Play</span>
-                </a>
-              </div>
-              <div class="social-links mt-4">
-                <h5>Follow Us</h5>
-                <div class="social-icons">
-                  <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                  <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                  <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
-                  <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
-                  <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" aria-label="Pinterest"><i class="bi bi-pinterest"></i></a>
-                  <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                <!-- Company (Tài Khoản Của Tôi) -->
+                <div class="col-lg-2 col-md-6 col-sm-6">
+                    <div class="footer-widget">
+                        <h4>Tài khoản của tôi</h4>
+                        <ul class="footer-links">
+                            @if(isset($duLieuChanTrang['Tài Khoản Của Tôi']))
+                                @foreach($duLieuChanTrang['Tài Khoản Của Tôi'] as $item)
+                                    <li><a href="{{ $item->duong_dan ?? '#' }}">{{ $item->noi_dung }}</a></li>
+                                @endforeach
+                            @else
+                                <li>Không có dữ liệu</li>
+                            @endif
+                        </ul>
+                    </div>
                 </div>
-              </div>
+
+                <!-- Download App + Social Links -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="footer-widget">
+                            <h5>Theo dõi tại</h5>
+                            <div class="social-icons">
+                                <a href=" #" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                                <a href=" #" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                                <a href=" #" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                                <a href=" #" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                                <a href=" #" aria-label="Pinterest"><i class="bi bi-pinterest"></i></a>
+                                <a href=" #" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <div class="container">
-
-        <div class="payment-methods d-flex align-items-center justify-content-center">
-          <span>We Accept:</span>
-          <div class="payment-icons">
-            <i class="bi bi-credit-card" aria-label="Credit Card"></i>
-            <i class="bi bi-paypal" aria-label="PayPal"></i>
-            <i class="bi bi-apple" aria-label="Apple Pay"></i>
-            <i class="bi bi-google" aria-label="Google Pay"></i>
-            <i class="bi bi-shop" aria-label="Shop Pay"></i>
-            <i class="bi bi-cash" aria-label="Cash on Delivery"></i>
-          </div>
-        </div>
-
-        <div class="legal-links">
-          <a href="https://bootstrapmade.com/content/demo/eStore/tos.html">Terms of Service</a>
-          <a href="https://bootstrapmade.com/content/demo/eStore/privacy.html">Privacy Policy</a>
-          <a href="https://bootstrapmade.com/content/demo/eStore/tos.html">Cookies Settings</a>
-        </div>
-
-        <div class="copyright text-center">
-          <p>© <span>Copyright</span> <strong class="sitename">eStore</strong>. All Rights Reserved.</p>
-        </div>
-
-        <div class="credits">
-          <!-- All the links in the footer should remain intact. -->
-          <!-- You can delete the links only if you've purchased the pro version. -->
-          <!-- Licensing information: https://bootstrapmade.com/license/ -->
-          <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-          Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-        </div>
-
-      </div>
-
     </div>
   </footer>
-
   <!-- Scroll Top -->
-  <a href="https://bootstrapmade.com/content/demo/eStore/index.html#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="##" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Preloader -->
-  
+
 
   <!-- Vendor JS Files -->
   <script src="./js/bootstrap.bundle.min.js.tải xuống"></script>
