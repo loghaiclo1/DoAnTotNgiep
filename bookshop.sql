@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 02, 2025 lúc 08:46 AM
+-- Thời gian đã tạo: Th6 04, 2025 lúc 03:55 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -36,39 +36,51 @@ CREATE TABLE `baiviet` (
   `trangthai` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `chude` varchar(255) DEFAULT NULL
+  `chude` varchar(255) DEFAULT NULL,
+  `nguoi_dang` varchar(255) DEFAULT NULL,
+  `luot_xem` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `baiviet`
 --
 
-INSERT INTO `baiviet` (`id`, `tieude`, `slug`, `noidung`, `anhbaiviet`, `trangthai`, `created_at`, `updated_at`, `chude`) VALUES
-(2, 'Review Sách tranh tô màu: Góc Nhỏ Có Nắng – mảnh ghép bình yên cho tâm hồn sau những mỏi mệt của cuộc sống', 'review-sach-tranh-to-mau-goc-nho-co-nang', 'Cuốn sách tranh tô màu “Góc Nhỏ Có Nắng” không chỉ là một cuốn sách tô màu thông thường mà còn là một tác phẩm giúp người đọc tìm thấy sự bình yên trong những khoảnh khắc giản dị của cuộc sống. Được thiết kế với bìa mềm, sách tranh tô màu này mang đến một', 'goc-nho-co-nang.jpg', 1, '2024-12-22 10:00:00', '2024-12-22 10:00:00', 'Sách hay'),
-(4, 'Review sách “Đắc Nhân Tâm”: Những nguyên tắc vàng để xây dựng mối quan hệ vững chắc', 'review-sach-dac-nhan-tam-nhung-nguyen-tac-vang-de-xay-dung-moi-quan-he-vung-chac', 'Đắc Nhân Tâm (tên gốc: How to Win Friends and Influence People) là một trong những cuốn sách kinh điển về nghệ thuật giao tiếp và xây dựng mối quan hệ của tác giả Dale Carnegie.\r\n\r\nĐược xuất bản lần đầu tiên vào năm 1936, cuốn sách đã nhanh chóng trở thàn', 'dac-nhan-tam.jpg', 1, '2025-01-01 09:07:09', '2025-01-02 09:07:09', 'Sách hay'),
-(5, 'Review sách “Người Đàn Ông Mang Tên Ove” –  câu chuyện cảm động về tình yêu và sự thấu hiểu', 'review-sach-nguoi-dan-ong-mang-ten-ove-cau-chuyen-cam-dong-ve-tinh-yeu-va-su-thau-hieu', 'Cuốn sách “Người Đàn Ông Mang Tên Ove” của tác giả Fredrik Backman kể về Ove người đàn ông già nua, khó tính cộc cằn và không còn niềm vui nào trong cuộc sống. Sự xuất hiện của những người hàng xóm mới, cùng những sự kiện bất ngờ, dần dần khiến Ove thay đ', 'ove.jpg', 1, '2025-01-03 09:07:57', '2025-01-07 09:07:57', 'Sách hay'),
-(6, 'Cô đơn là môn học bắt buộc của cuộc đời, những trích đoạn chiêm nghiệm về sự trưởng thành qua sách “Trong cô đơn bất ngờ gặp phiên bản tốt hơn của chính mình”', 'co-don-la-mon-hoc-bat-buoc-cua-cuoc-doi-nhung-trich-doan-chiem-nghiem-ve-su-truong-thanh-qua-sach-trong-co-don-bat-ngo-gap-phien-ban-tot-hon-cua-chinh-minh', '“Trong Cô Đơn Bất Ngờ Gặp Phiên Bản Tốt Hơn Của Chính Mình” là một tác phẩm đầy cảm xúc của Tả Tiểu Kỳ, một nhà thơ và nhà văn trẻ thuộc thế hệ 9x đến từ Trung Quốc. Cuốn sách chạm đến một khía cạnh sâu kín trong tâm hồn mỗi người, đặc biệt là những người', 'co-don.jpg', 1, '2025-01-02 09:08:09', '2025-01-06 09:08:09', 'Sách hay'),
-(7, 'Bé vui chơi – Mẹ an tâm: Gợi ý đồ chơi cho bé tha hồ sáng tạo', 'be-vui-choi-me-an-tam-goi-y-do-choi-cho-be-tha-ho-sang-tao', 'Bé 0-12 tháng tuổi\r\nDành cho những nhóc 0-12 tháng tuổi, có một loạt đồ chơi hấp dẫn và phát triển, giúp bé khám phá thế giới xung quanh một cách an toàn và thú vị:\r\n\r\nBập bênh: Một chiếc bập bênh mềm mại với màu sắc sáng và âm thanh nhẹ nhàng sẽ là một đ', 'me-va-be.jpg', 1, '2025-01-01 09:08:22', '2025-01-05 09:08:22', 'Sách thiếu nhi'),
-(8, 'Bí Quyết Giúp Bé Phát Triển Toàn Diện Nhờ Các Món Đồ Chơi Thông Minh', 'bi-quyet-giup-be-phat-trien-toan-dien-nho-cac-mon-do-choi-thong-minh', '1. Bộ bảng chữ cái tương tác\r\nBộ bảng chữ cái tương tác là món đồ chơi giáo dục hiện đại, tích hợp nhiều tính năng giúp bé học chữ một cách thú vị và hiệu quả. Bảng chữ cái được thiết kế với các chữ cái đầy màu sắc, âm thanh vui tai và các trò chơi tương ', 'bo-sach-thieu-nhi.jpg', 1, '2025-01-06 09:08:43', '2025-01-08 09:08:43', 'Sách thiếu nhi'),
-(9, 'Các món đồ chơi phù hợp cho bé gái từ 1 đến 3 tuổi', 'cac-mon-do-choi-phu-hop-cho-be-gai-tu-1-den-3-tuoi', 'Đồ chơi búp bê\r\nBúp bê luôn là một trong những món đồ chơi yêu thích của bé gái. Từ những con búp bê vải mềm mại đến những búp bê nhựa có thể cử động tay chân, mỗi loại búp bê đều mang lại niềm vui và sự thú vị riêng cho trẻ. Búp bê không chỉ là người bạn', 'do-choi-tre-em.jpg', 1, '2025-01-06 09:08:59', '2025-01-07 09:08:59', 'Sách thiếu nhi'),
-(11, 'Truyện Kiều của Nguyễn Du: Một tác phẩm văn học kinh điển của Việt Nam', 'truyen-kieu-nguyen-du', 'Truyện Kiều của Nguyễn Du là một tác phẩm nổi bật trong nền văn học cổ điển Việt Nam, được viết bằng thể thơ lục bát, kể về cuộc đời đầy bi thương của nàng Kiều. Tác phẩm không chỉ phản ánh được xã hội phong kiến mà còn gửi gắm nhiều giá trị nhân văn sâu ', 'image1.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN'),
-(12, 'Chinh Phục Con Đường Văn Học Cổ Điển: Những Tác Phẩm Để Đời', 'chinh-phuc-con-duong-van-hoc-co-dien', 'Văn học cổ điển không chỉ là một phần di sản văn hóa mà còn là cầu nối giữa quá khứ và hiện tại, giúp chúng ta hiểu thêm về những giá trị nhân văn trong xã hội phong kiến. Từ những bài thơ của Hồ Xuân Hương cho đến các tác phẩm nổi bật của Phan Bội Châu, ', 'image2.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN'),
-(13, 'Văn Học Cổ Điển Việt Nam: Những Tác Phẩm Gắn Liền Với Thời Gian', 'van-hoc-co-dien-viet-nam-tac-pham', 'Văn học cổ điển Việt Nam không chỉ là những tác phẩm văn học nổi tiếng mà còn là nền tảng vững chắc cho sự phát triển của nền văn học dân tộc. Từ những bài thơ lục bát của Nguyễn Du, Hồ Xuân Hương cho đến các tác phẩm văn xuôi của Phan Bội Châu, văn học c', 'image3.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN'),
-(14, 'Sự Giao Thoa Giữa Văn Học Cổ Điển Và Hiện Đại Trong Văn Học Việt Nam', 'giao-thoa-van-hoc-co-dien-hien-dai', 'Văn học Việt Nam qua các thời kỳ luôn có sự giao thoa giữa các giá trị cổ điển và hiện đại. Từ những tác phẩm văn học cổ điển như Truyện Kiều của Nguyễn Du đến các tác phẩm văn học hiện đại như của Nguyễn Minh Châu, chúng ta có thể thấy rõ sự thay đổi tro', 'image4.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN'),
-(15, 'Văn Học Cổ Điển Và Những Giá Trị Vĩnh Cửu Của Văn Minh Nhân Loại', 'van-hoc-co-dien-gia-tri-vinh-cuu', 'Văn học cổ điển không chỉ là những tác phẩm nghệ thuật mà còn là một phần của di sản văn hóa nhân loại. Những tác phẩm này đã truyền lại những giá trị đạo đức, nhân văn qua nhiều thế kỷ và vẫn còn nguyên giá trị cho đến ngày nay. Từ những tác phẩm của các', 'image5.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN'),
-(16, 'Văn Học Hiện Đại Việt Nam: Những Tác Phẩm Gây Chấn Động', 'van-hoc-hien-dai-viet-nam', 'Văn học hiện đại Việt Nam đã phát triển mạnh mẽ trong suốt những thập kỷ qua, với những tác phẩm không chỉ phản ánh hiện thực xã hội mà còn khắc họa những khía cạnh sâu sắc của tâm lý con người. Các tác giả đương đại như Nguyễn Minh Châu, Bảo Ninh, Dương ', 'image6.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI'),
-(17, 'Bước Chuyển Mình Của Văn Học Hiện Đại Việt Nam', 'buoc-chuyen-minh-van-hoc-hien-dai', 'Văn học hiện đại Việt Nam là sự phản ánh những thay đổi trong xã hội Việt Nam sau những biến động lớn. Những tác phẩm của các tác giả đương đại không chỉ tập trung vào các chủ đề lịch sử, mà còn khai thác sâu vào những vấn đề hiện đại như mối quan hệ giữa', 'image7.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI'),
-(18, 'Những Tác Phẩm Văn Học Hiện Đại Việt Nam Và Sự Phát Triển Của Nền Văn Học Đương Đại', 'nhung-tac-pham-van-hoc-hien-dai', 'Văn học hiện đại Việt Nam đã và đang có những bước phát triển mạnh mẽ. Từ các tác phẩm nổi bật như của Nguyễn Minh Châu đến Bảo Ninh, văn học hiện đại không chỉ phản ánh cuộc sống xã hội mà còn phản ánh sự chuyển mình của con người Việt Nam trong thời kỳ ', 'image8.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI'),
-(19, 'Những Chân Trời Mới Của Văn Học Hiện Đại Việt Nam', 'chan-troi-moi-van-hoc-hien-dai', 'Văn học hiện đại Việt Nam có sự chuyển biến mạnh mẽ trong những năm qua, với những tác phẩm mang tính cách mạng về tư duy và nghệ thuật. Những tác phẩm này không chỉ phản ánh cuộc sống hiện thực mà còn mở ra những chân trời mới về tri thức, về cách sống v', 'image9.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI'),
-(20, 'Chuyện Kể Của Những Con Vật Thông Minh', 'chuyen-ke-cua-nhung-con-vat-thong-minh', '“Chuyện Kể Của Những Con Vật Thông Minh” là một bộ sách thiếu nhi được viết với mục đích giáo dục trẻ em về các giá trị sống qua những câu chuyện đầy hấp dẫn và mang tính giáo dục cao. Bộ sách gồm những câu chuyện về những con vật thông minh, khéo léo và ', 'imagea.jpg', 1, '2025-01-09 09:00:42', '2025-01-09 09:00:42', 'Sách thiếu nhi'),
-(21, 'Cuộc Phiêu Lưu Của Cô Bé Mạnh Mẽ', 'cuoc-phieu-luu-cua-co-be-manh-me', '“Cuộc Phiêu Lưu Của Cô Bé Mạnh Mẽ” là câu chuyện về một cô bé dũng cảm, luôn sẵn sàng đối mặt với những thử thách để bảo vệ gia đình và bạn bè của mình. Mặc dù còn nhỏ, cô bé này không bao giờ ngần ngại bước vào những cuộc phiêu lưu mới, vượt qua mọi khó ', 'imageb.jpg', 1, '2025-01-09 09:00:42', '2025-01-09 09:00:42', 'Sách thiếu nhi'),
-(22, 'Những Người Bạn Đặc Biệt Của Bé', 'nhung-nguoi-ban-dac-biet-cua-be', '“Những Người Bạn Đặc Biệt Của Bé” là một câu chuyện về tình bạn chân thành giữa một cô bé và những người bạn đặc biệt của mình, bao gồm cả một con chó, một con mèo, và một con thỏ. Những người bạn này cùng nhau khám phá thế giới và học hỏi từ nhau rất nhi', 'imagec.jpg', 1, '2025-01-09 09:00:42', '2025-01-09 09:00:42', 'Sách thiếu nhi'),
-(23, 'Tâm lý học là gì? Những khái niệm cơ bản về tâm lý con người', 'tam-ly-hoc-la-gi-nhung-khai-niem-co-ban-ve-tam-ly-con-nguoi', 'Tâm lý học là một ngành khoa học nghiên cứu về các yếu tố tác động đến hành vi và cảm xúc của con người. Ngành này không chỉ nghiên cứu những lý thuyết, mô hình và phương pháp nghiên cứu tâm lý mà còn khám phá những yếu tố ảnh hưởng đến tư duy, cảm xúc, h', 'image11.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học'),
-(24, 'Các phương pháp nghiên cứu trong tâm lý học', 'cac-phuong-phap-nghien-cuu-trong-tam-ly-hoc', 'Trong tâm lý học, có rất nhiều phương pháp nghiên cứu được sử dụng để thu thập dữ liệu và phân tích hành vi của con người. Các phương pháp này có thể được chia thành ba nhóm chính: phương pháp quan sát, phương pháp thực nghiệm và phương pháp khảo sát. Phư', 'image12.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học'),
-(25, 'Tâm lý học hành vi: Khám phá và ứng dụng', 'tam-ly-hoc-hanh-vi-kham-pha-va-ung-dung', 'Tâm lý học hành vi là một lĩnh vực nghiên cứu trong tâm lý học tập trung vào việc quan sát, phân tích và giải thích các hành vi của con người thông qua các yếu tố môi trường và tình huống xung quanh. Trường phái hành vi, do John B. Watson và B.F. Skinner ', 'image13.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học'),
-(26, 'Tâm lý học phát triển: Sự thay đổi tâm lý theo từng giai đoạn', 'tam-ly-hoc-phat-trien-su-thay-doi-tam-ly-theo-tung-giai-doan', 'Tâm lý học phát triển là một nhánh của tâm lý học nghiên cứu sự thay đổi trong hành vi, tư duy và cảm xúc của con người qua các giai đoạn phát triển từ khi sinh ra đến khi trưởng thành. Mỗi giai đoạn phát triển đều có những đặc điểm và thách thức riêng bi', 'image14.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học'),
-(27, 'Tâm lý học lâm sàng: Chẩn đoán và điều trị rối loạn tâm lý', 'tam-ly-hoc-lam-sang-chan-doan-va-dieu-tri-roi-loan-tam-ly', 'Tâm lý học lâm sàng là lĩnh vực nghiên cứu và ứng dụng trong việc chẩn đoán, điều trị và hỗ trợ những người gặp phải các vấn đề về tâm lý, từ các rối loạn tâm lý nhẹ như lo âu, trầm cảm đến các rối loạn nghiêm trọng như rối loạn tâm thần. Các chuyên gia t', 'image15.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học'),
-(28, 'PHPCRAFT: Web Bán Sách Của Nhóm', 'thong-tin-ve-phpcraft', 'Giới thiệu.\r\nPHPCRAFT là nhóm gồm 5 người: Dương Quang Lãm, Võ Minh Quân, Võ Quang Bảo, Nguyễn Hải Long, Võ Thành Đăng Khoa.\r\nNhóm đang làm một web bán sách bằng Laravel. Mục tiêu là tạo ra một website dễ dùng, đơn giản.\r\nCông việc của nhóm\r\nHoàn thiện các chức năng được yêu cầu.\r\nThiết kế giao diện: Làm trang web dễ nhìn và dễ dùng.\r\nKiểm tra lỗi. Đảm bảo mọi thứ chạy tốt.\r\nMục tiêu: Nhóm muốn làm một trang web bán sách sài được. Dù còn nhiều thử thách, nhóm sẽ cố gắng để hoàn thành.', 'phpcraft.jpg', 1, '2024-12-31 21:53:49', '2025-01-10 10:38:34', 'Thông tin nhóm');
+INSERT INTO `baiviet` (`id`, `tieude`, `slug`, `noidung`, `anhbaiviet`, `trangthai`, `created_at`, `updated_at`, `chude`, `nguoi_dang`, `luot_xem`) VALUES
+(2, 'Review Sách tranh tô màu: Góc Nhỏ Có Nắng – mảnh ghép bình yên cho tâm hồn sau những mỏi mệt của cuộc sống', 'review-sach-tranh-to-mau-goc-nho-co-nang', 'Cuốn sách tranh tô màu “Góc Nhỏ Có Nắng” không chỉ là một cuốn sách tô màu thông thường mà còn là một tác phẩm giúp người đọc tìm thấy sự bình yên trong những khoảnh khắc giản dị của cuộc sống. Được thiết kế với bìa mềm, sách tranh tô màu này mang đến một', 'goc-nho-co-nang.jpg', 1, '2024-12-22 10:00:00', '2024-12-22 10:00:00', 'Sách hay', NULL, 0),
+(4, 'Review sách “Đắc Nhân Tâm”: Những nguyên tắc vàng để xây dựng mối quan hệ vững chắc', 'review-sach-dac-nhan-tam-nhung-nguyen-tac-vang-de-xay-dung-moi-quan-he-vung-chac', 'Đắc Nhân Tâm (tên gốc: How to Win Friends and Influence People) là một trong những cuốn sách kinh điển về nghệ thuật giao tiếp và xây dựng mối quan hệ của tác giả Dale Carnegie.\r\n\r\nĐược xuất bản lần đầu tiên vào năm 1936, cuốn sách đã nhanh chóng trở thàn', 'dac-nhan-tam.jpg', 1, '2025-01-01 09:07:09', '2025-01-02 09:07:09', 'Sách hay', NULL, 0),
+(5, 'Review sách “Người Đàn Ông Mang Tên Ove” –  câu chuyện cảm động về tình yêu và sự thấu hiểu', 'review-sach-nguoi-dan-ong-mang-ten-ove-cau-chuyen-cam-dong-ve-tinh-yeu-va-su-thau-hieu', 'Cuốn sách “Người Đàn Ông Mang Tên Ove” của tác giả Fredrik Backman kể về Ove người đàn ông già nua, khó tính cộc cằn và không còn niềm vui nào trong cuộc sống. Sự xuất hiện của những người hàng xóm mới, cùng những sự kiện bất ngờ, dần dần khiến Ove thay đ', 'ove.jpg', 1, '2025-01-03 09:07:57', '2025-01-07 09:07:57', 'Sách hay', NULL, 0),
+(6, 'Cô đơn là môn học bắt buộc của cuộc đời, những trích đoạn chiêm nghiệm về sự trưởng thành qua sách “Trong cô đơn bất ngờ gặp phiên bản tốt hơn của chính mình”', 'co-don-la-mon-hoc-bat-buoc-cua-cuoc-doi-nhung-trich-doan-chiem-nghiem-ve-su-truong-thanh-qua-sach-trong-co-don-bat-ngo-gap-phien-ban-tot-hon-cua-chinh-minh', '“Trong Cô Đơn Bất Ngờ Gặp Phiên Bản Tốt Hơn Của Chính Mình” là một tác phẩm đầy cảm xúc của Tả Tiểu Kỳ, một nhà thơ và nhà văn trẻ thuộc thế hệ 9x đến từ Trung Quốc. Cuốn sách chạm đến một khía cạnh sâu kín trong tâm hồn mỗi người, đặc biệt là những người', 'co-don.jpg', 1, '2025-01-02 09:08:09', '2025-01-06 09:08:09', 'Sách hay', NULL, 0),
+(7, 'Bé vui chơi – Mẹ an tâm: Gợi ý đồ chơi cho bé tha hồ sáng tạo', 'be-vui-choi-me-an-tam-goi-y-do-choi-cho-be-tha-ho-sang-tao', 'Bé 0-12 tháng tuổi\r\nDành cho những nhóc 0-12 tháng tuổi, có một loạt đồ chơi hấp dẫn và phát triển, giúp bé khám phá thế giới xung quanh một cách an toàn và thú vị:\r\n\r\nBập bênh: Một chiếc bập bênh mềm mại với màu sắc sáng và âm thanh nhẹ nhàng sẽ là một đ', 'me-va-be.jpg', 1, '2025-01-01 09:08:22', '2025-01-05 09:08:22', 'Sách thiếu nhi', NULL, 0),
+(8, 'Bí Quyết Giúp Bé Phát Triển Toàn Diện Nhờ Các Món Đồ Chơi Thông Minh', 'bi-quyet-giup-be-phat-trien-toan-dien-nho-cac-mon-do-choi-thong-minh', '1. Bộ bảng chữ cái tương tác\r\nBộ bảng chữ cái tương tác là món đồ chơi giáo dục hiện đại, tích hợp nhiều tính năng giúp bé học chữ một cách thú vị và hiệu quả. Bảng chữ cái được thiết kế với các chữ cái đầy màu sắc, âm thanh vui tai và các trò chơi tương ', 'bo-sach-thieu-nhi.jpg', 1, '2025-01-06 09:08:43', '2025-01-08 09:08:43', 'Sách thiếu nhi', NULL, 0),
+(9, 'Các món đồ chơi phù hợp cho bé gái từ 1 đến 3 tuổi', 'cac-mon-do-choi-phu-hop-cho-be-gai-tu-1-den-3-tuoi', 'Đồ chơi búp bê\r\nBúp bê luôn là một trong những món đồ chơi yêu thích của bé gái. Từ những con búp bê vải mềm mại đến những búp bê nhựa có thể cử động tay chân, mỗi loại búp bê đều mang lại niềm vui và sự thú vị riêng cho trẻ. Búp bê không chỉ là người bạn', 'do-choi-tre-em.jpg', 1, '2025-01-06 09:08:59', '2025-01-07 09:08:59', 'Sách thiếu nhi', NULL, 0),
+(11, 'Truyện Kiều của Nguyễn Du: Một tác phẩm văn học kinh điển của Việt Nam', 'truyen-kieu-nguyen-du', 'Truyện Kiều của Nguyễn Du là một tác phẩm nổi bật trong nền văn học cổ điển Việt Nam, được viết bằng thể thơ lục bát, kể về cuộc đời đầy bi thương của nàng Kiều. Tác phẩm không chỉ phản ánh được xã hội phong kiến mà còn gửi gắm nhiều giá trị nhân văn sâu ', 'image1.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN', NULL, 0),
+(12, 'Chinh Phục Con Đường Văn Học Cổ Điển: Những Tác Phẩm Để Đời', 'chinh-phuc-con-duong-van-hoc-co-dien', 'Văn học cổ điển không chỉ là một phần di sản văn hóa mà còn là cầu nối giữa quá khứ và hiện tại, giúp chúng ta hiểu thêm về những giá trị nhân văn trong xã hội phong kiến. Từ những bài thơ của Hồ Xuân Hương cho đến các tác phẩm nổi bật của Phan Bội Châu, ', 'image2.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN', NULL, 0),
+(13, 'Văn Học Cổ Điển Việt Nam: Những Tác Phẩm Gắn Liền Với Thời Gian', 'van-hoc-co-dien-viet-nam-tac-pham', 'Văn học cổ điển Việt Nam không chỉ là những tác phẩm văn học nổi tiếng mà còn là nền tảng vững chắc cho sự phát triển của nền văn học dân tộc. Từ những bài thơ lục bát của Nguyễn Du, Hồ Xuân Hương cho đến các tác phẩm văn xuôi của Phan Bội Châu, văn học c', 'image3.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN', NULL, 0),
+(14, 'Sự Giao Thoa Giữa Văn Học Cổ Điển Và Hiện Đại Trong Văn Học Việt Nam', 'giao-thoa-van-hoc-co-dien-hien-dai', 'Văn học Việt Nam qua các thời kỳ luôn có sự giao thoa giữa các giá trị cổ điển và hiện đại. Từ những tác phẩm văn học cổ điển như Truyện Kiều của Nguyễn Du đến các tác phẩm văn học hiện đại như của Nguyễn Minh Châu, chúng ta có thể thấy rõ sự thay đổi tro', 'image4.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN', NULL, 0),
+(15, 'Văn Học Cổ Điển Và Những Giá Trị Vĩnh Cửu Của Văn Minh Nhân Loại', 'van-hoc-co-dien-gia-tri-vinh-cuu', 'Văn học cổ điển không chỉ là những tác phẩm nghệ thuật mà còn là một phần của di sản văn hóa nhân loại. Những tác phẩm này đã truyền lại những giá trị đạo đức, nhân văn qua nhiều thế kỷ và vẫn còn nguyên giá trị cho đến ngày nay. Từ những tác phẩm của các', 'image5.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC CỔ ĐIỂN', NULL, 0),
+(16, 'Văn Học Hiện Đại Việt Nam: Những Tác Phẩm Gây Chấn Động', 'van-hoc-hien-dai-viet-nam', 'Văn học hiện đại Việt Nam đã phát triển mạnh mẽ trong suốt những thập kỷ qua, với những tác phẩm không chỉ phản ánh hiện thực xã hội mà còn khắc họa những khía cạnh sâu sắc của tâm lý con người. Các tác giả đương đại như Nguyễn Minh Châu, Bảo Ninh, Dương ', 'image6.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI', NULL, 0),
+(17, 'Bước Chuyển Mình Của Văn Học Hiện Đại Việt Nam', 'buoc-chuyen-minh-van-hoc-hien-dai', 'Văn học hiện đại Việt Nam là sự phản ánh những thay đổi trong xã hội Việt Nam sau những biến động lớn. Những tác phẩm của các tác giả đương đại không chỉ tập trung vào các chủ đề lịch sử, mà còn khai thác sâu vào những vấn đề hiện đại như mối quan hệ giữa', 'image7.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI', NULL, 0),
+(18, 'Những Tác Phẩm Văn Học Hiện Đại Việt Nam Và Sự Phát Triển Của Nền Văn Học Đương Đại', 'nhung-tac-pham-van-hoc-hien-dai', 'Văn học hiện đại Việt Nam đã và đang có những bước phát triển mạnh mẽ. Từ các tác phẩm nổi bật như của Nguyễn Minh Châu đến Bảo Ninh, văn học hiện đại không chỉ phản ánh cuộc sống xã hội mà còn phản ánh sự chuyển mình của con người Việt Nam trong thời kỳ ', 'image8.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI', NULL, 0),
+(19, 'Những Chân Trời Mới Của Văn Học Hiện Đại Việt Nam', 'chan-troi-moi-van-hoc-hien-dai', 'Văn học hiện đại Việt Nam có sự chuyển biến mạnh mẽ trong những năm qua, với những tác phẩm mang tính cách mạng về tư duy và nghệ thuật. Những tác phẩm này không chỉ phản ánh cuộc sống hiện thực mà còn mở ra những chân trời mới về tri thức, về cách sống v', 'image9.jpg', 1, '2025-01-09 08:59:02', '2025-01-09 08:59:02', 'VĂN HỌC HIỆN ĐẠI', NULL, 0),
+(20, 'Chuyện Kể Của Những Con Vật Thông Minh', 'chuyen-ke-cua-nhung-con-vat-thong-minh', '“Chuyện Kể Của Những Con Vật Thông Minh” là một bộ sách thiếu nhi được viết với mục đích giáo dục trẻ em về các giá trị sống qua những câu chuyện đầy hấp dẫn và mang tính giáo dục cao. Bộ sách gồm những câu chuyện về những con vật thông minh, khéo léo và ', 'imagea.jpg', 1, '2025-01-09 09:00:42', '2025-01-09 09:00:42', 'Sách thiếu nhi', NULL, 0),
+(21, 'Cuộc Phiêu Lưu Của Cô Bé Mạnh Mẽ', 'cuoc-phieu-luu-cua-co-be-manh-me', '“Cuộc Phiêu Lưu Của Cô Bé Mạnh Mẽ” là câu chuyện về một cô bé dũng cảm, luôn sẵn sàng đối mặt với những thử thách để bảo vệ gia đình và bạn bè của mình. Mặc dù còn nhỏ, cô bé này không bao giờ ngần ngại bước vào những cuộc phiêu lưu mới, vượt qua mọi khó ', 'imageb.jpg', 1, '2025-01-09 09:00:42', '2025-01-09 09:00:42', 'Sách thiếu nhi', NULL, 0),
+(22, 'Những Người Bạn Đặc Biệt Của Bé', 'nhung-nguoi-ban-dac-biet-cua-be', '“Những Người Bạn Đặc Biệt Của Bé” là một câu chuyện về tình bạn chân thành giữa một cô bé và những người bạn đặc biệt của mình, bao gồm cả một con chó, một con mèo, và một con thỏ. Những người bạn này cùng nhau khám phá thế giới và học hỏi từ nhau rất nhi', 'imagec.jpg', 1, '2025-01-09 09:00:42', '2025-01-09 09:00:42', 'Sách thiếu nhi', NULL, 0),
+(23, 'Tâm lý học là gì? Những khái niệm cơ bản về tâm lý con người', 'tam-ly-hoc-la-gi-nhung-khai-niem-co-ban-ve-tam-ly-con-nguoi', 'Tâm lý học là một ngành khoa học nghiên cứu về các yếu tố tác động đến hành vi và cảm xúc của con người. Ngành này không chỉ nghiên cứu những lý thuyết, mô hình và phương pháp nghiên cứu tâm lý mà còn khám phá những yếu tố ảnh hưởng đến tư duy, cảm xúc, h', 'image11.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học', NULL, 0),
+(24, 'Các phương pháp nghiên cứu trong tâm lý học', 'cac-phuong-phap-nghien-cuu-trong-tam-ly-hoc', 'Trong tâm lý học, có rất nhiều phương pháp nghiên cứu được sử dụng để thu thập dữ liệu và phân tích hành vi của con người. Các phương pháp này có thể được chia thành ba nhóm chính: phương pháp quan sát, phương pháp thực nghiệm và phương pháp khảo sát. Phư', 'image12.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học', NULL, 0),
+(25, 'Tâm lý học hành vi: Khám phá và ứng dụng', 'tam-ly-hoc-hanh-vi-kham-pha-va-ung-dung', 'Tâm lý học hành vi là một lĩnh vực nghiên cứu trong tâm lý học tập trung vào việc quan sát, phân tích và giải thích các hành vi của con người thông qua các yếu tố môi trường và tình huống xung quanh. Trường phái hành vi, do John B. Watson và B.F. Skinner ', 'image13.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học', NULL, 0),
+(26, 'Tâm lý học phát triển: Sự thay đổi tâm lý theo từng giai đoạn', 'tam-ly-hoc-phat-trien-su-thay-doi-tam-ly-theo-tung-giai-doan', 'Tâm lý học phát triển là một nhánh của tâm lý học nghiên cứu sự thay đổi trong hành vi, tư duy và cảm xúc của con người qua các giai đoạn phát triển từ khi sinh ra đến khi trưởng thành. Mỗi giai đoạn phát triển đều có những đặc điểm và thách thức riêng bi', 'image14.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học', NULL, 0),
+(27, 'Tâm lý học lâm sàng: Chẩn đoán và điều trị rối loạn tâm lý', 'tam-ly-hoc-lam-sang-chan-doan-va-dieu-tri-roi-loan-tam-ly', 'Tâm lý học lâm sàng là lĩnh vực nghiên cứu và ứng dụng trong việc chẩn đoán, điều trị và hỗ trợ những người gặp phải các vấn đề về tâm lý, từ các rối loạn tâm lý nhẹ như lo âu, trầm cảm đến các rối loạn nghiêm trọng như rối loạn tâm thần. Các chuyên gia t', 'image15.jpg', 1, '2025-01-09 09:34:08', '2025-01-09 09:34:08', 'Tâm lý học', NULL, 0),
+(28, 'Demo', 'demo', 'Demo', 'demo.jpg', 1, '2024-12-31 21:53:49', '2025-01-10 10:38:34', 'Thông tin nhóm', NULL, 0),
+(29, 'Khám phá vật lý lượng tử', 'kham-pha-vat-ly-luong-tu', 'Vật lý lượng tử là một trong những ngành khoa học hiện đại hấp dẫn nhất hiện nay. Nó nghiên cứu hành vi của các hạt cực nhỏ như electron và photon, nơi các định luật vật lý cổ điển không còn chính xác. Bài viết này sẽ giúp bạn hiểu những nguyên lý cơ bản như nguyên lý bất định Heisenberg, chồng chập lượng tử và rối lượng tử.', '1.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'KHOA HỌC', NULL, 0),
+(30, 'Hệ mặt trời và các hành tinh', 'he-mat-troi-va-cac-hanh-tinh', 'Hệ mặt trời bao gồm Mặt Trời và các hành tinh quay quanh nó như Trái Đất, Sao Hỏa, Sao Mộc và Sao Thổ. Mỗi hành tinh đều có những đặc điểm riêng biệt về khí hậu, địa hình và cấu tạo. Bài viết sẽ giúp bạn khám phá chi tiết từng hành tinh và vai trò của chúng trong vũ trụ bao la.', '2.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'KHOA HỌC', NULL, 0),
+(31, 'Sinh học tế bào cơ bản', 'sinh-hoc-te-bao-co-ban', 'Tế bào là đơn vị cơ bản của sự sống. Trong bài viết này, chúng ta sẽ tìm hiểu về cấu trúc của tế bào nhân thực và tế bào nhân sơ, cũng như các bào quan quan trọng như nhân, ty thể, ribosome và mạng lưới nội chất. Kiến thức này rất cần thiết cho học sinh trung học và những người yêu thích sinh học.', '3.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'KHOA HỌC', NULL, 0),
+(32, 'Khoa học và đời sống', 'khoa-hoc-va-doi-song', 'Khoa học không chỉ tồn tại trong phòng thí nghiệm mà còn ảnh hưởng sâu rộng đến đời sống hàng ngày của chúng ta. Từ điện thoại thông minh, y học hiện đại đến công nghệ nông nghiệp tiên tiến, bài viết sẽ cho bạn thấy ứng dụng thực tiễn của khoa học và lý do vì sao nên đầu tư vào giáo dục khoa học.', '4.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'KHOA HỌC', NULL, 0),
+(33, 'Phát minh vĩ đại làm thay đổi thế giới', 'phat-minh-thay-doi-the-gioi', 'Lịch sử nhân loại chứng kiến nhiều phát minh vĩ đại như bóng đèn, internet, máy bay và vaccine. Những phát minh này không chỉ giúp nâng cao chất lượng cuộc sống mà còn mở ra thời kỳ phát triển vượt bậc cho nhân loại. Cùng điểm qua một số phát minh đã tạo nên bước ngoặt lớn trong lịch sử.', '5.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'KHOA HỌC', NULL, 0),
+(34, 'Học tiếng Anh hiệu quả', 'hoc-tieng-anh-hieu-qua', 'Để học tiếng Anh hiệu quả, bạn cần có kế hoạch học rõ ràng và phù hợp với trình độ. Bài viết này sẽ hướng dẫn bạn cách lập kế hoạch học từ vựng, luyện nghe, nói và viết. Đồng thời chia sẻ mẹo học giúp duy trì động lực và ghi nhớ kiến thức lâu dài.', '6.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0),
+(35, 'Luyện phát âm chuẩn tiếng Anh', 'luyen-phat-am-chuan', 'Phát âm chuẩn là yếu tố quan trọng để giao tiếp tiếng Anh hiệu quả. Bài viết cung cấp các quy tắc phát âm phổ biến, cách sử dụng bảng phiên âm IPA và giới thiệu một số công cụ hỗ trợ luyện phát âm như ứng dụng di động, video luyện nói và bài tập thực hành.', '7.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0),
+(36, 'Từ vựng tiếng Anh theo chủ đề', 'tu-vung-tieng-anh-theo-chu-de', 'Học từ vựng theo chủ đề giúp người học ghi nhớ lâu hơn và dễ dàng áp dụng vào thực tế. Bài viết giới thiệu các nhóm từ vựng thông dụng như: gia đình, công việc, du lịch, và học tập, kèm theo ví dụ minh họa và bài tập thực hành để củng cố kiến thức.', '8.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0),
+(37, 'Giao tiếp tiếng Anh hàng ngày', 'giao-tiep-tieng-anh-hang-ngay', 'Giao tiếp tiếng Anh không chỉ là học từ vựng mà còn là sử dụng thành thạo các mẫu câu thông dụng. Bài viết cung cấp các đoạn hội thoại thực tế, mẹo diễn đạt tự nhiên và các lỗi phổ biến cần tránh trong giao tiếp hàng ngày.', '9.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0),
+(38, 'Ngữ pháp cơ bản cho người mới bắt đầu', 'ngu-phap-co-ban-cho-nguoi-moi', 'Ngữ pháp là nền tảng của mọi ngôn ngữ. Bài viết này giúp người mới bắt đầu làm quen với các thì cơ bản, cấu trúc câu, cách dùng danh từ, động từ, tính từ... Nội dung được trình bày dễ hiểu và kèm theo bài tập thực hành để kiểm tra kiến thức.', '10.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -221,10 +233,26 @@ INSERT INTO `danhsachyeuthich` (`MaKH`, `MaSP`, `TrangThai`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `du_lieu_chan_trang`
+-- Cấu trúc bảng cho bảng `failed_jobs`
 --
 
-CREATE TABLE `du_lieu_chan_trang` (
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `footers`
+--
+
+CREATE TABLE `footers` (
   `id` int(11) NOT NULL,
   `loai_du_lieu` enum('thong_tin_chung','muc_con') NOT NULL,
   `ten_muc` varchar(255) DEFAULT NULL,
@@ -241,11 +269,11 @@ CREATE TABLE `du_lieu_chan_trang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `du_lieu_chan_trang`
+-- Đang đổ dữ liệu cho bảng `footers`
 --
 
-INSERT INTO `du_lieu_chan_trang` (`id`, `loai_du_lieu`, `ten_muc`, `noi_dung`, `duong_dan`, `ten_cong_ty`, `dia_chi`, `email`, `dien_thoai`, `mo_ta`, `ngay_tao`, `ngay_cap_nhat`, `logo_url`) VALUES
-(1, 'thong_tin_chung', NULL, NULL, NULL, 'DEMO', ' TP. HCM', 'cskh@DEMO.com.vn', '10', 'DEMO.com nhận đặt hàng trực tuyến và giao hàng tận nơi.', '2025-06-02 06:24:41', '2025-06-02 06:43:58', 'storage/logo.png'),
+INSERT INTO `footers` (`id`, `loai_du_lieu`, `ten_muc`, `noi_dung`, `duong_dan`, `ten_cong_ty`, `dia_chi`, `email`, `dien_thoai`, `mo_ta`, `ngay_tao`, `ngay_cap_nhat`, `logo_url`) VALUES
+(1, 'thong_tin_chung', NULL, NULL, NULL, 'DEMO', ' TP. HCM và Long An', 'cskh@DEMO.com.vn', '10', 'DEMO.com nhận đặt hàng trực tuyến và giao hàng tận nơi.', '2025-06-02 06:24:41', '2025-06-02 13:44:53', 'storage/logo.png'),
 (2, 'muc_con', 'Dịch Vụ', 'Điều khoản sử dụng', '#', NULL, NULL, NULL, NULL, NULL, '2025-06-02 06:24:41', '2025-06-02 06:24:41', NULL),
 (3, 'muc_con', 'Dịch Vụ', 'Chính sách bảo mật thông tin cá nhân', '#', NULL, NULL, NULL, NULL, NULL, '2025-06-02 06:24:41', '2025-06-02 06:24:41', NULL),
 (4, 'muc_con', 'Dịch Vụ', 'Chính sách bảo mật thanh toán', '#', NULL, NULL, NULL, NULL, NULL, '2025-06-02 06:24:41', '2025-06-02 06:24:41', NULL),
@@ -259,22 +287,6 @@ INSERT INTO `du_lieu_chan_trang` (`id`, `loai_du_lieu`, `ten_muc`, `noi_dung`, `
 (12, 'muc_con', 'Tài Khoản Của Tôi', 'Thay đổi địa chỉ khách hàng', '#', NULL, NULL, NULL, NULL, NULL, '2025-06-02 06:24:41', '2025-06-02 06:24:41', NULL),
 (13, 'muc_con', 'Tài Khoản Của Tôi', 'Chi tiết tài khoản', '#', NULL, NULL, NULL, NULL, NULL, '2025-06-02 06:24:41', '2025-06-02 06:24:41', NULL),
 (14, 'muc_con', 'Tài Khoản Của Tôi', 'Lịch sử mua hàng', '#', NULL, NULL, NULL, NULL, NULL, '2025-06-02 06:24:41', '2025-06-02 06:24:41', NULL);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `failed_jobs`
---
-
-CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -437,8 +449,12 @@ CREATE TABLE `lien_he` (
 --
 
 INSERT INTO `lien_he` (`id`, `ho_ten`, `email`, `chu_de`, `noi_dung`, `created_at`, `updated_at`) VALUES
-(1, 'Trần An', 'tranan@gmail.com', 'khuyến mãi ', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ligula risus, condimentum vitae purus id, tempor efficitur mi. Sed dictum, ante eget fringilla interdum, urna est sollicitudin neque, eu tincidunt nulla orci eget ante. Ut in semper dolor. Praesent maximus elit rutrum dui condimentum convallis. Donec consequat consequat tellus, eu laoreet erat pharetra ac. Curabitur mattis, tortor eu hendrerit dapibus, tortor ante posuere quam, a fringilla justo purus ac tortor. Pellentesque enim libero, varius vitae sapien ac, eleifend consequat lacus. Maecenas imperdiet sem risus, et tincidunt mauris facilisis et. In cursus enim interdum nulla pharetra lobortis. Nam magna dui, iaculis ac lorem id, feugiat sagittis magna. Vestibulum volutpat ex at eros aliquet aliquet. Vestibulum in sollicitudin nisl. Mauris iaculis fringilla ante. Curabitur consectetur venenatis vestibulum.', '2025-01-07 17:00:00', '2025-01-07 17:00:00'),
-(2, 'Sang Trần ', 'SangTran@gmail.com', 'Khuyến mãi mua hàng', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ligula risus, condimentum vitae purus id, tempor efficitur mi. Sed dictum, ante eget fringilla interdum, urna est sollicitudin neque, eu tincidunt nulla orci eget ante. Ut in semper dolor. Praesent maximus elit rutrum dui condimentum convallis. Donec consequat consequat tellus, eu laoreet erat pharetra ac. Curabitur mattis, tortor eu hendrerit dapibus, tortor ante posuere quam, a fringilla justo purus ac tortor. Pellentesque enim libero, varius vitae sapien ac, eleifend consequat lacus. Maecenas imperdiet sem risus, et tincidunt mauris facilisis et. In cursus enim interdum nulla pharetra lobortis. Nam magna dui, iaculis ac lorem id, feugiat sagittis magna. Vestibulum volutpat ex at eros aliquet aliquet. Vestibulum in sollicitudin nisl. Mauris iaculis fringilla ante. Curabitur consectetur venenatis vestibulum.', '2025-01-07 17:00:00', '2025-01-07 17:00:00');
+(1, 'a', 'admin@juice-sh.op', 'a', 'a', '2025-06-02 06:40:42', '2025-06-02 06:40:42'),
+(2, 'a', 'longhai1112a@gmail.com', 'dsa', 'a', '2025-06-02 06:47:58', '2025-06-02 06:47:58'),
+(3, 'a', 'longhai1112a@gmail.com', 'a', 'a', '2025-06-02 06:54:08', '2025-06-02 06:54:08'),
+(4, 'a', 'longhai1112a@gmail.com', 'a', 'a', '2025-06-02 07:05:06', '2025-06-02 07:05:06'),
+(5, 'dsasad', 'ưq@gmail.com', 'ádsa', 'sadsa', '2025-06-02 07:05:27', '2025-06-02 07:05:27'),
+(6, 'a', 'admin@juice-sh.op', 'a', 'a', '2025-06-02 07:06:26', '2025-06-02 07:06:26');
 
 -- --------------------------------------------------------
 
@@ -589,7 +605,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('EmXzhBDeAd9POqIsMnXAYm1HhevAsXRoSw8IVKd1', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMGFHY0wweGE3bmZxc0hheGdEM211NEN2YzFiQ3BJTGtUeGdhaHBuWiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9qcy9tYWluLmpzLiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1748846675);
+('PK9EavB3v8Znf6qLYtxNfqVz0GoSqpL5p18tJpkK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicEE2a2dzczZZQk5UR0RiVkJWSTNIQ1kwYmZObWxOVFBzUUxkYmF5MiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hYm91dC90cnV5ZW4ta2lldS1uZ3V5ZW4tZHUiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1749045317);
 
 -- --------------------------------------------------------
 
@@ -685,17 +701,17 @@ ALTER TABLE `danhsachyeuthich`
   ADD KEY `MaSP` (`MaSP`);
 
 --
--- Chỉ mục cho bảng `du_lieu_chan_trang`
---
-ALTER TABLE `du_lieu_chan_trang`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Chỉ mục cho bảng `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Chỉ mục cho bảng `footers`
+--
+ALTER TABLE `footers`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Chỉ mục cho bảng `giohang`
@@ -792,7 +808,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `baiviet`
 --
 ALTER TABLE `baiviet`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT cho bảng `chitiethoadon`
@@ -807,16 +823,16 @@ ALTER TABLE `danhmuc`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT cho bảng `du_lieu_chan_trang`
---
-ALTER TABLE `du_lieu_chan_trang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
 -- AUTO_INCREMENT cho bảng `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `footers`
+--
+ALTER TABLE `footers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT cho bảng `giohang`
@@ -852,7 +868,7 @@ ALTER TABLE `khuyenmai`
 -- AUTO_INCREMENT cho bảng `lien_he`
 --
 ALTER TABLE `lien_he`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `migrations`
