@@ -5,6 +5,7 @@ use App\Models\About;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AboutController extends Controller
 
@@ -107,29 +108,37 @@ class AboutController extends Controller
                 'tongHop' => $tongHop,
             ]);
         }
-        public function search(Request $request)
-        {
-            $query = $request->input('search', '');
-            $page = $request->input('page', 1);
-            $perPage = 4;
 
-            $results = collect();
+                    public function search(Request $request)
+                    {
+                        $query = $request->input('search', '');
+                        $page = $request->input('page', 1);
+                        $perPage = 4;
 
-            if (!empty($query)) {
-                $rawResults = DB::table('baiviet')
-                    ->select('*')
-                    ->where('trangthai', 1)
-                    ->whereRaw("MATCH(tieude, noidung, chude) AGAINST (? IN NATURAL LANGUAGE MODE)", [$query])
-                    ->paginate($perPage, ['*'], 'page', $page);
+                        if (!empty($query)) {
+                            // Nếu có từ khóa tìm kiếm thì dùng full-text search
+                            $results = DB::table('baiviet')
+                                ->select('*')
+                                ->where('trangthai', 1)
+                                ->whereRaw("MATCH(tieude, noidung, chude) AGAINST (? IN NATURAL LANGUAGE MODE)", [$query])
+                                ->paginate($perPage, ['*'], 'page', $page);
+                        } else {
+                            // Nếu không có từ khóa, tạo LengthAwarePaginator rỗng để tránh lỗi
+                            $empty = collect();
+                            $results = new LengthAwarePaginator(
+                                $empty,
+                                0,
+                                $perPage,
+                                $page,
+                                ['path' => $request->url(), 'query' => $request->query()]
+                            );
+                        }
 
-                $results = $rawResults;
-            }
-
-            return view('homepage.aboutresult', [
-                'results' => $results,
-                'query' => $query,
-            ]);
-        }
+                        return view('homepage.aboutresult', [
+                            'results' => $results,
+                            'query' => $query,
+                        ]);
+                    }
     public function show($slug)
     {
         $article = About::where('slug', $slug)->firstOrFail();
