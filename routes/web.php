@@ -21,3 +21,4 @@
     Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
     Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
     Route::get('/productdetail', [HomeController::class, 'productdetail']);
+    Route::get('/account', [HomeController::class, 'account']);
