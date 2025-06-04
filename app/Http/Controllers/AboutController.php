@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\About;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AboutController extends Controller
 
@@ -106,59 +107,47 @@ class AboutController extends Controller
                 'tongHop' => $tongHop,
             ]);
         }
+        public function search(Request $request)
+        {
+            $rawQuery = $request->input('search', '');
 
-    public function search(Request $request)
-    {
-        $rawQuery = $request->input('search', '');
-
-
-        $normalizedQuery = Str::of($rawQuery)
+            // Loại bỏ dấu và chuyển thành chữ thường để so sánh
+            $normalizedQuery = Str::of($rawQuery)
             ->lower()
             ->ascii()
-            ->replaceMatches('/[^a-z0-9]/', '') // loại bỏ hết khoảng trắng và ký tự đặc biệt
+            ->replaceMatches('/[^a-z0-9]+/', ' ') // thay vì '', dùng khoảng trắng
+            ->trim()
             ->value();
 
-        $page = $request->input('page', 1);
-
-        if (empty($normalizedQuery)) {
-            $results = collect();
-        } else {
-            $allArticles = About::where('trangthai', 1)->get();
-            $filtered = $allArticles->filter(function ($article) use ($normalizedQuery) {
-                $normalizeText = function($text) {
-                    return Str::of($text)
-                        ->lower()
-                        ->ascii()
-                        ->replaceMatches('/[^a-z0-9]/', '')
-                        ->value();
-                };
-
-                $chudeKhongDau = $normalizeText($article->chude);
-                $tieudeKhongDau = $normalizeText($article->tieude);
-                $noidungKhongDau = $normalizeText($article->noidung);
-
-                return
-                    str_contains($chudeKhongDau, $normalizedQuery)
-                    || str_contains($tieudeKhongDau, $normalizedQuery)
-                    || str_contains($noidungKhongDau, $normalizedQuery);
-            })->values();
+            $page = $request->input('page', 1);
             $perPage = 4;
-            $offset = ($page - 1) * $perPage;
-            $results = $filtered->slice($offset, $perPage)->values();
-            $results = new \Illuminate\Pagination\LengthAwarePaginator(
-                $results,
-                $filtered->count(),
-                $perPage,
-                $page,
-                ['path' => $request->url(), 'query' => $request->query()]
-            );
+
+            if (empty($normalizedQuery)) {
+                $results = new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage);
+            } else {
+                $queryWords = explode(' ', $normalizedQuery);
+
+                // Xây dựng điều kiện LIKE cho từng từ
+                $articles = About::query()
+                    ->where('trangthai', 1)
+                    ->where(function ($q) use ($queryWords) {
+                        foreach ($queryWords as $word) {
+                            $like = '%' . $word . '%';
+                            $q->orWhere(DB::raw("LOWER(CONVERT(tieude USING ascii))"), 'LIKE', $like)
+                              ->orWhere(DB::raw("LOWER(CONVERT(chude USING ascii))"), 'LIKE', $like)
+                              ->orWhere(DB::raw("LOWER(CONVERT(noidung USING ascii))"), 'LIKE', $like);
+                        }
+                    })
+                    ->paginate($perPage);
+                $results = $articles;
+            }
+
+            return view('homepage.aboutresult', [
+                'results' => $results,
+                'query' => $rawQuery,
+            ]);
         }
 
-        return view('homepage.aboutresult', [
-            'results' => $results,
-            'query' => $rawQuery,
-        ]);
-    }
     public function show($slug)
     {
         $article = About::where('slug', $slug)->firstOrFail();
