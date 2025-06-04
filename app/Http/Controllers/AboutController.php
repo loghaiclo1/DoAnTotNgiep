@@ -109,45 +109,27 @@ class AboutController extends Controller
         }
         public function search(Request $request)
         {
-            $rawQuery = $request->input('search', '');
-
-            // Loại bỏ dấu và chuyển thành chữ thường để so sánh
-            $normalizedQuery = Str::of($rawQuery)
-            ->lower()
-            ->ascii()
-            ->replaceMatches('/[^a-z0-9]+/', ' ') // thay vì '', dùng khoảng trắng
-            ->trim()
-            ->value();
-
+            $query = $request->input('search', '');
             $page = $request->input('page', 1);
             $perPage = 4;
 
-            if (empty($normalizedQuery)) {
-                $results = new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage);
-            } else {
-                $queryWords = explode(' ', $normalizedQuery);
+            $results = collect();
 
-                // Xây dựng điều kiện LIKE cho từng từ
-                $articles = About::query()
+            if (!empty($query)) {
+                $rawResults = DB::table('baiviet')
+                    ->select('*')
                     ->where('trangthai', 1)
-                    ->where(function ($q) use ($queryWords) {
-                        foreach ($queryWords as $word) {
-                            $like = '%' . $word . '%';
-                            $q->orWhere(DB::raw("LOWER(CONVERT(tieude USING ascii))"), 'LIKE', $like)
-                              ->orWhere(DB::raw("LOWER(CONVERT(chude USING ascii))"), 'LIKE', $like)
-                              ->orWhere(DB::raw("LOWER(CONVERT(noidung USING ascii))"), 'LIKE', $like);
-                        }
-                    })
-                    ->paginate($perPage);
-                $results = $articles;
+                    ->whereRaw("MATCH(tieude, noidung, chude) AGAINST (? IN NATURAL LANGUAGE MODE)", [$query])
+                    ->paginate($perPage, ['*'], 'page', $page);
+
+                $results = $rawResults;
             }
 
             return view('homepage.aboutresult', [
                 'results' => $results,
-                'query' => $rawQuery,
+                'query' => $query,
             ]);
         }
-
     public function show($slug)
     {
         $article = About::where('slug', $slug)->firstOrFail();

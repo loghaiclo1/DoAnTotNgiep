@@ -43,7 +43,9 @@
                                 </h5>
                                 <p class="article-excerpt text-muted mb-2">{{ Str::limit(strip_tags($post->noidung), 100) }}</p>
                                 <small class="text-muted">Chủ đề: {{ $post->chude }}</small><br>
-                                <small class="text-muted">Ngày đăng: {{ $post->created_at->format('d/m/Y') }}</small>
+                                <small class="text-muted">
+                                    Ngày đăng: {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
+                                </small>
                             </div>
                         </div>
                     </div>

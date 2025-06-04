@@ -12,5 +12,7 @@ class About extends Model
     protected $keyType = 'string';
 
     protected $fillable = ['tieude', 'slug', 'noidung', 'anhbaiviet', 'trangthai', 'chude', 'created_at', 'updated_at'];
-
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
 }
