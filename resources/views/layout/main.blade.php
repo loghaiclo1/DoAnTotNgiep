@@ -3,7 +3,7 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>DATN</title>
+  <title>Trang chủ</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -42,68 +42,6 @@
 <body class="index-page vsc-initialized" data-aos-easing="ease-in-out" data-aos-duration="600" data-aos-delay="0">
 
   <header id="header" class="header position-relative">
-    <!-- Top Bar -->
-    <div class="top-bar py-2">
-      <div class="container-fluid container-xl">
-        <div class="row align-items-center">
-          <div class="col-lg-4 d-none d-lg-flex">
-            <div class="top-bar-item">
-              <i class="bi bi-telephone-fill me-2"></i>
-              <span>Need help? Call us: </span>
-              <a href="tel:+1234567890">+1 (234) 567-890</a>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-12 text-center">
-            <div class="announcement-slider swiper init-swiper swiper-initialized swiper-vertical swiper-backface-hidden">
-              <script type="application/json" class="swiper-config">
-                {
-                  "loop": true,
-                  "speed": 600,
-                  "autoplay": {
-                    "delay": 5000
-                  },
-                  "slidesPerView": 1,
-                  "direction": "vertical",
-                  "effect": "slide"
-                }
-              </script>
-              <div class="swiper-wrapper" id="swiper-wrapper-1746d66bd8b4b31b" aria-live="off" style="transition-duration: 0ms; transform: translate3d(0px, -48px, 0px); transition-delay: 0ms;">
-                <div class="swiper-slide swiper-slide-next" style="height: 24px;" role="group" aria-label="1 / 3" data-swiper-slide-index="0">🚚 Free shipping on orders over $50</div>
-                <div class="swiper-slide swiper-slide-prev" style="height: 24px;" role="group" aria-label="2 / 3" data-swiper-slide-index="1">💰 30 days money back guarantee.</div>
-                <div class="swiper-slide swiper-slide-active" role="group" aria-label="3 / 3" data-swiper-slide-index="2" style="height: 24px;">🎁 20% off on your first order</div>
-              </div>
-            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
-          </div>
-
-          <div class="col-lg-4 d-none d-lg-block">
-            <div class="d-flex justify-content-end">
-              <div class="top-bar-item dropdown me-3">
-                <a href="##" class="dropdown-toggle" data-bs-toggle="dropdown">
-                  <i class="bi bi-translate me-2"></i>EN
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="##"><i class="bi bi-check2 me-2 selected-icon"></i>English</a></li>
-                  <li><a class="dropdown-item" href="##">Español</a></li>
-                  <li><a class="dropdown-item" href="##">Français</a></li>
-                  <li><a class="dropdown-item" href="##">Deutsch</a></li>
-                </ul>
-              </div>
-              <div class="top-bar-item dropdown">
-                <a href="##" class="dropdown-toggle" data-bs-toggle="dropdown">
-                  <i class="bi bi-currency-dollar me-2"></i>USD
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="##"><i class="bi bi-check2 me-2 selected-icon"></i>USD</a></li>
-                  <li><a class="dropdown-item" href="##">EUR</a></li>
-                  <li><a class="dropdown-item" href="##">GBP</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Main Header -->
     <div class="main-header">
@@ -111,21 +49,22 @@
         <div class="d-flex py-3 align-items-center justify-content-between">
 
           <!-- Logo -->
-          <a href="#" class="logo d-flex align-items-center">
+          <a href="{{ url("/")}}" class="logo d-flex align-items-center">
             <!-- Uncomment the line below if you also wish to use an image logo -->
             <!-- <img src="assets/img/logo.webp" alt=""> -->
-            <h1 class="sitename">eStore</h1>
+            <h1 class="sitename">BookShop</h1>
           </a>
 
           <!-- Search -->
-          <form class="search-form desktop-search-form">
+          <form class="search-form desktop-search-form" action="{{ url('/search') }}" method="GET">
             <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search for products">
+              <input type="text" name="query" class="form-control" placeholder="Tìm kiếm sách">
               <button class="btn" type="submit">
                 <i class="bi bi-search"></i>
               </button>
             </div>
           </form>
+
 
           <!-- Actions -->
           <div class="header-actions d-flex align-items-center justify-content-end">
@@ -142,30 +81,29 @@
               </button>
               <div class="dropdown-menu">
                 <div class="dropdown-header">
-                  <h6>Welcome to <span class="sitename">eStore</span></h6>
-                  <p class="mb-0">Access account &amp; manage orders</p>
+                  <h6>Chào mừng đến <span class="sitename">BookShop</span></h6>
                 </div>
                 <div class="dropdown-body">
-                  <a class="dropdown-item d-flex align-items-center" href="#">
+                  <a class="dropdown-item d-flex align-items-center" href="{{ url('/account') }}">
                     <i class="bi bi-person-circle me-2"></i>
-                    <span>My Profile</span>
+                    <span>Tài khoản</span>
                   </a>
                   <a class="dropdown-item d-flex align-items-center" href="#">
                     <i class="bi bi-bag-check me-2"></i>
-                    <span>My Orders</span>
+                    <span>Giỏ hàng</span>
                   </a>
                   <a class="dropdown-item d-flex align-items-center" href="#">
                     <i class="bi bi-heart me-2"></i>
-                    <span>My Wishlist</span>
+                    <span>Yêu thích</span>
                   </a>
                   <a class="dropdown-item d-flex align-items-center" href="#">
                     <i class="bi bi-gear me-2"></i>
-                    <span>Settings</span>
+                    <span>Cài đặt</span>
                   </a>
                 </div>
                 <div class="dropdown-footer">
-                  <a href="#" class="btn btn-primary w-100 mb-2">Sign In</a>
-                  <a href="#" class="btn btn-outline-primary w-100">Register</a>
+                  <a href="#" class="btn btn-primary w-100 mb-2">Đăng nhập</a>
+                  <a href="#" class="btn btn-outline-primary w-100">Đăng ký</a>
                 </div>
               </div>
             </div>
@@ -177,7 +115,7 @@
             </a>
 
             <!-- Cart -->
-            <a href="#" class="header-action-btn">
+            <a href="{{ url("/cart") }}" class="header-action-btn">
               <i class="bi bi-cart3"></i>
               <span class="badge">3</span>
             </a>
@@ -196,32 +134,14 @@
         <div class="position-relative">
           <nav id="navmenu" class="navmenu">
             <ul>
-              <li><a href=" {{ url('/') }} " class="active">Home</a></li>
-              <li><a href=" {{ url('/about') }} ">About</a></li>
-              <li><a href=" {{ url('/category') }} ">Category</a></li>
-              <li><a href=" {{ url('/productdetail') }} ">Product Details</a></li>
-              <li><a href=" {{ url('/cart') }} ">Cart</a></li>
-              <li><a href=" {{ url('/checkout') }} ">Checkout</a></li>
-              <li class="dropdown"><a href="##"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="##">Dropdown 1</a></li>
-                  <li class="dropdown"><a href="##"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                      <li><a href="##">Deep Dropdown 1</a></li>
-                      <li><a href="##">Deep Dropdown 2</a></li>
-                      <li><a href="##">Deep Dropdown 3</a></li>
-                      <li><a href="##">Deep Dropdown 4</a></li>
-                      <li><a href="##">Deep Dropdown 5</a></li>
-                    </ul>
-                  </li>
-                  <li><a href="##">Dropdown 2</a></li>
-                  <li><a href="##">Dropdown 3</a></li>
-                  <li><a href="##">Dropdown 4</a></li>
-                </ul>
-              </li>
+              <li><a href=" {{ url('/') }} " class="active">Trang chủ</a></li>
+              <li><a href=" {{ url('/about') }} ">Giới thiệu</a></li>
+              <li><a href=" {{ url('/category') }} ">Danh mục</a></li>
+              <li><a href=" {{ url('/cart') }} ">Giỏ hàng</a></li>
+              <li><a href=" {{ url('/checkout') }} ">Thanh toán</a></li>
 
               <!-- Products Mega Menu 1 -->
-              <li class="products-megamenu-1"><a href="##"><span>Megamenu 1</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="products-megamenu-1"><a href="##"><span>Sách trong nước</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
 
                 <!-- Products Mega Menu 1 Mobile View -->
                 <ul class="mobile-megamenu">
@@ -278,16 +198,16 @@
                   <div class="megamenu-tabs">
                     <ul class="nav nav-tabs" id="productMegaMenuTabs" role="tablist">
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="featured-tab" data-bs-toggle="tab" data-bs-target="#featured-content-1862" type="button" aria-selected="true" role="tab">Featured</button>
+                        <button class="nav-link active" id="featured-tab" data-bs-toggle="tab" data-bs-target="#featured-content-1862" type="button" aria-selected="true" role="tab">Sách bán chạy</button>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">New Arrivals</button>
+                        <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">Sách mới</button>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="sale-tab" data-bs-toggle="tab" data-bs-target="#sale-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">Sale</button>
+                        <button class="nav-link" id="sale-tab" data-bs-toggle="tab" data-bs-target="#sale-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">Sách giảm giá</button>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">Categories</button>
+                        <button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category-content-1862" type="button" aria-selected="false" tabindex="-1" role="tab">Danh mục sách</button>
                       </li>
                     </ul>
                   </div>
@@ -308,36 +228,6 @@
                             <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-2.webp" alt="Featured Product" loading="lazy">
-                          </div>
-                          <div class="product-info">
-                            <h5>Smart Watch</h5>
-                            <p class="price">$199.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-3.webp" alt="Featured Product" loading="lazy">
-                          </div>
-                          <div class="product-info">
-                            <h5>Wireless Earbuds</h5>
-                            <p class="price">$89.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-4.webp" alt="Featured Product" loading="lazy">
-                          </div>
-                          <div class="product-info">
-                            <h5>Bluetooth Speaker</h5>
-                            <p class="price">$79.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
                       </div>
                     </div>
 
@@ -355,39 +245,6 @@
                             <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-6.webp" alt="New Arrival" loading="lazy">
-                            <span class="badge-new">New</span>
-                          </div>
-                          <div class="product-info">
-                            <h5>Wireless Charger</h5>
-                            <p class="price">$39.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-7.webp" alt="New Arrival" loading="lazy">
-                            <span class="badge-new">New</span>
-                          </div>
-                          <div class="product-info">
-                            <h5>Smart Bulb Set</h5>
-                            <p class="price">$49.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-8.webp" alt="New Arrival" loading="lazy">
-                            <span class="badge-new">New</span>
-                          </div>
-                          <div class="product-info">
-                            <h5>Portable Power Bank</h5>
-                            <p class="price">$59.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
                       </div>
                     </div>
 
@@ -402,39 +259,6 @@
                           <div class="product-info">
                             <h5>Wireless Keyboard</h5>
                             <p class="price"><span class="original-price">$89.99</span> $62.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-10.webp" alt="Sale Product" loading="lazy">
-                            <span class="badge-sale">-25%</span>
-                          </div>
-                          <div class="product-info">
-                            <h5>Gaming Mouse</h5>
-                            <p class="price"><span class="original-price">$59.99</span> $44.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-11.webp" alt="Sale Product" loading="lazy">
-                            <span class="badge-sale">-40%</span>
-                          </div>
-                          <div class="product-info">
-                            <h5>Desk Lamp</h5>
-                            <p class="price"><span class="original-price">$49.99</span> $29.99</p>
-                            <a href="##" class="btn-view">View Product</a>
-                          </div>
-                        </div>
-                        <div class="product-card">
-                          <div class="product-image">
-                            <img src="./image/product-12.webp" alt="Sale Product" loading="lazy">
-                            <span class="badge-sale">-20%</span>
-                          </div>
-                          <div class="product-info">
-                            <h5>USB-C Hub</h5>
-                            <p class="price"><span class="original-price">$39.99</span> $31.99</p>
                             <a href="##" class="btn-view">View Product</a>
                           </div>
                         </div>
@@ -493,7 +317,7 @@
 
               </li><!-- End Products Mega Menu 1 -->
               <!-- Products Mega Menu 2 -->
-              <li class="products-megamenu-2"><a href="##"><span>Megamenu 2</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="products-megamenu-2"><a href="##"><span>Sách nước ngoài</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
 
                 <!-- Products Mega Menu 2 Mobile View -->
                 <ul class="mobile-megamenu">
@@ -776,7 +600,7 @@
 
               </li><!-- End Products Mega Menu 2 -->
 
-              <li><a href=" {{ url('/contact') }} ">Contact</a></li>
+              <li><a href=" {{ url('/contact') }} ">Liên hệ</a></li>
 
             </ul>
           </nav>
@@ -823,8 +647,6 @@
             </div>
         </div>
     </div>
-
-
 
     <div class="footer-main">
         <div class="container">

@@ -13,4 +13,5 @@ Route::get('/checkout', [HomeController::class, 'checkout']);
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 Route::get('/productdetail', [HomeController::class, 'productdetail']);
-
+Route::get('/search', [HomeController::class, 'search'])->name('search');
+Route::get('/account', [HomeController::class, 'account'])->name('account');

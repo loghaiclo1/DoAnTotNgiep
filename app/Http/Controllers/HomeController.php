@@ -34,4 +34,12 @@ class HomeController extends Controller
     {
         return view('homepage.productdetail');
     }
+    public function search()
+    {
+        return view('homepage.search');
+    }
+    public function account()
+    {
+        return view('homepage.account');
+    }
 }
