@@ -18,18 +18,20 @@
   <link href="https://fonts.googleapis.com/" rel="preconnect">
   <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin="">
   <link href="./css/css2" rel="stylesheet">
-
   <!-- Vendor CSS Files -->
-  <link href="./css/bootstrap.min.css" rel="stylesheet">
-  <link href="./css/bootstrap-icons.css" rel="stylesheet">
-  <link href="./css/swiper-bundle.min.css" rel="stylesheet">
-  <link href="./css/aos.css" rel="stylesheet">
-  <link href="./css/glightbox.min.css" rel="stylesheet">
-  <link href="./css/drift-basic.css" rel="stylesheet">
-
+  <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/swiper-bundle.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/aos.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/glightbox.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/drift-basic.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/main.css') }}" rel="stylesheet">
   <!-- Main CSS File -->
   <link href="./css/main.css" rel="stylesheet">
-
+  @if (Request::is('about/*') || Request::is('about'))
+  <link href="{{ asset('css/about.css') }}" rel="stylesheet">
+@endif
+  @stack('styles')
   <!-- =======================================================
   * Template Name: eStore
   * Template URL: https://bootstrapmade.com/estore-bootstrap-ecommerce-template/
@@ -756,18 +758,15 @@
 
 
   <!-- Vendor JS Files -->
-  <script src="./js/bootstrap.bundle.min.js"></script>
-  {{-- <script src="./js/validate.js"></script> --}}
-  <script src="./js/swiper-bundle.min.js"></script>
-  <script src="./js/aos.js"></script>
-  <script src="./js/imagesloaded.pkgd.min.js"></script>
-  <script src="./js/isotope.pkgd.min.js"></script>
-  <script src="./js/glightbox.min.js"></script>
-  <script src="./js/Drift.min.js"></script>
-  <script src="./js/purecounter_vanilla.js"></script>
-
-  <!-- Main JS File -->
-  <script src="./js/main.js"></script>
+  <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ asset('js/swiper-bundle.min.js') }}"></script>
+  <script src="{{ asset('js/aos.js') }}"></script>
+  <script src="{{ asset('js/imagesloaded.pkgd.min.js') }}"></script>
+  <script src="{{ asset('js/isotope.pkgd.min.js') }}"></script>
+  <script src="{{ asset('js/glightbox.min.js') }}"></script>
+  <script src="{{ asset('js/Drift.min.js') }}"></script>
+  <script src="{{ asset('js/purecounter_vanilla.js') }}"></script>
+  <script src="{{ asset('js/main.js') }}"></script>
 
 <script defer="" src="./js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9490ba9f9852409c&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.5.0&quot;,&quot;token&quot;:&quot;68c5ca450bae485a842ff76066d69420&quot;}" crossorigin="anonymous"></script>
 

@@ -1,0 +1,39 @@
+.title-hover {
+    transition: all 0.3s ease; /* Hiệu ứng mượt mà */
+    display: inline-block; /* Để transform hoạt động */
+    position: relative; /* Để đảm bảo hiệu ứng không bị ảnh hưởng */
+  }
+
+  .title-hover:hover {
+    color: #125484 !important; /* Màu xanh đậm khi hover */
+    text-decoration: underline !important; /* Gạch chân khi hover */
+    transform: scale(1.05) !important; /* Phóng to nhẹ 1.05 lần */
+    text-shadow: 1px 1px 2px rgba(220, 53, 69, 0.3) !important; /* Bóng nhẹ */
+    background-color: #f8d7da !important; /* Background nhẹ khi hover */
+  }
+
+  #about-page .title-hover:hover {
+    z-index: 1; /* Đảm bảo phần tử nổi lên trên */
+  }
+
+  /* Ảnh đồng nhất kích thước cho bài viết liên quan */
+  /* Bạn nên chọn width phù hợp, hiện đang dùng 100% hoặc 20% */
+  .uniform-img {
+    width: 100%; /* Hoặc chỉnh thành 20% nếu muốn ảnh nhỏ hơn */
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .uniformi-img {
+    width: 30%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .uniformia-img {
+    width: 20%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
