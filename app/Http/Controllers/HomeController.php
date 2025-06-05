@@ -10,16 +10,20 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $featuredBooks = Book::where('TrangThai', 1)->inRandomOrder()->take(3)->get();
+
         $categories = Category::whereNull('parent_id')->get();
+
         $books = Book::with('category')
             ->where('TrangThai', 1)
             ->inRandomOrder()
             ->take(8)
             ->get();
+
         $filterCategories = $books->map(function ($book) {
             return $book->category->name ?? null;
         })->filter()->unique()->take(3);
-        return view('homepage.home', compact('categories', 'books', 'filterCategories'));
+        return view('homepage.home', compact('categories', 'books', 'filterCategories', 'featuredBooks'));
     }
     public function about()
     {

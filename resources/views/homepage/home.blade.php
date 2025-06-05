@@ -16,7 +16,6 @@
                                 nữa. Cùng bạn nâng tầm tri thức mỗi ngày.</p>
                             <div class="hero-cta">
                                 <a href="#shop" class="btn btn-shop">Mua ngay <i class="bi bi-arrow-right"></i></a>
-                                <a href="#collection" class="btn btn-collection">Xem bộ sưu tập</a>
                             </div>
                             <div class="hero-features">
                                 <div class="feature-item">
@@ -34,29 +33,43 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-lg-6 image-col aos-init aos-animate" data-aos="fade-left" data-aos-delay="200">
                         <div class="hero-image">
-                            <img src="./image/book-main.webp" alt="Sách nổi bật" class="main-product" loading="lazy">
-                            <div class="floating-product product-1 aos-init aos-animate" data-aos="fade-up"
-                                data-aos-delay="300">
-                                <img src="./image/book-1.webp" alt="Sách mới 1">
-                                <div class="product-info">
-                                    <h4>Combo Sách Kỹ Năng</h4>
-                                    <span class="price">249.000đ</span>
+                            @php
+                                $book1 = $featuredBooks[0] ?? null;
+                                $book2 = $featuredBooks[1] ?? null;
+                                $book3 = $featuredBooks[2] ?? null;
+                            @endphp
+                            <img src="{{ asset('./image/' . $book3->HinhAnh) }}" alt="Sách nổi bật" class="main-product"
+                                loading="lazy" style="height: 500px">                            
+
+                            @if ($book1)
+                                <div class="floating-product product-1 aos-init aos-animate" data-aos="fade-up"
+                                    data-aos-delay="300">
+                                    <img src="{{ asset('./image/' . $book1->HinhAnh) }}"
+                                        alt="{{ $book1->TenSach }}">
+                                    <div class="product-info">
+                                        <h4>{{ $book1->TenSach }}</h4>
+                                        <span class="price">{{ number_format($book1->GiaBan, 0, ',', '.') }}₫</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="floating-product product-2 aos-init" data-aos="fade-up" data-aos-delay="400">
-                                <img src="./image/book-2.webp" alt="Sách mới 2">
-                                <div class="product-info">
-                                    <h4>Tiểu Thuyết Hot</h4>
-                                    <span class="price">159.000đ</span>
+                            @endif
+
+                            @if ($book2)
+                                <div class="floating-product product-2 aos-init aos-animate" data-aos="fade-up"
+                                    data-aos-delay="400">
+                                    <img src="{{ asset('./image/' . $book2->HinhAnh) }}"
+                                        alt="{{ $book2->TenSach }}">
+                                    <div class="product-info">
+                                        <h4>{{ $book2->TenSach }}</h4>
+                                        <span class="price">{{ number_format($book2->GiaBan, 0, ',', '.') }}₫</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="discount-badge aos-init aos-animate" data-aos="zoom-in" data-aos-delay="500">
-                                <span class="percent">Giảm 30%</span>
-                            </div>
+                            @endif
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
@@ -205,10 +218,7 @@
                             <div class="product-card">
                                 <div class="product-image">
                                     <img src="{{ asset('image/book-' . $index . '.webp') }}"
-                                        class="img-fluid default-image" alt="Bìa sách" loading="lazy">
-                                    <img src="{{ asset('image/book-' . $index . '-variant.webp') }}"
-                                        class="img-fluid hover-image" alt="Bìa sách khi hover" loading="lazy">
-
+                                        alt="Bìa sách" loading="lazy">
                                     {{-- Nhãn --}}
                                     @if ($index == 1)
                                         <div class="product-tags">
@@ -289,11 +299,10 @@
                         <div class="col-md-6 col-lg-3 product-item isotope-item ">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="{{ asset('uploads/sach/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
+                                    <img src="{{ asset('./image/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
                                         class="img-fluid main-img">
                                     <div class="product-overlay">
-                                        <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
-                                            giỏ</a>
+                                        <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào giỏ</a>
                                     </div>
                                 </div>
                                 <div class="product-info">
@@ -303,10 +312,10 @@
                                             class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
                                     </div>
                                     <div class="product-rating">
-                                        @for ($i = 1; $i <= 5; $i++)
+                                        {{-- @for ($i = 1; $i <= 5; $i++)
                                             <i
                                                 class="bi {{ $i <= round($book->LuotMua / 10) ? 'bi-star-fill' : 'bi-star' }}"></i>
-                                        @endfor
+                                        @endfor --}}
                                         <span>( {{ $book->LuotMua }} lượt bán )</span>
                                     </div>
                                 </div>
@@ -314,7 +323,7 @@
                         </div>
                     @endforeach
                 </div>
-                
+
                 <!-- Nút xem tất cả -->
                 <div class="text-center mt-5 aos-init" data-aos="fade-up">
                     <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
