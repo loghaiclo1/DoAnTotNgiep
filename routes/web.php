@@ -14,7 +14,7 @@
     Route::get('/about/vanhoccodien/ajax', [AboutController::class, 'fetchVanHocCoDien'])->name('about.vanhoccodien.ajax');
     Route::get('/about/tamlyhoc/ajax', [AboutController::class, 'tamLyHocAjax'])->name('about.tamlyhoc.ajax');
     Route::get('/about/sachthieunhi/ajax', [AboutController::class, 'sachThieuNhiAjax'])->name('about.sachthieunhi.ajax');
-
+    Route::get('/about/sachhay/ajax', [AboutController::class, 'sachHayAjax'])->name('about.sachhay.ajax');
     Route::get('/cart', [HomeController::class, 'cart']);
     Route::get('/category', [HomeController::class, 'category']);
     Route::get('/checkout', [HomeController::class, 'checkout']);

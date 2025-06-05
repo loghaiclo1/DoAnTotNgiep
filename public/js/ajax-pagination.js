@@ -68,3 +68,19 @@ $(document).ready(function () {
       });
     }
   });
+  $(document).on('click', '#sach-hay-container .pagination a', function (e) {
+    e.preventDefault();
+    let page = $(this).attr('href').split('sachHay_page=')[1];
+    let url = $('#sach-hay-container').data('url');
+
+    $.ajax({
+      url: url,
+      data: { sachHay_page: page },
+      success: function (response) {
+        $('#sach-hay-container').html(response.html);
+      },
+      error: function () {
+        alert('Lỗi khi tải dữ liệu Sách Hay!');
+      }
+    });
+  });

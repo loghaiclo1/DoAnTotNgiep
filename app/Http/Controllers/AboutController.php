@@ -68,17 +68,9 @@ class AboutController extends Controller
                           ->orWhere('noidung', 'LIKE', "%{$tuKhoa}%");
                     });
                 })
-                ->inRandomOrder()
-                ->take(3)
-                ->get();
-
-
-            // Lấy 4 bài viết mới nhất cho sidebar, không lấy bài nhóm
-            $sidebarPosts = About::where('trangthai', 1)
-                ->where('chude', '!=', 'Thông tin nhóm')
                 ->orderBy('created_at', 'desc')
-                ->take(4)
-                ->get();
+                ->paginate(4);
+
 
             $tongHop = About::where('trangthai', 1)
                 ->whereNotIn('chude', [
@@ -103,7 +95,6 @@ class AboutController extends Controller
                 'vanHocCoDien' => $vanHocCoDien,
                 'tamLyHoc' => $tamLyHoc,
                 'sachThieuNhi' => $sachThieuNhi,
-                'sidebarPosts' => $sidebarPosts,
                 'tuKhoa' => $tuKhoa,
                 'tongHop' => $tongHop,
             ]);
@@ -173,19 +164,33 @@ class AboutController extends Controller
 
         return response()->json(['html' => $html]);
     }
-    public function sachThieuNhiAjax(Request $request)
-{
-    $page = $request->input('sachThieuNhi_page', 1);
+        public function sachThieuNhiAjax(Request $request)
+    {
+        $page = $request->input('sachThieuNhi_page', 1);
 
-    $sachThieuNhi = About::where('trangthai', 1)
-        ->where('chude', 'Sách Thiếu Nhi')
-        ->orderBy('created_at', 'desc')
-        ->paginate(4, ['*'], 'sachThieuNhi_page', $page);
+        $sachThieuNhi = About::where('trangthai', 1)
+            ->where('chude', 'Sách Thiếu Nhi')
+            ->orderBy('created_at', 'desc')
+            ->paginate(4, ['*'], 'sachThieuNhi_page', $page);
 
-    $html = view('homepage.partials.sachthieunhi', compact('sachThieuNhi'))->render();
+        $html = view('homepage.partials.sachthieunhi', compact('sachThieuNhi'))->render();
 
-    return response()->json(['html' => $html]);
-}
+        return response()->json(['html' => $html]);
+    }
+
+    public function sachHayAjax(Request $request)
+    {
+        $page = $request->input('sachHay_page', 1);
+
+        $sachHay = About::where('trangthai', 1)
+            ->where('chude', 'Sách Hay')
+            ->orderBy('created_at', 'desc')
+            ->paginate(4, ['*'], 'sachHay_page', $page);
+
+        $html = view('homepage.partials.sachhay', compact('sachHay'))->render();
+
+        return response()->json(['html' => $html]);
+    }
 
 
 }

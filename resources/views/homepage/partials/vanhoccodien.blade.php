@@ -11,6 +11,6 @@
     @endforeach
 </div>
 
-<div class="d-flex justify-content-center mt-4">
+<div class="pagination-wrapper">
     {{ $vanHocCoDien->appends(request()->except('vanHocCoDien_page'))->links('pagination::bootstrap-5') }}
 </div>
