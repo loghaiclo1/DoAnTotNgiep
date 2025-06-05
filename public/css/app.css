@@ -9,3 +9,27 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+/* Đẩy phân trang sát trái */
+.pagination {
+    justify-content: flex-start !important;
+}
+
+/* Thêm khoảng cách giữa các nút */
+.pagination li.page-item {
+    margin-right: 5px;
+}
+
+/* Một số hiệu ứng hover cho đẹp */
+.pagination li.page-item a.page-link,
+.pagination li.page-item span.page-link {
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination li.page-item a.page-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+.pagination-wrapper {
+    padding-top: 10px;
+}

@@ -13,7 +13,7 @@
       </div>
     </div>
     @endforeach
-    <div class="d-flex justify-content-center mt-4 w-100">
-      {{ $sachThieuNhi->appends(request()->except('sachThieuNhi_page'))->links('pagination::bootstrap-5') }}
-    </div>
+</div class="pagination-wrapper">
+{{ $sachThieuNhi->links('vendor.pagination.bootstrap-4') }}
+</div>
   </div>

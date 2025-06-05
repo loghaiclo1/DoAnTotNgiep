@@ -15,6 +15,6 @@
 </div>
 @endforeach
 
-<div class="d-flex justify-content-center mt-4">
+<div class="pagination-wrapper">
     {{ $tamLyHoc->appends(request()->except('tamLyHoc_page'))->links('pagination::bootstrap-5') }}
 </div>
