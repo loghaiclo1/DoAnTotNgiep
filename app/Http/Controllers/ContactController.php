@@ -18,10 +18,8 @@ class ContactController extends Controller
             'noi_dung' => 'required|string',
         ]);
 
-        // Lưu thông tin vào CSDL
         Contact::create($validated);
 
-        // Trả về JSON response cho JS
         return response()->json(['message' => 'Gửi liên hệ thành công']);
     }
 
