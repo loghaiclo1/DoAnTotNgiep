@@ -3,12 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Book;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('homepage.home');
+        $categories = Category::whereNull('parent_id')->get();
+        $books = Book::with('category')
+            ->where('TrangThai', 1)
+            ->orderBy('created_at', 'desc')
+            ->take(8)
+            ->get();
+        return view('homepage.home', compact('categories', 'books'));
     }
     public function about()
     {

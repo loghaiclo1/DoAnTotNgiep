@@ -54,7 +54,6 @@
                             </div>
                             <div class="discount-badge aos-init aos-animate" data-aos="zoom-in" data-aos-delay="500">
                                 <span class="percent">Giảm 30%</span>
-                                <span class="text">TRONG TUẦN</span>
                             </div>
                         </div>
                     </div>
@@ -120,7 +119,6 @@
 
         <!-- Category Cards Section -->
         <section id="category-cards" class="category-cards section">
-
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
 
                 <div class="category-slider swiper init-swiper swiper-initialized swiper-horizontal swiper-backface-hidden">
@@ -166,18 +164,20 @@
 
                     <div class="swiper-wrapper">
                         <!-- Danh mục: Tiểu thuyết -->
-                        <div class="swiper-slide">
-                            <div class="category-card aos-init" data-aos="fade-up" data-aos-delay="100">
-                                <div class="category-image">
-                                    <img src="./images/categories/novel.jpg" alt="Tiểu thuyết" class="img-fluid">
+                        @foreach ($categories as $category)
+                            <div class="swiper-slide">
+                                <div class="category-card aos-init" data-aos="fade-up" data-aos-delay="100">
+                                    <div class="category-image">
+                                        <img src="{{ asset('storage/images/categories/' . $category->image) }}"
+                                            alt="{{ $category->name }}" class="img-fluid">
+                                    </div>
+                                    <h3 class="category-title" style="height: 40px">{{ $category->name }}</h3>
+                                    <p class="category-count">{{ $category->books->count() }} Sách</p>
+                                    <a href="/categories/novel" class="stretched-link"></a>
                                 </div>
-                                <h3 class="category-title">Tiểu thuyết</h3>
-                                <p class="category-count">125+ Sách</p>
-                                <a href="/categories/novel" class="stretched-link"></a>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
-
 
                     <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide"
                         aria-controls="swiper-wrapper-53e34c62701b4e56"></div>
@@ -185,9 +185,7 @@
                         aria-controls="swiper-wrapper-53e34c62701b4e56"></div>
                     <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
                 </div>
-
             </div>
-
         </section><!-- /Category Cards Section -->
 
         <!-- Sách Bán Chạy -->
@@ -269,7 +267,6 @@
 
             <div class="container isotope-layout aos-init" data-aos="fade-up" data-aos-delay="100"
                 data-default-filter="*" data-layout="masonry" data-sort="original-order">
-
                 <!-- Bộ lọc thể loại sách -->
                 <div class="row">
                     <div class="col-12">
@@ -284,143 +281,54 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Danh sách sách -->
-                <div class="row product-container isotope-container aos-init" data-aos="fade-up" data-aos-delay="200">
-
-                    <!-- Sách 1 -->
-                    <div class="col-md-6 col-lg-3 product-item isotope-item filter-vanhoc">
-                        <div class="product-card">
-                            <div class="product-image">
-                                <span class="badge">Mới</span>
-                                <img src="./image/book-1.webp" alt="Sách Văn học" class="img-fluid main-img">
-                                <img src="./image/book-1-variant.webp" alt="Sách Văn học - Hover"
-                                    class="img-fluid hover-img">
-                                <div class="product-overlay">
-                                    <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào giỏ</a>
-                                    <div class="product-actions">
-                                        <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-eye"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-arrow-left-right"></i></a>
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+                    @foreach ($books as $book)
+                        <div class="row product-container isotope-container aos-init" data-aos="fade-up"
+                            data-aos-delay="200" style="width: 25%;">
+                            <!-- Sách 1 -->
+                            <div class="col-md-6 col-lg-3 product-item isotope-item filter-vanhoc" style="width: 100%">
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        <img src="./image/book-1.webp" alt="Sách Văn học" class="img-fluid main-img">
+                                        <img src="./image/book-1-variant.webp" alt="Sách Văn học - Hover"
+                                            class="img-fluid hover-img">
+                                        <div class="product-overlay">
+                                            <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
+                                                giỏ</a>
+                                            <div class="product-actions">
+                                                <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
+                                                <a href="#" class="action-btn"><i class="bi bi-eye"></i></a>
+                                                <a href="#" class="action-btn"><i
+                                                        class="bi bi-arrow-left-right"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>
+                                        <div class="product-price">
+                                            <span
+                                                class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                        </div>
+                                        <div class="product-rating">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i
+                                                    class="bi {{ $i <= round($book->LuotMua / 10) ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                            @endfor
+                                            <i class="bi bi-star-half"></i> <span>( {{ $book->LuotMua }} lượt bán)</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="product-info">
-                                <h5 class="product-title"><a href="#">Người Đua Diều</a></h5>
-                                <div class="product-price">
-                                    <span class="current-price">120.000₫</span>
-                                </div>
-                                <div class="product-rating">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-half"></i> <span>(36)</span>
-                                </div>
-                            </div>
                         </div>
+                    @endforeach
+                    <!-- Nút xem thêm -->
+                    <div class="text-center mt-5 aos-init" data-aos="fade-up">
+                        <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
                     </div>
-
-                    <!-- Sách 2 -->
-                    <div class="col-md-6 col-lg-3 product-item isotope-item filter-kynang">
-                        <div class="product-card">
-                            <div class="product-image">
-                                <span class="badge">Giảm giá</span>
-                                <img src="./image/book-2.webp" alt="Sách Kỹ năng" class="img-fluid main-img">
-                                <img src="./image/book-2-variant.webp" alt="Sách Kỹ năng - Hover"
-                                    class="img-fluid hover-img">
-                                <div class="product-overlay">
-                                    <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào giỏ</a>
-                                    <div class="product-actions">
-                                        <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-eye"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-arrow-left-right"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title"><a href="#">Đắc Nhân Tâm</a></h5>
-                                <div class="product-price">
-                                    <span class="current-price">95.000₫</span>
-                                    <span class="old-price">129.000₫</span>
-                                </div>
-                                <div class="product-rating">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star"></i> <span>(48)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sách 3 -->
-                    <div class="col-md-6 col-lg-3 product-item isotope-item filter-thieunhi">
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="./image/book-3.webp" alt="Sách Thiếu nhi" class="img-fluid main-img">
-                                <img src="./image/book-3-variant.webp" alt="Sách Thiếu nhi - Hover"
-                                    class="img-fluid hover-img">
-                                <div class="product-overlay">
-                                    <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào giỏ</a>
-                                    <div class="product-actions">
-                                        <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-eye"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-arrow-left-right"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title"><a href="#">Harry Potter - Tập 1</a></h5>
-                                <div class="product-price">
-                                    <span class="current-price">150.000₫</span>
-                                </div>
-                                <div class="product-rating">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
-                                    <i class="bi bi-star"></i> <span>(20)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sách 4 -->
-                    <div class="col-md-6 col-lg-3 product-item isotope-item filter-vanhoc">
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="./image/book-4.webp" alt="Sách Văn học" class="img-fluid main-img">
-                                <img src="./image/book-4-variant.webp" alt="Sách Văn học - Hover"
-                                    class="img-fluid hover-img">
-                                <div class="product-overlay">
-                                    <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào giỏ</a>
-                                    <div class="product-actions">
-                                        <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-eye"></i></a>
-                                        <a href="#" class="action-btn"><i class="bi bi-arrow-left-right"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <h5 class="product-title"><a href="#">Chiến Tranh Và Hòa Bình</a></h5>
-                                <div class="product-price">
-                                    <span class="current-price">220.000₫</span>
-                                    <span class="old-price">270.000₫</span>
-                                </div>
-                                <div class="product-rating">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i> <span>(54)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-
-                <!-- Nút xem thêm -->
-                <div class="text-center mt-5 aos-init" data-aos="fade-up">
-                    <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
-                </div>
-
-
             </div>
+
 
         </section><!-- /Product List Section -->
 

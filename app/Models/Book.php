@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Book extends Model
+{
+    protected $table = 'sach'; // Tên bảng đúng trong CSDL của bạn
+
+    protected $primaryKey = 'MaSach'; // Khóa chính không phải "id"
+
+    public $timestamps = true; // Bảng của bạn có `created_at`, `updated_at`
+
+    protected $fillable = [
+        'TenSach',
+        'category_id',
+        'GiaNhap',
+        'GiaBan',
+        'SoLuong',
+        'NamXuatBan',
+        'MoTa',
+        'TrangThai',
+        'LuotMua',
+        'HinhAnh',
+        'slug',
+    ];
+
+    // Quan hệ: Sách thuộc 1 danh mục
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+}
