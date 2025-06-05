@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'eStore - Liên hệ')
+@section('title', 'BookShop - Liên hệ')
 
 @section('content')
 <main class="main">

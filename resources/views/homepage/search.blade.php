@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'eStore - Home')
+@section('title', 'BookShop - tìm Kiếm')
 @section('content')
 
 @endsection
