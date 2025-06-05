@@ -267,68 +267,59 @@
 
             <div class="container isotope-layout aos-init" data-aos="fade-up" data-aos-delay="100"
                 data-default-filter="*" data-layout="masonry" data-sort="original-order">
-                <!-- Bộ lọc thể loại sách -->
+
+                <!-- Bộ lọc -->
                 <div class="row">
                     <div class="col-12">
                         <div class="product-filters isotope-filters mb-5 d-flex justify-content-center aos-init"
                             data-aos="fade-up">
                             <ul class="d-flex flex-wrap gap-2 list-unstyled">
-                                <li class="filter-active" data-filter="*">Tất cả</li>
-                                <li data-filter=".filter-vanhoc">Văn học</li>
-                                <li data-filter=".filter-kynang">Kỹ năng</li>
-                                <li data-filter=".filter-thieunhi">Thiếu nhi</li>
+                                <div class="container section-title aos-init" data-aos="fade-up">
+                                    <h2>Sách Mới Nổi Bật</h2>
+                                </div>
                             </ul>
+
                         </div>
                     </div>
                 </div>
+
                 <!-- Danh sách sách -->
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+                <div class="row product-container isotope-container aos-init" data-aos="fade-up" data-aos-delay="200">
                     @foreach ($books as $book)
-                        <div class="row product-container isotope-container aos-init" data-aos="fade-up"
-                            data-aos-delay="200" style="width: 25%;">
-                            <!-- Sách 1 -->
-                            <div class="col-md-6 col-lg-3 product-item isotope-item filter-vanhoc" style="width: 100%">
-                                <div class="product-card">
-                                    <div class="product-image">
-                                        <img src="./image/book-1.webp" alt="Sách Văn học" class="img-fluid main-img">
-                                        <img src="./image/book-1-variant.webp" alt="Sách Văn học - Hover"
-                                            class="img-fluid hover-img">
-                                        <div class="product-overlay">
-                                            <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
-                                                giỏ</a>
-                                            <div class="product-actions">
-                                                <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
-                                                <a href="#" class="action-btn"><i class="bi bi-eye"></i></a>
-                                                <a href="#" class="action-btn"><i
-                                                        class="bi bi-arrow-left-right"></i></a>
-                                            </div>
-                                        </div>
+                        <div class="col-md-6 col-lg-3 product-item isotope-item ">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="{{ asset('uploads/sach/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
+                                        class="img-fluid main-img">
+                                    <div class="product-overlay">
+                                        <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
+                                            giỏ</a>
                                     </div>
-                                    <div class="product-info">
-                                        <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>
-                                        <div class="product-price">
-                                            <span
-                                                class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
-                                        </div>
-                                        <div class="product-rating">
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                <i
-                                                    class="bi {{ $i <= round($book->LuotMua / 10) ? 'bi-star-fill' : 'bi-star' }}"></i>
-                                            @endfor
-                                            <i class="bi bi-star-half"></i> <span>( {{ $book->LuotMua }} lượt bán)</span>
-                                        </div>
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>
+                                    <div class="product-price">
+                                        <span
+                                            class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                    </div>
+                                    <div class="product-rating">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i
+                                                class="bi {{ $i <= round($book->LuotMua / 10) ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                        @endfor
+                                        <span>( {{ $book->LuotMua }} lượt bán )</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @endforeach
-                    <!-- Nút xem thêm -->
-                    <div class="text-center mt-5 aos-init" data-aos="fade-up">
-                        <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
-                    </div>
+                </div>
+                
+                <!-- Nút xem tất cả -->
+                <div class="text-center mt-5 aos-init" data-aos="fade-up">
+                    <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
-
 
         </section><!-- /Product List Section -->
 

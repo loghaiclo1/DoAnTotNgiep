@@ -13,10 +13,13 @@ class HomeController extends Controller
         $categories = Category::whereNull('parent_id')->get();
         $books = Book::with('category')
             ->where('TrangThai', 1)
-            ->orderBy('created_at', 'desc')
+            ->inRandomOrder()
             ->take(8)
             ->get();
-        return view('homepage.home', compact('categories', 'books'));
+        $filterCategories = $books->map(function ($book) {
+            return $book->category->name ?? null;
+        })->filter()->unique()->take(3);
+        return view('homepage.home', compact('categories', 'books', 'filterCategories'));
     }
     public function about()
     {
