@@ -12,8 +12,8 @@ class Category extends Model
     protected $fillable = [
         'name',
         'parent_id',
-        // Nếu có cột 'image', thì thêm:
-        // 'image',
+        'image',
+        'slug',
     ];
 
     // Nếu bạn dùng timestamps (created_at, updated_at)

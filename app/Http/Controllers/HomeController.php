@@ -12,7 +12,7 @@ class HomeController extends Controller
     {
         $featuredBooks = Book::where('TrangThai', 1)->inRandomOrder()->take(3)->get();
 
-        $categories = Category::whereNull('parent_id')->get();
+        $categories = Category::whereNotNull('image')->get();
 
         $books = Book::with('category')
             ->where('TrangThai', 1)
@@ -20,10 +20,15 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
+        $sachbanchay = Book::where('TrangThai', 1)
+            ->orderBy('luotmua', 'desc')
+            ->take(4)
+            ->get();
+
         $filterCategories = $books->map(function ($book) {
             return $book->category->name ?? null;
         })->filter()->unique()->take(3);
-        return view('homepage.home', compact('categories', 'books', 'filterCategories', 'featuredBooks'));
+        return view('homepage.home', compact('categories', 'books', 'filterCategories', 'featuredBooks', 'sachbanchay'));
     }
     public function about()
     {

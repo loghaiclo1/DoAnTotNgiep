@@ -4,6 +4,7 @@
     use App\Http\Controllers\HomeController;
     use App\Http\Controllers\ContactController;
     use App\Http\Controllers\AboutController;
+    use App\Http\Controllers\CategoryController;
 
 
     Route::get('/', [HomeController::class, 'index']);
@@ -17,6 +18,8 @@
     Route::get('/about/sachhay/ajax', [AboutController::class, 'sachHayAjax'])->name('about.sachhay.ajax');
     Route::get('/cart', [HomeController::class, 'cart']);
     Route::get('/category', [HomeController::class, 'category']);
+    Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
+
     Route::get('/checkout', [HomeController::class, 'checkout']);
     Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
     Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');

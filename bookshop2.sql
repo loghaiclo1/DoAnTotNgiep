@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 06, 2025 lúc 04:13 AM
+-- Thời gian đã tạo: Th6 09, 2025 lúc 09:45 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -81,30 +81,6 @@ INSERT INTO `baiviet` (`id`, `tieude`, `slug`, `noidung`, `anhbaiviet`, `trangth
 (36, 'Từ vựng tiếng Anh theo chủ đề', 'tu-vung-tieng-anh-theo-chu-de', 'Học từ vựng theo chủ đề giúp người học ghi nhớ lâu hơn và dễ dàng áp dụng vào thực tế. Bài viết giới thiệu các nhóm từ vựng thông dụng như: gia đình, công việc, du lịch, và học tập, kèm theo ví dụ minh họa và bài tập thực hành để củng cố kiến thức.', '8.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0),
 (37, 'Giao tiếp tiếng Anh hàng ngày', 'giao-tiep-tieng-anh-hang-ngay', 'Giao tiếp tiếng Anh không chỉ là học từ vựng mà còn là sử dụng thành thạo các mẫu câu thông dụng. Bài viết cung cấp các đoạn hội thoại thực tế, mẹo diễn đạt tự nhiên và các lỗi phổ biến cần tránh trong giao tiếp hàng ngày.', '9.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0),
 (38, 'Ngữ pháp cơ bản cho người mới bắt đầu', 'ngu-phap-co-ban-cho-nguoi-moi', 'Ngữ pháp là nền tảng của mọi ngôn ngữ. Bài viết này giúp người mới bắt đầu làm quen với các thì cơ bản, cấu trúc câu, cách dùng danh từ, động từ, tính từ... Nội dung được trình bày dễ hiểu và kèm theo bài tập thực hành để kiểm tra kiến thức.', '10.jpg', 1, '2025-06-04 05:53:57', '2025-06-04 05:53:57', 'NGOẠI NGỮ', NULL, 0);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `cache`
---
-
-CREATE TABLE `cache` (
-  `key` varchar(255) NOT NULL,
-  `value` mediumtext NOT NULL,
-  `expiration` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `cache_locks`
---
-
-CREATE TABLE `cache_locks` (
-  `key` varchar(255) NOT NULL,
-  `owner` varchar(255) NOT NULL,
-  `expiration` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -190,25 +166,29 @@ CREATE TABLE `danhmuc` (
   `name` varchar(255) NOT NULL,
   `parent_id` bigint(20) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `danhmuc`
 --
 
-INSERT INTO `danhmuc` (`id`, `name`, `parent_id`, `created_at`, `updated_at`) VALUES
-(1, 'Sách kinh tế', NULL, '2025-01-15 00:20:26', NULL),
-(2, 'Sách Văn Học Trong Nước', NULL, '2025-06-05 04:21:49', NULL),
-(3, 'Sách Văn Học Nước Ngoài', NULL, '2025-06-05 04:21:54', NULL),
-(4, 'Sách Thường Thức Đời Sống', NULL, '2025-06-05 04:21:55', NULL),
-(5, 'Sách Thiếu Nhi', NULL, '2025-06-05 04:21:57', NULL),
-(6, 'Sách Phát Triển Bản Thân', NULL, '2025-06-05 04:21:58', NULL),
-(7, 'Sách Tin Học Ngoại Ngữ', NULL, '2025-06-05 04:21:59', NULL),
-(8, 'Sách chuyên ngành', NULL, '2025-06-05 04:22:00', NULL),
-(9, 'Sách Giáo Khoa - Giáo Trình', NULL, '2025-01-18 00:20:35', NULL),
-(10, 'Sách Lịch Sử – Địa Lý', NULL, '2025-06-05 04:22:01', NULL),
-(11, 'Sách Light Novel – Manga', NULL, '2025-01-29 00:20:43', NULL);
+INSERT INTO `danhmuc` (`id`, `name`, `parent_id`, `created_at`, `updated_at`, `slug`, `image`) VALUES
+(1, 'Sách Văn Học Trong Nước', NULL, '2025-01-15 00:20:26', NULL, 'sach-van-hoc-trong-nuoc', NULL),
+(2, 'Sách Văn Học Nước Ngoài', NULL, '2025-06-05 04:21:49', NULL, 'sach-van-hoc-nuoc-ngoai', NULL),
+(3, 'Sách kinh tế', NULL, '2025-06-05 04:21:54', NULL, 'sach-kinh-te', 'sach-kinh-te.jpg'),
+(4, 'Sách Thường Thức Đời Sống', NULL, '2025-06-05 04:21:55', NULL, 'sach-thuong-thuc-doi-song', 'sach-thuong-thuc-doi-song.jpg'),
+(5, 'Sách Thiếu Nhi', NULL, '2025-06-05 04:21:57', NULL, 'sach-thieu-nhi', 'sach-thieu-nhi.jpg'),
+(6, 'Sách Phát Triển Bản Thân', NULL, '2025-06-05 04:21:58', NULL, 'sach-phat-trien-ban-than', 'sach-phat-trien-ban-than.jpg'),
+(7, 'Sách Tin Học Ngoại Ngữ', NULL, '2025-06-05 04:21:59', NULL, 'sach-tin-hoc-ngoai-ngu', 'sach-tin-hoc-ngoai-ngu.jpg'),
+(8, 'Sách Chuyên Ngành', NULL, '2025-06-05 04:22:00', NULL, 'sach-chuyen-nganh', 'sach-chuyen-nganh.jpg'),
+(9, 'Sách Giáo Khoa - Giáo Trình', NULL, '2025-01-18 00:20:35', NULL, 'sach-giao-khoa-giao-trinh', 'sach-gk-gt.jpg'),
+(10, 'Sách Lịch Sử – Địa Lý', NULL, '2025-06-05 04:22:01', NULL, 'sach-lich-su-dia-ly', 'sach-ls-dl.jpg'),
+(11, 'Sách Light Novel – Manga', NULL, '2025-01-29 00:20:43', NULL, 'sach-light-novel-manga', 'sach-ln-manga.jpg'),
+(12, 'Sách Trong Nước', NULL, '2025-06-09 19:40:08', NULL, 'sach-trong-nuoc', NULL),
+(13, 'Sách Nước Ngoài/Foreign Book', NULL, '2025-06-09 19:40:08', NULL, 'sach-nuoc-ngoai', NULL);
 
 -- --------------------------------------------------------
 
@@ -229,22 +209,6 @@ CREATE TABLE `danhsachyeuthich` (
 INSERT INTO `danhsachyeuthich` (`MaKH`, `MaSP`, `TrangThai`) VALUES
 (1, 2, 0x01),
 (1, 8, 0x01);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `failed_jobs`
---
-
-CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -340,41 +304,6 @@ INSERT INTO `hoadon` (`MaHoaDon`, `MaKhachHang`, `NgayLap`, `TongTien`, `TrangTh
 (10, 2, '2025-01-08 18:10:00', 200000.00, 'Đang chờ', 2, '456 Lý Tự Trọng, Q.1, TP.HCM'),
 (11, 3, '2025-01-08 18:20:00', 120000.00, 'Đang giao hàng', 1, '789 Lê Lai, Q.1, TP.HCM'),
 (12, 4, '2025-01-08 18:30:00', 175000.00, 'Hoàn thành', 2, '12 Pasteur, Q.3, TP.HCM');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `jobs`
---
-
-CREATE TABLE `jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) NOT NULL,
-  `payload` longtext NOT NULL,
-  `attempts` tinyint(3) UNSIGNED NOT NULL,
-  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
-  `available_at` int(10) UNSIGNED NOT NULL,
-  `created_at` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `job_batches`
---
-
-CREATE TABLE `job_batches` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `total_jobs` int(11) NOT NULL,
-  `pending_jobs` int(11) NOT NULL,
-  `failed_jobs` int(11) NOT NULL,
-  `failed_job_ids` longtext NOT NULL,
-  `options` mediumtext DEFAULT NULL,
-  `cancelled_at` int(11) DEFAULT NULL,
-  `created_at` int(11) NOT NULL,
-  `finished_at` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -483,18 +412,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `password_reset_tokens`
---
-
-CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Cấu trúc bảng cho bảng `phuongthucthanhtoan`
 --
 
@@ -569,7 +486,7 @@ INSERT INTO `sach` (`MaSach`, `TenSach`, `category_id`, `GiaNhap`, `GiaBan`, `So
 (25, 'Tuổi Thơ Dữ Dội', 7, 65000.00, 90000.00, 11, 2000, 'Một câu chuyện cảm động về tuổi thơ đầy sóng gió.', 1, '30', 'tuoi_tho_du_doi.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', 'tuoi-tho-du-doi'),
 (26, 'Tuổi Thơ Dữ Dội 2', 7, 60000.00, 85000.00, 10, 2005, 'Phần tiếp theo của hành trình đầy cảm xúc.', 1, '30', 'tuoi_tho_du_doi_2.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', 'tuoi-tho-du-doi-2'),
 (27, 'Thơ Bảy Màu', 7, 45000.00, 65000.00, 14, 2010, 'Tập thơ tràn đầy màu sắc và cảm xúc.', 1, '30', 'tho_bay_mau.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', 'tho-bay-mau'),
-(28, 'Hồ Sơ Chinh Khách 23', 8, 80000.00, 110000.00, 20, 2023, 'Cuộc đời và sự nghiệp của các chinh khách nổi tiếng.', 1, '30', 'hsck_23.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', 'ho-so-chinh-khach-23'),
+(28, 'Học Sinh Chân Kinh', 8, 80000.00, 110000.00, 20, 2023, 'Cuộc đời và sự nghiệp của các chinh khách nổi tiếng.', 1, '30', 'hsck_23.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', 'ho-so-chinh-khach-23'),
 (29, '100 Kỹ Năng Sinh Tồn', 8, 50000.00, 75000.00, 13, 2020, 'Những kỹ năng sinh tồn cơ bản và nâng cao.', 1, '30', '100_ky_nang_sinh_ton.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', '100-ky-nang-sinh-ton'),
 (30, 'Doanh Nhân Thế Giới', 8, 55000.00, 80000.00, 9, 2019, 'Tiểu sử các doanh nhân nổi tiếng toàn cầu.', 1, '30', 'doanh_nhan_the_gioi.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', 'doanh-nhan-the-gioi'),
 (31, 'Thiền Sư Và Bé Năm Tuổi', 8, 60000.00, 90000.00, 16, 2022, 'Một câu chuyện đầy ý nghĩa về cuộc đời và thiền.', 1, '30', 'thien_su_va_e_be_5_tuoi.jpg', '2025-01-16 22:03:02', '2025-01-16 22:03:02', 'thien-su-va-be-nam-tuoi'),
@@ -607,40 +524,8 @@ CREATE TABLE `sessions` (
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('fcBpgTwCqpfd2FD5I2rp30U2CuJoCS7hmnkAONKw', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/119.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSzIzUU0zMnFBb0FrREpFWGxRYmR5SkZ3bGFyVldWUVNaQXJJSFdWMiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MTgzOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWJvdXQvY28tZG9uLWxhLW1vbi1ob2MtYmF0LWJ1b2MtY3VhLWN1b2MtZG9pLW5odW5nLXRyaWNoLWRvYW4tY2hpZW0tbmdoaWVtLXZlLXN1LXRydW9uZy10aGFuaC1xdWEtc2FjaC10cm9uZy1jby1kb24tYmF0LW5nby1nYXAtcGhpZW4tYmFuLXRvdC1ob24tY3VhLWNoaW5oLW1pbmgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1749139988),
-('G9BHCYJOSSfkEhUjm1iw4ebTaomyhOcI8fEVmkdp', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieW5yOE5aTmh4TGIzclpaV095OEkzSVk0S3B4WVMxVzdTZGh6NGhTVSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1749126168);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `users`
---
-
-CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Nguyễn Văn A', 'nguyenvana@example.com', '2025-01-08 03:00:00', '123456', NULL, '2025-01-08 03:00:00', '2025-01-08 03:00:00'),
-(2, 'Trần Thị B', 'tranthib@example.com', '2025-01-08 04:00:00', 'abcdef', NULL, '2025-01-08 04:00:00', '2025-01-08 04:00:00'),
-(3, 'Phạm Minh C', 'phamminhc@example.com', '2025-01-08 05:00:00', 'password123', NULL, '2025-01-08 05:00:00', '2025-01-08 05:00:00'),
-(4, 'Lê Thị D', 'lethid@example.com', '2025-01-08 06:00:00', 'qwerty', NULL, '2025-01-08 06:00:00', '2025-01-08 06:00:00'),
-(5, 'Vũ Minh E', 'vuminhe@example.com', '2025-01-08 07:00:00', 'letmein', NULL, '2025-01-08 07:00:00', '2025-01-08 07:00:00'),
-(6, 'Đặng Thị F', 'dangthif@example.com', '2025-01-08 08:00:00', 'secret123', NULL, '2025-01-08 08:00:00', '2025-01-08 08:00:00'),
-(7, 'Nguyễn Hữu G', 'nguyenhuug@example.com', '2025-01-08 09:00:00', 'mypassword', NULL, '2025-01-08 09:00:00', '2025-01-08 09:00:00'),
-(8, 'Lý Thị H', 'lythih@example.com', '2025-01-08 10:00:00', 'pa$$word', NULL, '2025-01-08 10:00:00', '2025-01-08 10:00:00'),
-(9, 'Trương Minh I', 'truongminhi@example.com', '2025-01-08 11:00:00', '123abc456', NULL, '2025-01-08 11:00:00', '2025-01-08 11:00:00'),
-(10, 'Hồ Minh J', 'hominhj@example.com', '2025-01-08 12:00:00', 'securepass', NULL, '2025-01-08 12:00:00', '2025-01-08 12:00:00');
+('G9BHCYJOSSfkEhUjm1iw4ebTaomyhOcI8fEVmkdp', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieW5yOE5aTmh4TGIzclpaV095OEkzSVk0S3B4WVMxVzdTZGh6NGhTVSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1749126168),
+('qdUHEwRgPnckpA0sQrSjxCVojGCkM1pZSdd2ZZ4S', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/119.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMTh0aHhFVzhYREdtS1VMUjBvU0Y0Y1JidzhSQmc0b2hxc25Gem1KbiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1749497830);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -652,18 +537,6 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `re
 ALTER TABLE `baiviet`
   ADD PRIMARY KEY (`id`);
 ALTER TABLE `baiviet` ADD FULLTEXT KEY `tieude` (`tieude`,`noidung`,`chude`);
-
---
--- Chỉ mục cho bảng `cache`
---
-ALTER TABLE `cache`
-  ADD PRIMARY KEY (`key`);
-
---
--- Chỉ mục cho bảng `cache_locks`
---
-ALTER TABLE `cache_locks`
-  ADD PRIMARY KEY (`key`);
 
 --
 -- Chỉ mục cho bảng `chitietgiohang`
@@ -704,13 +577,6 @@ ALTER TABLE `danhsachyeuthich`
   ADD KEY `MaSP` (`MaSP`);
 
 --
--- Chỉ mục cho bảng `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
-
---
 -- Chỉ mục cho bảng `footers`
 --
 ALTER TABLE `footers`
@@ -730,19 +596,6 @@ ALTER TABLE `hoadon`
   ADD PRIMARY KEY (`MaHoaDon`),
   ADD KEY `MaKhachHang` (`MaKhachHang`),
   ADD KEY `PT_ThanhToan` (`PT_ThanhToan`);
-
---
--- Chỉ mục cho bảng `jobs`
---
-ALTER TABLE `jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `jobs_queue_index` (`queue`);
-
---
--- Chỉ mục cho bảng `job_batches`
---
-ALTER TABLE `job_batches`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Chỉ mục cho bảng `khachhang`
@@ -770,12 +623,6 @@ ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `password_reset_tokens`
---
-ALTER TABLE `password_reset_tokens`
-  ADD PRIMARY KEY (`email`);
-
---
 -- Chỉ mục cho bảng `phuongthucthanhtoan`
 --
 ALTER TABLE `phuongthucthanhtoan`
@@ -797,13 +644,6 @@ ALTER TABLE `sessions`
   ADD KEY `sessions_last_activity_index` (`last_activity`);
 
 --
--- Chỉ mục cho bảng `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_email_unique` (`email`);
-
---
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
@@ -823,13 +663,7 @@ ALTER TABLE `chitiethoadon`
 -- AUTO_INCREMENT cho bảng `danhmuc`
 --
 ALTER TABLE `danhmuc`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- AUTO_INCREMENT cho bảng `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `footers`
@@ -848,12 +682,6 @@ ALTER TABLE `giohang`
 --
 ALTER TABLE `hoadon`
   MODIFY `MaHoaDon` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT cho bảng `jobs`
---
-ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `khachhang`
@@ -890,12 +718,6 @@ ALTER TABLE `phuongthucthanhtoan`
 --
 ALTER TABLE `sach`
   MODIFY `MaSach` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
-
---
--- AUTO_INCREMENT cho bảng `users`
---
-ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

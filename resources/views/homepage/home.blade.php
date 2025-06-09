@@ -41,14 +41,13 @@
                                 $book2 = $featuredBooks[1] ?? null;
                                 $book3 = $featuredBooks[2] ?? null;
                             @endphp
-                            <img src="{{ asset('./image/' . $book3->HinhAnh) }}" alt="Sách nổi bật" class="main-product"
-                                loading="lazy" style="height: 500px">                            
+                            <img src="{{ asset('./image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật"
+                                class="main-product" loading="lazy" style="height: 500px">
 
                             @if ($book1)
                                 <div class="floating-product product-1 aos-init aos-animate" data-aos="fade-up"
                                     data-aos-delay="300">
-                                    <img src="{{ asset('./image/' . $book1->HinhAnh) }}"
-                                        alt="{{ $book1->TenSach }}">
+                                    <img src="{{ asset('./image/book/' . $book1->HinhAnh) }}" alt="{{ $book1->TenSach }}">
                                     <div class="product-info">
                                         <h4>{{ $book1->TenSach }}</h4>
                                         <span class="price">{{ number_format($book1->GiaBan, 0, ',', '.') }}₫</span>
@@ -59,8 +58,7 @@
                             @if ($book2)
                                 <div class="floating-product product-2 aos-init aos-animate" data-aos="fade-up"
                                     data-aos-delay="400">
-                                    <img src="{{ asset('./image/' . $book2->HinhAnh) }}"
-                                        alt="{{ $book2->TenSach }}">
+                                    <img src="{{ asset('./image/book/' . $book2->HinhAnh) }}" alt="{{ $book2->TenSach }}">
                                     <div class="product-info">
                                         <h4>{{ $book2->TenSach }}</h4>
                                         <span class="price">{{ number_format($book2->GiaBan, 0, ',', '.') }}₫</span>
@@ -176,17 +174,16 @@
           </script>
 
                     <div class="swiper-wrapper">
-                        <!-- Danh mục: Tiểu thuyết -->
                         @foreach ($categories as $category)
                             <div class="swiper-slide">
                                 <div class="category-card aos-init" data-aos="fade-up" data-aos-delay="100">
                                     <div class="category-image">
-                                        <img src="{{ asset('storage/images/categories/' . $category->image) }}"
+                                        <img src="{{ asset('/image/category/' . $category->image) }}"
                                             alt="{{ $category->name }}" class="img-fluid">
                                     </div>
                                     <h3 class="category-title" style="height: 40px">{{ $category->name }}</h3>
                                     <p class="category-count">{{ $category->books->count() }} Sách</p>
-                                    <a href="/categories/novel" class="stretched-link"></a>
+                                    <a href="{{ url('/category/' . $category->slug) }}" class="stretched-link"></a>
                                 </div>
                             </div>
                         @endforeach
@@ -203,36 +200,30 @@
 
         <!-- Sách Bán Chạy -->
         <section id="best-sellers" class="best-sellers section">
-
             <!-- Tiêu đề -->
             <div class="container section-title aos-init" data-aos="fade-up">
                 <h2>Sách Bán Chạy</h2>
                 <p>Những cuốn sách được độc giả yêu thích và đánh giá cao</p>
-            </div><!-- Kết thúc tiêu đề -->
+            </div>
 
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
                 <div class="row gy-4">
-                    @foreach ([1, 2, 3, 4] as $index)
+                    @foreach ($sachbanchay as $index => $book)
                         <div class="col-md-6 col-lg-3 aos-init" data-aos="fade-up"
                             data-aos-delay="{{ 100 + $index * 50 }}">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="{{ asset('image/book-' . $index . '.webp') }}"
-                                        alt="Bìa sách" loading="lazy">
-                                    {{-- Nhãn --}}
-                                    @if ($index == 1)
-                                        <div class="product-tags">
-                                            <span class="badge bg-accent">Mới</span>
-                                        </div>
-                                    @elseif ($index == 2)
-                                        <div class="product-tags">
-                                            <span class="badge bg-sale">Giảm giá</span>
-                                        </div>
-                                    @elseif ($index == 4)
-                                        <div class="product-tags">
-                                            <span class="badge bg-sold-out">Hết hàng</span>
-                                        </div>
-                                    @endif
+                                    <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
+                                        loading="lazy">
+
+                                    {{-- Nhãn tùy theo thứ tự --}}
+                                    {{-- @if ($index == 0)
+                                        <div class="product-tags"><span class="badge bg-accent">Mới</span></div>
+                                    @elseif ($index == 1)
+                                        <div class="product-tags"><span class="badge bg-sale">Giảm giá</span></div>
+                                    @elseif ($index == 3)
+                                        <div class="product-tags"><span class="badge bg-sold-out">Hết hàng</span></div>
+                                    @endif --}}
 
                                     <div class="product-actions">
                                         <button class="btn-wishlist" type="button" aria-label="Thêm vào yêu thích">
@@ -243,16 +234,14 @@
                                         </button>
                                     </div>
                                 </div>
+
                                 <div class="product-info">
                                     <h3 class="product-title">
-                                        <a href="#">Tên sách mẫu {{ $index }}</a>
+                                        <a href="#">{{ $book->TenSach }}</a>
                                     </h3>
                                     <div class="product-price">
                                         <span
-                                            class="current-price">{{ number_format(70000 + $index * 15000, 0, ',', '.') }}₫</span>
-                                        @if ($index == 2)
-                                            <span class="original-price">120.000₫</span>
-                                        @endif
+                                            class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
                                     </div>
                                     <div class="product-rating">
                                         @for ($i = 1; $i <= 5; $i++)
@@ -260,17 +249,23 @@
                                         @endfor
                                         <span class="rating-count">({{ 10 + $index * 5 }} đánh giá)</span>
                                     </div>
-                                    <button class="btn btn-add-to-cart {{ $index == 4 ? 'btn-disabled' : '' }}"
-                                        {{ $index == 4 ? 'disabled' : '' }}>
-                                        <i class="bi bi-bag-plus me-2"></i>{{ $index == 4 ? 'Hết hàng' : 'Thêm vào giỏ' }}
-                                    </button>
+                                    @if ($book->SoLuong == 0)
+                                        <button class="btn btn-add-to-cart btn-disabled" disabled>
+                                            <i class="bi bi-bag-plus me-2"></i>Hết hàng
+                                        </button>
+                                    @else
+                                        <button class="btn btn-add-to-cart">
+                                            <i class="bi bi-bag-plus me-2"></i>Thêm vào giỏ
+                                        </button>
+                                    @endif
+
                                 </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
             </div>
-        </section><!-- /Sách Bán Chạy -->
+        </section>
 
         <!-- Product List Section -->
         <section id="product-list" class="product-list section">
@@ -281,14 +276,13 @@
                 <!-- Bộ lọc -->
                 <div class="row">
                     <div class="col-12">
-                        <div class="product-filters isotope-filters mb-5 d-flex justify-content-center aos-init"
+                        <div class="product-filters isotope-filters d-flex justify-content-center aos-init"
                             data-aos="fade-up">
                             <ul class="d-flex flex-wrap gap-2 list-unstyled">
                                 <div class="container section-title aos-init" data-aos="fade-up">
                                     <h2>Sách Mới Nổi Bật</h2>
                                 </div>
                             </ul>
-
                         </div>
                     </div>
                 </div>
@@ -299,10 +293,10 @@
                         <div class="col-md-6 col-lg-3 product-item isotope-item ">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="{{ asset('./image/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
-                                        class="img-fluid main-img">
+                                    <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="object-fit: cover">
                                     <div class="product-overlay">
-                                        <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào giỏ</a>
+                                        <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
+                                            giỏ</a>
                                     </div>
                                 </div>
                                 <div class="product-info">
