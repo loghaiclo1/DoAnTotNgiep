@@ -34,6 +34,6 @@ class Category extends Model
     // Mối quan hệ: sách thuộc danh mục này
     public function books()
     {
-        return $this->hasMany(Book::class); // nếu có bảng sách (books)
+        return $this->hasMany(Book::class, 'category_id'); 
     }
 }

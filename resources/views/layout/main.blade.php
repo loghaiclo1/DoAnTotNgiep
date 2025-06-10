@@ -31,7 +31,6 @@
   @if (Request::is('about/*') || Request::is('about'))
   <link href="{{ asset('css/about.css') }}" rel="stylesheet">
 @endif
-  @stack('styles')
   <!-- =======================================================
   * Template Name: eStore
   * Template URL: https://bootstrapmade.com/estore-bootstrap-ecommerce-template/
@@ -80,33 +79,52 @@
               <button class="header-action-btn" data-bs-toggle="dropdown">
                 <i class="bi bi-person"></i>
               </button>
+
               <div class="dropdown-menu">
-                <div class="dropdown-header">
-                  <h6>Chào mừng đến <span class="sitename">BookShop</span></h6>
-                </div>
-                <div class="dropdown-body">
-                  <a class="dropdown-item d-flex align-items-center" href="{{ url('/account') }}">
-                    <i class="bi bi-person-circle me-2"></i>
-                    <span>Tài khoản</span>
-                  </a>
-                  <a class="dropdown-item d-flex align-items-center" href="#">
-                    <i class="bi bi-bag-check me-2"></i>
-                    <span>Giỏ hàng</span>
-                  </a>
-                  <a class="dropdown-item d-flex align-items-center" href="#">
-                    <i class="bi bi-heart me-2"></i>
-                    <span>Yêu thích</span>
-                  </a>
-                  <a class="dropdown-item d-flex align-items-center" href="#">
-                    <i class="bi bi-gear me-2"></i>
-                    <span>Cài đặt</span>
-                  </a>
-                </div>
-                <div class="dropdown-footer">
-                  <a  href="{{ url('/login') }}" class="btn btn-primary w-100 mb-2">Đăng nhập</a>
-                  <a  href="{{ url('/register') }}" class="btn btn-outline-primary w-100">Đăng ký</a>
-                </div>
+                  @auth
+                      {{-- Trạng thái: Đã đăng nhập --}}
+                      <div class="dropdown-header">
+                          <h6>Xin chào, <span class="sitename">{{ Auth::user()->Ho }} {{ Auth::user()->Ten }}</span></h6>
+                      </div>
+                      <div class="dropdown-body">
+                          <a class="dropdown-item d-flex align-items-center" href="{{ url('/account') }}">
+                              <i class="bi bi-person-circle me-2"></i>
+                              <span>Tài khoản</span>
+                          </a>
+                          <a class="dropdown-item d-flex align-items-center" href="#">
+                              <i class="bi bi-bag-check me-2"></i>
+                              <span>Giỏ hàng</span>
+                          </a>
+                          <a class="dropdown-item d-flex align-items-center" href="#">
+                              <i class="bi bi-heart me-2"></i>
+                              <span>Yêu thích</span>
+                          </a>
+                          <a class="dropdown-item d-flex align-items-center" href="#">
+                              <i class="bi bi-gear me-2"></i>
+                              <span>Cài đặt</span>
+                          </a>
+                      </div>
+                      <div class="dropdown-footer">
+                          <form action="{{ route('logout') }}" method="POST">
+                              @csrf
+                              <button class="btn btn-danger w-100" type="submit">Đăng xuất</button>
+                          </form>
+                      </div>
+                  @endauth
+
+                  @guest
+                      {{-- Trạng thái: Chưa đăng nhập --}}
+                      <div class="dropdown-header">
+                          <h6>Chào mừng đến <span class="sitename">BookShop</span></h6>
+                      </div>
+                      <div class="dropdown-footer">
+                          <a href="{{ url('/login') }}" class="btn btn-primary w-100 mb-2">Đăng nhập</a>
+                          <a href="{{ url('/register') }}" class="btn btn-outline-primary w-100">Đăng ký</a>
+                      </div>
+                  @endguest
               </div>
+
+
             </div>
 
             <!-- Wishlist -->
@@ -142,7 +160,7 @@
               <li><a href=" {{ url('/checkout') }} ">Thanh toán</a></li>
 
               <!-- Products Mega Menu 1 -->
-              <li class="products-megamenu-1"><span>Sách trong nước</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
+              <li class="products-megamenu-1"><span>Danh mục sách</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
 
                 <!-- Products Mega Menu 1 Mobile View -->
                 <ul class="mobile-megamenu">
@@ -318,7 +336,7 @@
 
               </li><!-- End Products Mega Menu 1 -->
               <!-- Products Mega Menu 2 -->
-              <li class="products-megamenu-2"><span>Sách nước ngoài</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
+              <li class="products-megamenu-2"><span>Danh mục sách</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
 
                 <!-- Products Mega Menu 2 Mobile View -->
                 <ul class="mobile-megamenu">
@@ -377,13 +395,10 @@
                   <div class="megamenu-tabs">
                     <ul class="nav nav-tabs" role="tablist">
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="womens-tab" data-bs-toggle="tab" data-bs-target="#womens-content-1883" type="button" aria-selected="true" role="tab">WOMEN</button>
+                        <button class="nav-link active" id="womens-tab" data-bs-toggle="tab" data-bs-target="#womens-content-1883" type="button" aria-selected="true" role="tab">Sách trong nước</button>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="mens-tab" data-bs-toggle="tab" data-bs-target="#mens-content-1883" type="button" aria-selected="false" tabindex="-1" role="tab">MEN</button>
-                      </li>
-                      <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="kids-tab" data-bs-toggle="tab" data-bs-target="#kids-content-1883" type="button" aria-selected="false" tabindex="-1" role="tab">KIDS</button>
+                        <button class="nav-link" id="mens-tab" data-bs-toggle="tab" data-bs-target="#mens-content-1883" type="button" aria-selected="false" tabindex="-1" role="tab">Sách nước ngoài</button>
                       </li>
                     </ul>
                   </div>
@@ -392,72 +407,59 @@
                   <div class="megamenu-content tab-content">
 
                     <!-- Women Tab -->
-                    <div class="tab-pane fade show active" id="womens-content-1883" role="tabpanel" aria-labelledby="womens-tab">
-                      <div class="category-layout">
-                        <div class="categories-section">
-                          <div class="category-headers">
-                            <h4>Clothing</h4>
-                            <h4>Shoes</h4>
-                            <h4>Accessories</h4>
-                            <h4>Specialty Sizes</h4>
-                          </div>
+                   <div class="tab-pane fade show active" id="womens-content-1883" role="tabpanel" aria-labelledby="womens-tab">
+                    <div class="category-layout">
+                      <div class="categories-section">
 
-                          <div class="category-links">
+                        {{-- Hiển thị 4 danh mục cấp 2 --}}
+                        <div class="category-headers">
+                          @foreach($dmCap2->take(4) as $parent)
+                            <h4>{{ $parent->name }}</h4>
+                          @endforeach
+                        </div>
+
+                        <div class="category-links">
+                          @php
+                            // Tạo mảng chứa danh sách các danh mục cấp 3 theo từng danh mục cấp 2
+                            $columns = [];
+
+                            foreach ($dmCap2->take(4) as $parent) {
+                                $children = $dmCap3->where('parent_id', $parent->id)->take(6)->values(); // lấy tối đa 6 mục con
+                                $columns[] = $children;
+                            }
+
+                            // Tính số hàng tối đa
+                            $maxRows = collect($columns)->map(fn($col) => $col->count())->max();
+                          @endphp
+
+                          {{-- Hiển thị từng hàng --}}
+                          @for ($i = 0; $i < $maxRows; $i++)
                             <div class="link-row">
-                              <a href="##">Shirts &amp; Tops</a>
-                              <a href="##">Boots</a>
-                              <a href="##">Handbags</a>
-                              <a href="##">Plus Size</a>
+                              @foreach($columns as $col)
+                                @php
+                                  $cat = $col[$i] ?? null;
+                                @endphp
+                                @if($cat)
+                                  <a href="{{ url('/category/' . $cat->slug) }}">{{ $cat->name }}</a>
+                                @else
+                                  <span></span> {{-- Giữ cột trống nếu không có dữ liệu --}}
+                                @endif
+                              @endforeach
                             </div>
-                            <div class="link-row">
-                              <a href="##">Coats &amp; Outerwear</a>
-                              <a href="##">Sandals</a>
-                              <a href="##">Eyewear</a>
-                              <a href="##">Petite</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Underwear</a>
-                              <a href="##">Heels</a>
-                              <a href="##">Hats</a>
-                              <a href="##">Wide Shoes</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Sweatshirts</a>
-                              <a href="##">Loafers</a>
-                              <a href="##">Watches</a>
-                              <a href="##">Narrow Shoes</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Dresses</a>
-                              <a href="##">Slippers</a>
-                              <a href="##">Jewelry</a>
-                              <a href="##"></a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Swimwear</a>
-                              <a href="##">Oxfords</a>
-                              <a href="##">Belts</a>
-                              <a href="##"></a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">View all</a>
-                              <a href="##">View all</a>
-                              <a href="##">View all</a>
-                              <a href="##"></a>
-                            </div>
+                          @endfor
+
+                          {{-- View all cho mỗi cột --}}
+                          <div class="link-row">
+                            @foreach($dmCap2->take(4) as $parent)
+                              <a href="{{ url('/category/' . $parent->slug) }}">View all</a>
+                            @endforeach
                           </div>
                         </div>
-                        <div class="featured-section">
-                          <div class="featured-image">
-                            <img src="./image/product-f-1.webp" alt="Women&#39;s Heels Collection">
-                            <div class="featured-content">
-                              <h3>Women's<br>Bags<br>Collection</h3>
-                              <a href="##" class="btn-shop">Shop now</a>
-                            </div>
-                          </div>
-                        </div>
+
                       </div>
                     </div>
+                   </div>
+
 
                     <!-- Men Tab -->
                     <div class="tab-pane fade" id="mens-content-1883" role="tabpanel" aria-labelledby="mens-tab">
@@ -512,15 +514,6 @@
                               <a href="##">View all</a>
                               <a href="##">View all</a>
                               <a href="##"></a>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="featured-section">
-                          <div class="featured-image">
-                            <img src="./image/product-m-4.webp" alt="Men&#39;s Footwear Collection">
-                            <div class="featured-content">
-                              <h3>Men's<br>Footwear<br>Collection</h3>
-                              <a href="##" class="btn-shop">Shop now</a>
                             </div>
                           </div>
                         </div>
@@ -627,6 +620,16 @@
 
    @yield('content')
 
+   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="loginSuccessToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ session('success') }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
 
    <footer id="footer" class="footer">
     <div class="footer-newsletter">
@@ -774,6 +777,30 @@
 
 
 <script defer="" src="./js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9490ba9f9852409c&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.5.0&quot;,&quot;token&quot;:&quot;68c5ca450bae485a842ff76066d69420&quot;}" crossorigin="anonymous"></script>
+@if (session('success'))
+    <div id="bubble-alert" class="login-success">
+        {!! session('success') !!}
+    </div>
+@endif
+@if (session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const bubble = document.getElementById('bubble-alert');
+        
+        // Click để ẩn
+        bubble.addEventListener('click', () => {
+            bubble.style.opacity = '0';
+            setTimeout(() => bubble.remove(), 500);
+        });
+
+        // Tự ẩn sau 3 giây
+        setTimeout(() => {
+            bubble.style.opacity = '0';
+            setTimeout(() => bubble.remove(), 500);
+        }, 3000);
+    });
+</script>
+@endif
 
 
 </body></html>

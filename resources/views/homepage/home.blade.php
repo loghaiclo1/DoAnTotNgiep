@@ -2,8 +2,8 @@
 
 @section('title', 'BookShop - Trang Chủ')
 @section('content')
-    <main class="main">
 
+    <main class="main">
         <!-- Hero Section -->
         <section class="ecommerce-hero-1 hero section" id="hero">
             <div class="container">
@@ -41,8 +41,8 @@
                                 $book2 = $featuredBooks[1] ?? null;
                                 $book3 = $featuredBooks[2] ?? null;
                             @endphp
-                            <img src="{{ asset('./image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật"
-                                class="main-product" loading="lazy" style="height: 500px">
+                            <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật" class="main-product"
+                                loading="lazy" style="height: 500px">
 
                             @if ($book1)
                                 <div class="floating-product product-1 aos-init aos-animate" data-aos="fade-up"
@@ -72,7 +72,6 @@
             </div>
         </section>
         <!-- /Hero Section -->
-
 
         <!-- Info Cards Section -->
         <section id="info-cards" class="info-cards section light-background">
@@ -174,7 +173,7 @@
           </script>
 
                     <div class="swiper-wrapper">
-                        @foreach ($categories as $category)
+                        @foreach ($demDMcha as $category)
                             <div class="swiper-slide">
                                 <div class="category-card aos-init" data-aos="fade-up" data-aos-delay="100">
                                     <div class="category-image">
@@ -182,7 +181,7 @@
                                             alt="{{ $category->name }}" class="img-fluid">
                                     </div>
                                     <h3 class="category-title" style="height: 40px">{{ $category->name }}</h3>
-                                    <p class="category-count">{{ $category->books->count() }} Sách</p>
+                                    <p class="category-count">{{ $category->demsach }} Sách</p>
                                     <a href="{{ url('/category/' . $category->slug) }}" class="stretched-link"></a>
                                 </div>
                             </div>
@@ -293,14 +292,15 @@
                         <div class="col-md-6 col-lg-3 product-item isotope-item ">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="object-fit: cover">
+                                    <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
+                                        style="object-fit: cover">
                                     <div class="product-overlay">
                                         <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
                                             giỏ</a>
                                     </div>
                                 </div>
                                 <div class="product-info">
-                                    <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>
+                                    <h5 class="product-title"><a href="{{ route('product.detail', ['slug' => $book->slug]) }}">{{ $book->TenSach }}</a></h5>
                                     <div class="product-price">
                                         <span
                                             class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>

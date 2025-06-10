@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Footer;
+use App\Models\Category;
+use App\Models\Book;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -32,9 +35,22 @@ class AppServiceProvider extends ServiceProvider
                 ->get()
                 ->groupBy('ten_muc');
 
-            $view->with('thongTinChung', $thongTinChung);
-            $view->with('duLieuChanTrang', $mucCon);
-            $view->with('tatCaDuLieu', $tatCaDuLieu);
+            $dmCap2 = Category::where('parent_id', 1)->take(4)->get();
+
+            $dmCap3 = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
+
+            $dmCap3 = $dmCap3->map(function ($dm) {
+                $dm->book_count = Book::where('category_id', $dm->id)->count();
+                return $dm;
+            })->sortByDesc('book_count')->take(4)->values();
+
+            $view->with([
+                'dmCap2' => $dmCap2,
+                'dmCap3' => $dmCap3,
+                'thongTinChung' => $thongTinChung,
+                'duLieuChanTrang' => $mucCon,
+                'tatCaDuLieu' => $tatCaDuLieu,
+            ]);
         });
     }
 }
