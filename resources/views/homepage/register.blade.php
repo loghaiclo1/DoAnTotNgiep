@@ -77,9 +77,14 @@
 
                                     <div class="col-12">
                                         <label for="login-register-reg-password" class="form-label">Mật khẩu</label>
-                                        <input type="password"
-                                            class="form-control @error('matkhau') is-invalid @enderror"
-                                            id="login-register-reg-password" name="matkhau" required>
+                                        <div class="input-group">
+                                            <input type="password"
+                                                class="form-control @error('matkhau') is-invalid @enderror"
+                                                id="login-register-reg-password" name="matkhau" required>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('login-register-reg-password', this)">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </div>
                                         @error('matkhau')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -87,11 +92,16 @@
 
                                     <div class="col-12">
                                         <label for="login-register-reg-confirm-password" class="form-label">Nhập lại mật khẩu</label>
-                                        <input type="password" class="form-control"
-                                            id="login-register-reg-confirm-password" name="matkhau_confirmation"
-                                            required>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control"
+                                                id="login-register-reg-confirm-password" name="matkhau_confirmation"
+                                                required>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="togglePassword('login-register-reg-confirm-password', this)">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </div>
-
                                     <div class="col-12">
                                         <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
                                         @if ($errors->has('g-recaptcha-response'))
