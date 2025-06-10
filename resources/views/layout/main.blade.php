@@ -103,8 +103,8 @@
                   </a>
                 </div>
                 <div class="dropdown-footer">
-                  <a href="#" class="btn btn-primary w-100 mb-2">Đăng nhập</a>
-                  <a href="#" class="btn btn-outline-primary w-100">Đăng ký</a>
+                  <a  href="{{ url('/login') }}" class="btn btn-primary w-100 mb-2">Đăng nhập</a>
+                  <a  href="{{ url('/register') }}" class="btn btn-outline-primary w-100">Đăng ký</a>
                 </div>
               </div>
             </div>
@@ -136,7 +136,7 @@
           <nav id="navmenu" class="navmenu">
             <ul>
               <li><a href=" {{ url('/') }} " class="active">Trang chủ</a></li>
-              <li><a href=" {{ url('/about') }} ">Giới thiệu</a></li>
+              {{-- <li><a href=" {{ url('/about') }} ">Giới thiệu</a></li> --}}
               <li><a href=" {{ url('/category') }} ">Danh mục</a></li>
               <li><a href=" {{ url('/cart') }} ">Giỏ hàng</a></li>
               <li><a href=" {{ url('/checkout') }} ">Thanh toán</a></li>
@@ -750,11 +750,12 @@
         </div>
     </div>
   </footer>
+
   <!-- Scroll Top -->
   <a href="##" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Preloader -->
-
+  @yield('scripts')
 
   <!-- Vendor JS Files -->
   <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
@@ -765,7 +766,11 @@
   <script src="{{ asset('js/glightbox.min.js') }}"></script>
   <script src="{{ asset('js/Drift.min.js') }}"></script>
   <script src="{{ asset('js/purecounter_vanilla.js') }}"></script>
-  <script src="{{ asset('js/main.js') }}"></script>
+  <script src="{{ asset('js/main.js') }}"></script>register
+  <script src="{{ asset('js/register.js') }}"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <script defer="" src="./js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9490ba9f9852409c&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.5.0&quot;,&quot;token&quot;:&quot;68c5ca450bae485a842ff76066d69420&quot;}" crossorigin="anonymous"></script>
 

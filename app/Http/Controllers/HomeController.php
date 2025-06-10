@@ -62,4 +62,12 @@ class HomeController extends Controller
     {
         return view('homepage.account');
     }
+    public function login()
+    {
+        return view('homepage.login');
+    }
+    public function register()
+    {
+        return view('homepage.register');
+    }
 }

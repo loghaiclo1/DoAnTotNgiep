@@ -66,7 +66,7 @@
                     </a>
                   </li>
                   <li class="nav-item" role="presentation">
-                    <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapmade.com/content/demo/eStore/account.html#wallet" aria-selected="false" tabindex="-1" role="tab">
+                    <a class="nav-link" data-bs-toggle="tab" href="https://login.com/content/demo/eStore/account.html#wallet" aria-selected="false" tabindex="-1" role="tab">
                       <i class="bi bi-wallet2"></i>
                       <span>Payment Methods</span>
                     </a>
