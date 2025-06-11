@@ -26,9 +26,9 @@
                     <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right" data-aos-delay="200">
                         <div class="product-images">
                             <div class="main-image-container mb-3">
-                                <div>
+                                <div style="display: flex; justify-content: center;">
                                     <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
-                                        class="img-fluid main-image" id="main-product-image">
+                                        class="img-fluid main-image" id="main-product-image" style="height: 500px; object-fit: cover;">
                                 </div>
                             </div>
                         </div>

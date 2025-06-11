@@ -41,13 +41,8 @@
                                 $book2 = $featuredBooks[1] ?? null;
                                 $book3 = $featuredBooks[2] ?? null;
                             @endphp
-                            @if ($book3)
-                                <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật"
-                                    class="main-product" loading="lazy" style="height: 500px">
-                            @else
-                                <img src="{{ asset('image/book/placeholder.jpg') }}" alt="Sách nổi bật"
-                                    class="main-product" loading="lazy" style="height: 500px">
-                            @endif
+                            <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật" class="main-product"
+                                loading="lazy" style="height: 500px">
 
                             @if ($book1)
                                 <div class="floating-product product-1 aos-init aos-animate" data-aos="fade-up"
@@ -174,7 +169,7 @@
                     </script>
 
                     <div class="swiper-wrapper">
-                        @foreach ($categories as $category)
+                        @foreach ($demDMcha as $category)
                             <div class="swiper-slide">
                                 <div class="category-card aos-init" data-aos="fade-up" data-aos-delay="100">
                                     <div class="category-image">
@@ -182,7 +177,7 @@
                                             alt="{{ $category->name }}" class="img-fluid">
                                     </div>
                                     <h3 class="category-title" style="height: 40px">{{ $category->name }}</h3>
-                                    <p class="category-count">{{ $category->books->count() }} Sách</p>
+                                    <p class="category-count">{{ $category->demsach }} Sách</p>
                                     <a href="{{ url('/category/' . $category->slug) }}" class="stretched-link"></a>
                                 </div>
                             </div>
@@ -225,7 +220,7 @@
 
                                 <div class="product-info">
                                     <h3 class="product-title">
-                                        <a href="{{ route('book.detail', $book->MaSach) }}">{{ $book->TenSach }}</a>
+                                        <a href="{{ route('product.detail', $book->MaSach) }}">{{ $book->TenSach }}</a>
                                     </h3>
                                     <div class="product-price">
                                         <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
@@ -275,49 +270,50 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Danh sách sách -->
-                <div class="row product-container isotope-container aos-init" data-aos="fade-up" data-aos-delay="200">
-                    @if ($books && $books->count() > 0)
-                        @foreach ($books as $book)
-                            <div class="col-md-6 col-lg-3 product-item isotope-item">
-                                <div class="product-card">
-                                    <div class="product-image">
-                                        <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="object-fit: cover">
-                                        <div class="product-overlay">
-                                            <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
-                                                @csrf
-                                                <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
-                                                <button type="submit" class="btn-cart">
-                                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="product-info">
-                                        <h5 class="product-title"><a href="{{ route('book.detail', $book->MaSach) }}">{{ $book->TenSach }}</a></h5>
-                                        <div class="product-price">
-                                            <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
-                                        </div>
-                                        <div class="product-rating">
-                                            <span>( {{ $book->LuotMua }} lượt bán )</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="col-12 text-center">
-                            <p>Chưa có sản phẩm nào.</p>
+     <!-- Danh sách sách -->
+     <div class="row product-container isotope-container aos-init" data-aos="fade-up" data-aos-delay="200">
+        @foreach ($books as $book)
+            <div class="col-md-6 col-lg-3 product-item isotope-item ">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
+                            style="object-fit: cover">
+                        <div class="product-overlay">
+                            <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                @csrf
+                                <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                <button type="submit" class="btn-cart">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                            </form>
                         </div>
-                    @endif
-                </div>
-
-                <!-- Nút xem tất cả -->
-                <div class="text-center mt-5 aos-init" data-aos="fade-up">
-                    <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                    <div class="product-info">
+                        <h5 class="product-title"><a href="{{ route('product.detail', ['slug' => $book->slug]) }}">{{ $book->TenSach }}</a></h5>
+                        <div class="product-price">
+                            <span
+                                class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                        </div>
+                        <div class="product-rating">
+                            {{-- @for ($i = 1; $i <= 5; $i++)
+                                <i
+                                    class="bi {{ $i <= round($book->LuotMua / 10) ? 'bi-star-fill' : 'bi-star' }}"></i>
+                            @endfor --}}
+                            <span>( {{ $book->LuotMua }} lượt bán )</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+        @endforeach
+    </div>
+
+    <!-- Nút xem tất cả -->
+    <div class="text-center mt-5 aos-init" data-aos="fade-up">
+        <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
+    </div>
+</div>
+
+
         </section><!-- /Product List Section -->
     </main>
 

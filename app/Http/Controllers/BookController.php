@@ -7,11 +7,9 @@ use App\Models\Book;
 
 class BookController extends Controller
 {
-
-
-    public function productdetail($id)
+    public function productdetail($slug)
     {
-        $book = Book::where('MaSach', $id)->where('TrangThai', 1)->firstOrFail();
+        $book = Book::where('slug', $slug)->where('TrangThai', 1)->firstOrFail();
 
         return view('homepage.productdetail', compact('book'));
     }

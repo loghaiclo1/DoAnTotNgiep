@@ -35,8 +35,8 @@ Route::get('/category', [HomeController::class, 'category']);
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 
 // Chi tiết sản phẩm
-Route::get('/sp/{maSach}', [BookController::class, 'productdetail'])->name('book.detail');
-Route::get('/productdetail', [HomeController::class, 'productdetail']); // Giữ luôn nếu có lý do dùng khác
+Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
+
 
 // Liên hệ
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
@@ -48,5 +48,8 @@ Route::get('/account', [HomeController::class, 'account']);
 // Đăng nhập / Đăng ký
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+
 Route::get('/register', [RegisterController::class, 'show'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
