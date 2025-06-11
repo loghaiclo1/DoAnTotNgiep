@@ -396,203 +396,32 @@
                   <div class="megamenu-tabs">
                     <ul class="nav nav-tabs" role="tablist">
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="womens-tab" data-bs-toggle="tab" data-bs-target="#womens-content-1883" type="button" aria-selected="true" role="tab">Sách trong nước</button>
+                        <button class="nav-link active" id="vn-tab" data-bs-toggle="tab" data-bs-target="#vn-tab-pane" type="button" role="tab">Sách trong nước</button>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="mens-tab" data-bs-toggle="tab" data-bs-target="#mens-content-1883" type="button" aria-selected="false" tabindex="-1" role="tab">Sách nước ngoài</button>
+                        <button class="nav-link" id="qt-tab" data-bs-toggle="tab" data-bs-target="#qt-tab-pane" type="button" role="tab">Sách nước ngoài</button>
                       </li>
                     </ul>
                   </div>
 
                   <!-- Tabs Content -->
                   <div class="megamenu-content tab-content">
+                    <!-- Sach VN Tab -->
+                   <x-categorymenu
+                        :data="$dmWithTop3" 
+                        tab-id="vn-tab-pane" 
+                        tab-label="vn-tab" 
+                        :active="true" 
+                    />
 
-                    <!-- Women Tab -->
-                   <div class="tab-pane fade show active" id="womens-content-1883" role="tabpanel" aria-labelledby="womens-tab">
-                    <div class="category-layout">
-                      <div class="categories-section">
-
-                        {{-- Hiển thị 4 danh mục cấp 2 --}}
-                        <div class="category-headers">
-                          @foreach($dmCap2->take(4) as $parent)
-                            <h4>{{ $parent->name }}</h4>
-                          @endforeach
-                        </div>
-
-                        <div class="category-links">
-                          @php
-                            // Tạo mảng chứa danh sách các danh mục cấp 3 theo từng danh mục cấp 2
-                            $columns = [];
-
-                            foreach ($dmCap2->take(4) as $parent) {
-                                $children = $dmCap3->where('parent_id', $parent->id)->take(6)->values(); // lấy tối đa 6 mục con
-                                $columns[] = $children;
-                            }
-
-                            // Tính số hàng tối đa
-                            $maxRows = collect($columns)->map(fn($col) => $col->count())->max();
-                          @endphp
-
-                          {{-- Hiển thị từng hàng --}}
-                          @for ($i = 0; $i < $maxRows; $i++)
-                            <div class="link-row">
-                              @foreach($columns as $col)
-                                @php
-                                  $cat = $col[$i] ?? null;
-                                @endphp
-                                @if($cat)
-                                  <a href="{{ url('/category/' . $cat->slug) }}">{{ $cat->name }}</a>
-                                @else
-                                  <span></span> {{-- Giữ cột trống nếu không có dữ liệu --}}
-                                @endif
-                              @endforeach
-                            </div>
-                          @endfor
-
-                          {{-- View all cho mỗi cột --}}
-                          <div class="link-row">
-                            @foreach($dmCap2->take(4) as $parent)
-                              <a href="{{ url('/category/' . $parent->slug) }}">View all</a>
-                            @endforeach
-                          </div>
-                        </div>
-
-                      </div>
-                    </div>
-                   </div>
-
-
-                    <!-- Men Tab -->
-                    <div class="tab-pane fade" id="mens-content-1883" role="tabpanel" aria-labelledby="mens-tab">
-                      <div class="category-layout">
-                        <div class="categories-section">
-                          <div class="category-headers">
-                            <h4>Clothing</h4>
-                            <h4>Shoes</h4>
-                            <h4>Accessories</h4>
-                            <h4>Specialty Sizes</h4>
-                          </div>
-
-                          <div class="category-links">
-                            <div class="link-row">
-                              <a href="##">Shirts &amp; Polos</a>
-                              <a href="##">Sneakers</a>
-                              <a href="##">Watches</a>
-                              <a href="##">Big &amp; Tall</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Jackets &amp; Coats</a>
-                              <a href="##">Boots</a>
-                              <a href="##">Belts</a>
-                              <a href="##">Slim Fit</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Underwear</a>
-                              <a href="##">Loafers</a>
-                              <a href="##">Ties</a>
-                              <a href="##">Wide Shoes</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Hoodies</a>
-                              <a href="##">Dress Shoes</a>
-                              <a href="##">Wallets</a>
-                              <a href="##">Extended Sizes</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Suits</a>
-                              <a href="##">Sandals</a>
-                              <a href="##">Sunglasses</a>
-                              <a href="##"></a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Activewear</a>
-                              <a href="##">Slippers</a>
-                              <a href="##">Hats</a>
-                              <a href="##"></a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">View all</a>
-                              <a href="##">View all</a>
-                              <a href="##">View all</a>
-                              <a href="##"></a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Kids Tab -->
-                    <div class="tab-pane fade" id="kids-content-1883" role="tabpanel" aria-labelledby="kids-tab">
-                      <div class="category-layout">
-                        <div class="categories-section">
-                          <div class="category-headers">
-                            <h4>Clothing</h4>
-                            <h4>Shoes</h4>
-                            <h4>Accessories</h4>
-                            <h4>By Age</h4>
-                          </div>
-
-                          <div class="category-links">
-                            <div class="link-row">
-                              <a href="##">T-shirts &amp; Tops</a>
-                              <a href="##">Sneakers</a>
-                              <a href="##">Backpacks</a>
-                              <a href="##">Babies (0-24 months)</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Outerwear</a>
-                              <a href="##">Boots</a>
-                              <a href="##">Hats &amp; Caps</a>
-                              <a href="##">Toddlers (2-4 years)</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Pajamas</a>
-                              <a href="##">Sandals</a>
-                              <a href="##">Socks</a>
-                              <a href="##">Kids (4-7 years)</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Sweatshirts</a>
-                              <a href="##">Slippers</a>
-                              <a href="##">Gloves</a>
-                              <a href="##">Older Kids (8-14 years)</a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Dresses</a>
-                              <a href="##">School Shoes</a>
-                              <a href="##">Scarves</a>
-                              <a href="##"></a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">Swimwear</a>
-                              <a href="##">Sports Shoes</a>
-                              <a href="##">Hair Accessories</a>
-                              <a href="##"></a>
-                            </div>
-                            <div class="link-row">
-                              <a href="##">View all</a>
-                              <a href="##">View all</a>
-                              <a href="##">View all</a>
-                              <a href="##"></a>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="featured-section">
-                          <div class="featured-image">
-                            <img src="./image/product-9.webp" alt="Kids&#39; New Arrivals">
-                            <div class="featured-content">
-                              <h3>Kids<br>New<br>Arrivals</h3>
-                              <a href="##" class="btn-shop">Shop now</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
+                    <x-categorymenu
+                        :data="$dmWithTop3QT" 
+                        tab-id="qt-tab-pane" 
+                        tab-label="qt-tab" 
+                        :active="false" 
+                    />
                   </div>
-
                 </div><!-- End Products Mega Menu 2 Desktop View -->
-
               </li><!-- End Products Mega Menu 2 -->
 
               <li><a href=" {{ url('/contact') }} ">Liên hệ</a></li>

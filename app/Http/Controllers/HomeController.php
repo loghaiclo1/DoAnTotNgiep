@@ -5,49 +5,99 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Book;
+use Illuminate\Support\Collection;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $featuredBooks = Book::where('TrangThai', 1)->inRandomOrder()->take(3)->get();
+        $featuredBooks = $this->getFeaturedBooks();
+        $demDMcha = $this->getCategoryParentWithBookCount();
+        $books = $this->getRandomBooks();
+        $sachbanchay = $this->getBestSellerBooks();
+        $filterCategories = $this->getFilterCategories($books);
+        $dmCap2 = $this->getDmCap2();
+        $dmWithTop3 = $this->getDmWithTop3($dmCap2);
 
+        return view('homepage.home', compact(
+            'demDMcha',
+            'books',
+            'filterCategories',
+            'featuredBooks',
+            'sachbanchay',
+            'dmCap2',
+            'dmWithTop3'
+        ));
+    }
+    private function getFeaturedBooks()
+    {
+        return Book::where('TrangThai', 1)->inRandomOrder()->take(3)->get();
+    }
+
+    private function getCategoryParentWithBookCount()
+    {
         $dmcha = Category::whereNotNull('image')->get();
 
-        $demDMcha = $dmcha->map(function ($dmcha) {
+        return $dmcha->map(function ($dmcha) {
             $idDM = Category::where('parent_id', $dmcha->id)->pluck('id')->toArray();
             $dmcha->demsach = Book::whereIn('category_id', $idDM)->count();
             return $dmcha;
         });
+    }
 
-        $books = Book::with('category')
+    private function getRandomBooks()
+    {
+        return Book::with('category')
             ->where('TrangThai', 1)
             ->inRandomOrder()
             ->take(8)
             ->get();
+    }
 
-        $sachbanchay = Book::where('TrangThai', 1)
+    private function getBestSellerBooks()
+    {
+        return Book::where('TrangThai', 1)
             ->orderBy('luotmua', 'desc')
             ->take(4)
             ->get();
+    }
 
-        $filterCategories = $books->map(function ($book) {
+    private function getFilterCategories($books)
+    {
+        return $books->map(function ($book) {
             return $book->category->name ?? null;
         })->filter()->unique()->take(3);
-        // Lấy danh mục cấp 2 thuộc cấp 1
-        $dmCap2 = Category::where('parent_id', 1)->get();
-
-        // Lấy danh mục cấp 3 thuộc cấp 2
-        $dmCap3 = Category::whereIn('parent_id', $dmCap2->pluck('id')->toArray())->get();
-
-        // Với mỗi dm cấp 3, đếm số sách
-        $dmCap3 = $dmCap3->map(function ($dm) {
-            $dm->book_count = Book::where('category_id', $dm->id)->count();
-            return $dm;
-        })->sortByDesc('book_count')->take(4)->values();
-
-        return view('homepage.home', compact('demDMcha', 'books', 'filterCategories', 'featuredBooks', 'sachbanchay', 'dmCap2', 'dmCap3'));
     }
+
+    private function getDmCap2()
+    {
+        return Category::where('parent_id', 1)->get();
+    }
+
+    private function getDmWithTop3($dmCap2)
+    {
+        $dmCap3All = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
+
+        $books1 = Book::select('category_id')
+            ->selectRaw('COUNT(*) as book_count')
+            ->groupBy('category_id')
+            ->pluck('book_count', 'category_id');
+
+        $dmCap3All = $dmCap3All->map(function ($cat) use ($books1) {
+            $cat->book_count = $books1[$cat->id] ?? 0;
+            return $cat;
+        });
+
+        return $dmCap2->map(function ($dm2) use ($dmCap3All) {
+            $children = $dmCap3All->where('parent_id', $dm2->id)
+                ->sortByDesc('book_count')
+                ->take(4)
+                ->values();
+            $dm2->topChildren = $children;
+            return $dm2;
+        });
+    }
+
     public function about()
     {
         return view('homepage.about');
