@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- saved from url=(0056)# -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>@yield('title', 'BookShop - Trang chủ')</title>
   <meta name="description" content="">
@@ -19,6 +19,7 @@
   <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin="">
   <link href="./css/css2" rel="stylesheet">
   <!-- Vendor CSS Files -->
+
   <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
   <link href="{{ asset('css/swiper-bundle.min.css') }}" rel="stylesheet">
@@ -756,6 +757,7 @@
 
   <!-- Preloader -->
   @yield('scripts')
+  <script src="{{ asset('js/cart.js') }}"></script>
 
   <!-- Vendor JS Files -->
   <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>

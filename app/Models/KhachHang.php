@@ -8,6 +8,9 @@ class KhachHang extends Model
 {
     protected $table = 'khachhang';
     protected $primaryKey = 'MaKhachHang';
-    protected $fillable = ['MaKhachHang', 'HoTen', 'Email', 'SoDienThoai', 'FirebaseUID', 'TrangThai', 'MatKhau'];
-    public $timestamps = false;
+    protected $fillable = ['MaKhachHang', 'Ho', 'Ten', 'Email', 'TrangThai', 'MatKhau'];
+    public $timestamps = true;
+
+    const CREATED_AT = 'NgayTao';
+    const UPDATED_AT = 'NgayCapNhat';
 }

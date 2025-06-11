@@ -1,9 +1,9 @@
+
 @extends('layout.main')
 
 @section('title', 'BookShop - Trang Chủ')
 @section('content')
     <main class="main">
-
         <!-- Hero Section -->
         <section class="ecommerce-hero-1 hero section" id="hero">
             <div class="container">
@@ -41,13 +41,18 @@
                                 $book2 = $featuredBooks[1] ?? null;
                                 $book3 = $featuredBooks[2] ?? null;
                             @endphp
-                            <img src="{{ asset('./image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật"
-                                class="main-product" loading="lazy" style="height: 500px">
+                            @if ($book3)
+                                <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật"
+                                    class="main-product" loading="lazy" style="height: 500px">
+                            @else
+                                <img src="{{ asset('image/book/placeholder.jpg') }}" alt="Sách nổi bật"
+                                    class="main-product" loading="lazy" style="height: 500px">
+                            @endif
 
                             @if ($book1)
                                 <div class="floating-product product-1 aos-init aos-animate" data-aos="fade-up"
                                     data-aos-delay="300">
-                                    <img src="{{ asset('./image/book/' . $book1->HinhAnh) }}" alt="{{ $book1->TenSach }}">
+                                    <img src="{{ asset('image/book/' . $book1->HinhAnh) }}" alt="{{ $book1->TenSach }}">
                                     <div class="product-info">
                                         <h4>{{ $book1->TenSach }}</h4>
                                         <span class="price">{{ number_format($book1->GiaBan, 0, ',', '.') }}₫</span>
@@ -58,7 +63,7 @@
                             @if ($book2)
                                 <div class="floating-product product-2 aos-init aos-animate" data-aos="fade-up"
                                     data-aos-delay="400">
-                                    <img src="{{ asset('./image/book/' . $book2->HinhAnh) }}" alt="{{ $book2->TenSach }}">
+                                    <img src="{{ asset('image/book/' . $book2->HinhAnh) }}" alt="{{ $book2->TenSach }}">
                                     <div class="product-info">
                                         <h4>{{ $book2->TenSach }}</h4>
                                         <span class="price">{{ number_format($book2->GiaBan, 0, ',', '.') }}₫</span>
@@ -67,18 +72,15 @@
                             @endif
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
         <!-- /Hero Section -->
 
-
         <!-- Info Cards Section -->
         <section id="info-cards" class="info-cards section light-background">
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
                 <div class="row g-4 justify-content-center">
-
                     <!-- Info Card 1 -->
                     <div class="col-12 col-sm-6 col-lg-3 aos-init" data-aos="fade-up" data-aos-delay="200">
                         <div class="info-card text-center">
@@ -122,7 +124,6 @@
                             <p>Chúng tôi luôn sẵn sàng hỗ trợ qua điện thoại, email và chat.</p>
                         </div>
                     </div><!-- End Info Card 4 -->
-
                 </div>
             </div>
         </section>
@@ -131,54 +132,53 @@
         <!-- Category Cards Section -->
         <section id="category-cards" class="category-cards section">
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
-
                 <div class="category-slider swiper init-swiper swiper-initialized swiper-horizontal swiper-backface-hidden">
                     <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "autoplay": {
-                "delay": 5000,
-                "disableOnInteraction": false
-              },
-              "grabCursor": true,
-              "speed": 600,
-              "slidesPerView": "auto",
-              "spaceBetween": 20,
-              "navigation": {
-                "nextEl": ".swiper-button-next",
-                "prevEl": ".swiper-button-prev"
-              },
-              "breakpoints": {
-                "320": {
-                  "slidesPerView": 2,
-                  "spaceBetween": 15
-                },
-                "576": {
-                  "slidesPerView": 3,
-                  "spaceBetween": 15
-                },
-                "768": {
-                  "slidesPerView": 4,
-                  "spaceBetween": 20
-                },
-                "992": {
-                  "slidesPerView": 5,
-                  "spaceBetween": 20
-                },
-                "1200": {
-                  "slidesPerView": 6,
-                  "spaceBetween": 20
-                }
-              }
-            }
-          </script>
+                        {
+                          "loop": true,
+                          "autoplay": {
+                            "delay": 5000,
+                            "disableOnInteraction": false
+                          },
+                          "grabCursor": true,
+                          "speed": 600,
+                          "slidesPerView": "auto",
+                          "spaceBetween": 20,
+                          "navigation": {
+                            "nextEl": ".swiper-button-next",
+                            "prevEl": ".swiper-button-prev"
+                          },
+                          "breakpoints": {
+                            "320": {
+                              "slidesPerView": 2,
+                              "spaceBetween": 15
+                            },
+                            "576": {
+                              "slidesPerView": 3,
+                              "spaceBetween": 15
+                            },
+                            "768": {
+                              "slidesPerView": 4,
+                              "spaceBetween": 20
+                            },
+                            "992": {
+                              "slidesPerView": 5,
+                              "spaceBetween": 20
+                            },
+                            "1200": {
+                              "slidesPerView": 6,
+                              "spaceBetween": 20
+                            }
+                          }
+                        }
+                    </script>
 
                     <div class="swiper-wrapper">
                         @foreach ($categories as $category)
                             <div class="swiper-slide">
                                 <div class="category-card aos-init" data-aos="fade-up" data-aos-delay="100">
                                     <div class="category-image">
-                                        <img src="{{ asset('/image/category/' . $category->image) }}"
+                                        <img src="{{ asset('image/category/' . $category->image) }}"
                                             alt="{{ $category->name }}" class="img-fluid">
                                     </div>
                                     <h3 class="category-title" style="height: 40px">{{ $category->name }}</h3>
@@ -209,22 +209,10 @@
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
                 <div class="row gy-4">
                     @foreach ($sachbanchay as $index => $book)
-                        <div class="col-md-6 col-lg-3 aos-init" data-aos="fade-up"
-                            data-aos-delay="{{ 100 + $index * 50 }}">
+                        <div class="col-md-6 col-lg-3 aos-init" data-aos="fade-up" data-aos-delay="{{ 100 + $index * 50 }}">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
-                                        loading="lazy">
-
-                                    {{-- Nhãn tùy theo thứ tự --}}
-                                    {{-- @if ($index == 0)
-                                        <div class="product-tags"><span class="badge bg-accent">Mới</span></div>
-                                    @elseif ($index == 1)
-                                        <div class="product-tags"><span class="badge bg-sale">Giảm giá</span></div>
-                                    @elseif ($index == 3)
-                                        <div class="product-tags"><span class="badge bg-sold-out">Hết hàng</span></div>
-                                    @endif --}}
-
+                                    <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" loading="lazy">
                                     <div class="product-actions">
                                         <button class="btn-wishlist" type="button" aria-label="Thêm vào yêu thích">
                                             <i class="bi bi-heart"></i>
@@ -237,11 +225,10 @@
 
                                 <div class="product-info">
                                     <h3 class="product-title">
-                                        <a href="#">{{ $book->TenSach }}</a>
+                                        <a href="{{ route('book.detail', $book->MaSach) }}">{{ $book->TenSach }}</a>
                                     </h3>
                                     <div class="product-price">
-                                        <span
-                                            class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                        <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
                                     </div>
                                     <div class="product-rating">
                                         @for ($i = 1; $i <= 5; $i++)
@@ -254,11 +241,14 @@
                                             <i class="bi bi-bag-plus me-2"></i>Hết hàng
                                         </button>
                                     @else
-                                        <button class="btn btn-add-to-cart">
-                                            <i class="bi bi-bag-plus me-2"></i>Thêm vào giỏ
-                                        </button>
+                                        <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                            @csrf
+                                            <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                            <button type="submit" class="btn btn-add-to-cart">
+                                                <i class="bi bi-bag-plus me-2"></i>Thêm vào giỏ
+                                            </button>
+                                        </form>
                                     @endif
-
                                 </div>
                             </div>
                         </div>
@@ -269,7 +259,6 @@
 
         <!-- Product List Section -->
         <section id="product-list" class="product-list section">
-
             <div class="container isotope-layout aos-init" data-aos="fade-up" data-aos-delay="100"
                 data-default-filter="*" data-layout="masonry" data-sort="original-order">
 
@@ -289,33 +278,39 @@
 
                 <!-- Danh sách sách -->
                 <div class="row product-container isotope-container aos-init" data-aos="fade-up" data-aos-delay="200">
-                    @foreach ($books as $book)
-                        <div class="col-md-6 col-lg-3 product-item isotope-item ">
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="object-fit: cover">
-                                    <div class="product-overlay">
-                                        <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
-                                            giỏ</a>
+                    @if ($books && $books->count() > 0)
+                        @foreach ($books as $book)
+                            <div class="col-md-6 col-lg-3 product-item isotope-item">
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="object-fit: cover">
+                                        <div class="product-overlay">
+                                            <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                                @csrf
+                                                <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                                <button type="submit" class="btn-cart">
+                                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="product-info">
-                                    <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>
-                                    <div class="product-price">
-                                        <span
-                                            class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
-                                    </div>
-                                    <div class="product-rating">
-                                        {{-- @for ($i = 1; $i <= 5; $i++)
-                                            <i
-                                                class="bi {{ $i <= round($book->LuotMua / 10) ? 'bi-star-fill' : 'bi-star' }}"></i>
-                                        @endfor --}}
-                                        <span>( {{ $book->LuotMua }} lượt bán )</span>
+                                    <div class="product-info">
+                                        <h5 class="product-title"><a href="{{ route('book.detail', $book->MaSach) }}">{{ $book->TenSach }}</a></h5>
+                                        <div class="product-price">
+                                            <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                        </div>
+                                        <div class="product-rating">
+                                            <span>( {{ $book->LuotMua }} lượt bán )</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        @endforeach
+                    @else
+                        <div class="col-12 text-center">
+                            <p>Chưa có sản phẩm nào.</p>
                         </div>
-                    @endforeach
+                    @endif
                 </div>
 
                 <!-- Nút xem tất cả -->
@@ -323,8 +318,31 @@
                     <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
-
         </section><!-- /Product List Section -->
-
     </main>
+
+    <!-- Thêm SweetAlert2 và JavaScript cho AJAX -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Xử lý session thông báo (nếu có)
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        @endif
+        @if (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        @endif
+        </script>
+
 @endsection

@@ -1,3 +1,4 @@
+
 @extends('layout.main')
 
 @section('title', 'BookShop - Chi Tiết Sản Phẩm')
@@ -17,12 +18,9 @@
             </div>
         </div>
 
-
         <!-- Product Details Section -->
         <section id="product-details" class="product-details section">
-
             <div class="container" data-aos="fade-up" data-aos-delay="100">
-
                 <div class="row">
                     <!-- Product Images -->
                     <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right" data-aos-delay="200">
@@ -57,7 +55,6 @@
                             <div class="product-availability mb-4">
                                 @if ($book->SoLuong > 0)
                                     <i class="bi bi-check-circle-fill text-success"></i> <span>Còn hàng</span>
-                                    <span class="stock-count">({{ $book->SoLuong }} sản phẩm)</span>
                                 @else
                                     <i class="bi bi-x-circle-fill text-danger"></i> <span>Hết hàng</span>
                                 @endif
@@ -69,17 +66,21 @@
                                 <div class="quantity-selector">
                                     <button class="quantity-btn decrease"><i class="bi bi-dash"></i></button>
                                     <input type="number" class="quantity-input" value="1" min="1"
-                                        max="{{ $book->SoLuong }}">
+                                        max="{{ $book->SoLuong }}" name="quantity">
                                     <button class="quantity-btn increase"><i class="bi bi-plus"></i></button>
                                 </div>
                             </div>
 
                             <!-- Buttons -->
                             <div class="product-actions">
-                                <button class="btn btn-primary add-to-cart-btn"
-                                    {{ $book->SoLuong == 0 ? 'disabled' : '' }}>
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                </button>
+                                <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                    @csrf
+                                    <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                    <button type="submit" class="btn btn-primary add-to-cart-btn"
+                                        {{ $book->SoLuong == 0 ? 'disabled' : '' }}>
+                                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                    </button>
+                                </form>
                                 <button class="btn btn-outline-secondary wishlist-btn">
                                     <i class="bi bi-heart"></i>
                                 </button>
@@ -424,6 +425,29 @@
                 </div>
             </div>
         </section><!-- /Product Details Section -->
-
     </main>
+
+    <!-- Thêm SweetAlert2 và JavaScript cho AJAX -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Xử lý session thông báo (nếu có)
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        @endif
+        @if (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        @endif
+    </script>
 @endsection
