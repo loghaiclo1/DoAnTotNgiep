@@ -3,90 +3,564 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Book;
+use App\Models\CartHold;
+use Carbon\Carbon;
 
 class CartController extends Controller
 {
+    const HOLD_DURATION_MINUTES = 15; // Không còn dùng, giữ lại để tương thích
+    const MAX_QUANTITY_THRESHOLD = 10000;
+
+    protected function getIdentifier()
+    {
+        $identifier = [
+            'user_id' => Auth::check() ? Auth::id() : null,
+            'session_id' => session()->getId(),
+        ];
+        Log::info('Current identifier:', $identifier);
+        return $identifier;
+    }
+
+    protected function syncCart()
+    {
+        if (!Auth::check()) {
+            Log::info('syncCart: No authenticated user, skipping sync.');
+            return;
+        }
+
+        $userId = Auth::id();
+        $sessionId = session()->getId();
+        $cart = session()->get('cart', []);
+
+        Log::info('Starting cart sync:', [
+            'user_id' => $userId,
+            'session_id' => $sessionId,
+            'initial_cart' => $cart
+        ]);
+
+        try {
+            // Lấy tất cả bản ghi CartHold của user hoặc session
+            $userHolds = CartHold::where(function ($query) use ($userId, $sessionId) {
+                $query->where('user_id', $userId)
+                      ->orWhere(function ($q) use ($sessionId) {
+                          $q->whereNull('user_id')->where('session_id', $sessionId);
+                      });
+            })->get()->keyBy('book_id');
+
+            $updatedCart = [];
+            foreach ($userHolds as $bookId => $hold) {
+                $book = Book::find($bookId);
+                if ($book) {
+                    // Chỉ kiểm tra SoLuong của sách
+                    if ($hold->quantity <= $book->SoLuong) {
+                        $updatedCart[$bookId] = [
+                            'name' => $book->TenSach,
+                            'price' => $book->GiaBan,
+                            'quantity' => $hold->quantity,
+                            'image' => $book->HinhAnh,
+                        ];
+                    } else {
+                        Log::warning('syncCart: Quantity exceeds stock, removing.', [
+                            'book_id' => $bookId,
+                            'quantity' => $hold->quantity,
+                            'stock' => $book->SoLuong
+                        ]);
+                    }
+                }
+            }
+
+            session()->put('cart', $updatedCart);
+            Log::info('Cart synced:', [
+                'user_id' => $userId,
+                'session_id' => $sessionId,
+                'cart' => $updatedCart
+            ]);
+
+            // Cập nhật CartHold cho user
+            foreach ($updatedCart as $bookId => $item) {
+                CartHold::updateOrCreate(
+                    ['user_id' => $userId, 'session_id' => $sessionId, 'book_id' => $bookId],
+                    ['quantity' => $item['quantity'], 'expires_at' => null] // Không dùng expires_at
+                );
+            }
+
+            // Xóa CartHold không còn trong giỏ
+            CartHold::where('user_id', $userId)
+                ->where('session_id', $sessionId)
+                ->whereNotIn('book_id', array_keys($updatedCart))
+                ->delete();
+
+        } catch (\Exception $e) {
+            Log::error('syncCart: Error syncing cart.', [
+                'user_id' => $userId,
+                'session_id' => $sessionId,
+                'exception' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function add(Request $request)
     {
         $bookId = $request->input('book_id');
+        $quantity = (int) $request->input('quantity', 1);
+
+        if (!$bookId) {
+            return response()->json(['status' => 'error', 'message' => 'Thiếu mã sách!'], 400)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        }
+
+        if ($quantity < 1) {
+            return response()->json(['status' => 'error', 'message' => 'Số lượng phải lớn hơn 0!'], 400)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        }
+
+        if ($quantity > self::MAX_QUANTITY_THRESHOLD) {
+            return response()->json(['status' => 'error', 'message' => "Số lượng $quantity không hợp lệ! Vui lòng nhập nhỏ hơn " . number_format(self::MAX_QUANTITY_THRESHOLD, 0, ',', '.') . "."], 400)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        }
 
         try {
-            if (!$bookId) {
-                return response()->json(['status' => 'error', 'message' => 'Book ID is required!'], 400);
-            }
-
             $book = Book::findOrFail($bookId);
 
             if ($book->SoLuong < 1) {
-                return response()->json(['status' => 'error', 'message' => 'Sản phẩm hiện đã hết hàng!'], 400);
+                return response()->json(['status' => 'error', 'message' => 'Sản phẩm đã hết hàng!'], 400)
+                    ->header('Content-Type', 'application/json; charset=utf-8');
             }
 
+            $identifier = $this->getIdentifier();
             $cart = session()->get('cart', []);
+            $currentQty = isset($cart[$bookId]) ? $cart[$bookId]['quantity'] : 0;
 
-            if (isset($cart[$bookId])) {
-                $cart[$bookId]['quantity']++;
-            } else {
-                $cart[$bookId] = [
-                    'name' => $book->TenSach,
-                    'price' => $book->GiaBan,
-                    'quantity' => 1,
-                    'image' => $book->HinhAnh,
-                ];
+            // Chỉ kiểm tra SoLuong
+            $newQty = $currentQty + $quantity;
+            if ($newQty > $book->SoLuong) {
+                return response()->json(['status' => 'error', 'message' => "Số lượng yêu cầu $newQty không có sẵn!."], 400)
+                    ->header('Content-Type', 'application/json; charset=utf-8');
             }
+
+            $cart[$bookId] = [
+                'name' => $book->TenSach,
+                'price' => $book->GiaBan,
+                'quantity' => $newQty,
+                'image' => $book->HinhAnh,
+            ];
 
             session()->put('cart', $cart);
+            Log::info('Session cart after add:', ['cart' => $cart, 'book_id' => $bookId, 'identifier' => $identifier]);
 
-            return response()->json(['status' => 'success', 'message' => 'Sản phẩm đã được thêm vào giỏ hàng!']);
+            CartHold::updateOrCreate(
+                array_merge($identifier, ['book_id' => $bookId]),
+                ['quantity' => $newQty, 'expires_at' => null] // Không dùng expires_at
+            );
+
+            $this->syncCart();
+            Log::info('Add to cart success:', [
+                'book_id' => $bookId,
+                'quantity' => $quantity,
+                'new_quantity' => $newQty,
+                'SoLuong' => $book->SoLuong,
+                'identifier' => $identifier
+            ]);
+
+            return response()->json(['status' => 'success', 'message' => 'Đã thêm vào giỏ hàng!', 'new_quantity' => $newQty])
+                ->header('Content-Type', 'application/json; charset=utf-8');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['status' => 'error', 'message' => 'Sách không tồn tại!'], 404);
+            Log::error('Book not found: ' . $e->getMessage(), ['book_id' => $bookId]);
+            return response()->json(['status' => 'error', 'message' => 'Sách không tồn tại!'], 400)
+                ->header('Content-Type', 'application/json; charset=utf-8');
         } catch (\Exception $e) {
-            \Log::error('Cart Add Error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['status' => 'error', 'message' => 'Đã có lỗi xảy ra: ' . $e->getMessage()], 500);
+            Log::error('Add to cart error: ' . $e->getMessage(), ['book_id' => $bookId, 'exception' => $e]);
+            return response()->json(['status' => 'error', 'message' => 'Lỗi hệ thống!'], 500)
+                ->header('Content-Type', 'application/json; charset=utf-8');
         }
     }
 
     public function index()
     {
+        $this->syncCart();
         $cart = session()->get('cart', []);
-        $total = 0;
-        foreach ($cart as $item) {
-            $total += $item['price'] * $item['quantity'];
-        }
-        return view('homepage.cart', compact('cart', 'total'));
-    }
+        $identifier = $this->getIdentifier();
+        $errors = [];
 
-    public function update(Request $request)
-    {
-        $quantities = $request->input('quantity', []);
+        Log::info('Cart before processing:', ['cart' => $cart, 'identifier' => $identifier]);
 
-        foreach ($quantities as $id => $quantity) {
-            if (isset($cart[$id])) {
-                $quantity = max(1, min((int)$quantity, 10));
-                $cart[$id]['quantity'] = $quantity;
+        foreach ($cart as $bookId => $item) {
+            $book = Book::find($bookId);
+            if (!$book) {
+                unset($cart[$bookId]);
+                $errors[] = "Sách với mã $bookId không tồn tại và đã được xóa khỏi giỏ hàng.";
+                Log::info('Removed book from cart: Book not found', ['book_id' => $bookId]);
+                continue;
+            }
+
+            $userHold = CartHold::where(array_merge($identifier, ['book_id' => $bookId]))
+                ->first();
+
+            if (!$userHold) {
+                unset($cart[$bookId]);
+                $errors[] = "Sách {$book->TenSach} không có trong giỏ hàng và đã được xóa.";
+                Log::info('Removed book from cart: No CartHold record', ['book_id' => $bookId]);
+                continue;
+            }
+
+            if ($item['quantity'] > $book->SoLuong) {
+                $errors[] = "Sách {$book->TenSach} chỉ còn $book->SoLuong quyển, không đủ {$item['quantity']} quyển. Đã xóa khỏi giỏ hàng.";
+                unset($cart[$bookId]);
+                CartHold::where(array_merge($identifier, ['book_id' => $bookId]))->delete();
+                Log::info('Removed book from cart: Quantity exceeded', [
+                    'book_id' => $bookId,
+                    'quantity' => $item['quantity'],
+                    'stock' => $book->SoLuong
+                ]);
+                continue;
             }
         }
 
         session()->put('cart', $cart);
+        $this->syncCart();
 
-        return redirect()->back()->with('success', 'Giỏ hàng đã được cập nhật!');
-    }
+        Log::info('Cart after processing:', ['cart' => $cart, 'identifier' => $identifier]);
 
-    public function remove($id)
-    {
-        $cart = session()->get('cart', []);
+        $total = collect($cart)->sum(function ($item) {
+            return $item['price'] * $item['quantity'];
+        });
 
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session()->put('cart', $cart);
+        if (!empty($errors)) {
+            session()->flash('cart_errors', $errors);
         }
 
-        return redirect()->back()->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng!');
+        return view('homepage.cart', compact('cart', 'total'));
+    }
+
+    public function remove(Request $request, $bookId)
+    {
+        try {
+            $sessionId = session()->getId();
+            $userId = Auth::check() ? Auth::id() : null;
+
+            Log::info('Attempting to remove book from cart:', [
+                'book_id' => $bookId,
+                'session_id' => $sessionId,
+                'user_id' => $userId
+            ]);
+
+            if ($request->header('X-Requested-With') !== 'XMLHttpRequest') {
+                Log::warning('Remove: Request is not AJAX.', ['book_id' => $bookId]);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Yêu cầu không hợp lệ!'
+                ], 400)->header('Content-Type', 'application/json; charset=utf-8');
+            }
+
+            $deletedRows = CartHold::where('book_id', $bookId)
+                ->where(function ($query) use ($sessionId, $userId) {
+                    if ($userId) {
+                        $query->where('user_id', $userId);
+                    } else {
+                        $query->where('session_id', $sessionId)->whereNull('user_id');
+                    }
+                })
+                ->delete();
+
+            if ($deletedRows === 0) {
+                Log::warning('Remove: No CartHold record found to delete.', [
+                    'book_id' => $bookId,
+                    'session_id' => $sessionId,
+                    'user_id' => $userId
+                ]);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Sản phẩm không tồn tại trong giỏ hàng!'
+                ], 404)->header('Content-Type', 'application/json; charset=utf-8');
+            }
+
+            $cart = session()->get('cart', []);
+            if (isset($cart[$bookId])) {
+                unset($cart[$bookId]);
+                session()->put('cart', $cart);
+                Log::info('Remove: Book removed from session cart.', [
+                    'book_id' => $bookId,
+                    'updated_cart' => $cart
+                ]);
+            }
+
+            $this->syncCart();
+
+            $total = collect($cart)->sum(function ($item) {
+                return $item['price'] * $item['quantity'];
+            });
+
+            Log::info('Remove: New total calculated.', [
+                'book_id' => $bookId,
+                'total' => $total,
+                'updated_cart' => $cart
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Đã xóa sản phẩm khỏi giỏ hàng!',
+                'total' => $total
+            ])->header('Content-Type', 'application/json; charset=utf-8');
+        } catch (\Exception $e) {
+            Log::error('Remove: Error removing product from cart.', [
+                'book_id' => $bookId,
+                'exception' => $e->getMessage()
+            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lỗi hệ thống khi xóa sản phẩm: ' . $e->getMessage()
+            ], 500)->header('Content-Type', 'application/json; charset=utf-8');
+        }
+    }
+
+    public function update(Request $request)
+    {
+        $this->syncCart();
+        $cart = session()->get('cart', []);
+        $identifier = $this->getIdentifier();
+
+        // Xử lý request từ AJAX
+        $bookId = $request->input('bookId');
+        $quantity = $request->input('quantity');
+
+        if ($bookId && $quantity) {
+            $qty = max(1, (int)$quantity);
+
+            if (!isset($cart[$bookId])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Sản phẩm không tồn tại trong giỏ hàng!'
+                ], 404);
+            }
+
+            try {
+                $book = Book::findOrFail($bookId);
+                if ($qty > $book->SoLuong) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => "Số lượng yêu cầu $qty vượt quá tồn kho ($book->SoLuong)!"
+                    ], 400);
+                }
+
+                $cart[$bookId]['quantity'] = $qty;
+                CartHold::updateOrCreate(
+                    array_merge($identifier, ['book_id' => $bookId]),
+                    ['quantity' => $qty, 'expires_at' => null]
+                );
+
+                session()->put('cart', $cart);
+                $this->syncCart();
+
+                $total = collect($cart)->sum(function ($item) {
+                    return $item['price'] * $item['quantity'];
+                });
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Cập nhật số lượng thành công!',
+                    'total' => $total
+                ]);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Sách không tồn tại!'
+                ], 404);
+            } catch (\Exception $e) {
+                Log::error('Update cart error: ' . $e->getMessage(), ['book_id' => $bookId]);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Lỗi hệ thống!'
+                ], 500);
+            }
+        }
+
+        // Xử lý request từ form
+        $quantities = $request->input('quantity', []);
+        foreach ($quantities as $bookId => $qty) {
+            $qty = max(1, (int)$qty);
+
+            if (!isset($cart[$bookId])) {
+                continue;
+            }
+
+            try {
+                $book = Book::findOrFail($bookId);
+                if ($qty > $book->SoLuong) {
+                    return redirect()->back()->with('error', "Số lượng yêu cầu $qty không có sẵn!.");
+                }
+
+                $cart[$bookId]['quantity'] = $qty;
+                CartHold::updateOrCreate(
+                    array_merge($identifier, ['book_id' => $bookId]),
+                    ['quantity' => $qty, 'expires_at' => null]
+                );
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                Log::error('Book not found: ' . $e->Tree, ['book_id' => $bookId]);
+                unset($cart[$bookId]);
+            }
+        }
+
+        session()->put('cart', $cart);
+        $this->syncCart();
+        return redirect()->back()->with('success', 'Đã cập nhật giỏ hàng!');
+    }
+
+    public function mergeCart($oldSessionId = null)
+    {
+        if (!Auth::check()) {
+            return;
+        }
+
+        $userId = Auth::id();
+        $currentSessionId = session()->getId();
+        $sessionIdToCheck = $oldSessionId ?? $currentSessionId;
+        $cart = session()->get('cart', []);
+
+        try {
+            \Log::info('Starting cart merge:', [
+                'user_id' => $userId,
+                'current_session_id' => $currentSessionId,
+                'old_session_id' => $oldSessionId,
+                'initial_cart' => $cart,
+            ]);
+
+            // Lấy bản ghi CartHold của user và session cũ, nhóm theo book_id
+            $userHolds = CartHold::where(function ($query) use ($userId, $sessionIdToCheck) {
+                $query->where('user_id', $userId)
+                      ->orWhere(function ($q) use ($sessionIdToCheck) {
+                          $q->whereNull('user_id')->where('session_id', $sessionIdToCheck);
+                      });
+            })->where('expires_at', '>', now())
+              ->get()
+              ->groupBy('book_id'); // Nhóm để xử lý trùng lặp
+
+            // Khởi tạo mergedCart từ session cart
+            $mergedCart = $cart;
+
+            // Gộp từ CartHold
+            foreach ($userHolds as $bookId => $holds) {
+                $book = Book::find($bookId);
+                if (!$book) {
+                    \Log::warning('Sách không tồn tại trong CartHold:', ['book_id' => $bookId]);
+                    continue;
+                }
+
+                // Tính tổng số lượng từ tất cả bản ghi CartHold cho book_id
+                $totalHoldQty = $holds->sum('quantity');
+
+                // Tính số lượng giữ bởi người khác
+                $totalHeldByOthers = CartHold::where('book_id', $bookId)
+                    ->where(function ($query) use ($userId, $currentSessionId) {
+                        $query->where('user_id', '!=', $userId)
+                              ->orWhereNull('user_id');
+                    })->where('session_id', '!=', $currentSessionId)
+                    ->where('expires_at', '>', now())
+                    ->sum('quantity');
+
+                $availableQty = $book->SoLuong - $totalHeldByOthers;
+
+                if ($totalHoldQty <= $availableQty) {
+                    if (isset($mergedCart[$bookId])) {
+                        // Cộng dồn số lượng
+                        $newQty = $mergedCart[$bookId]['quantity'] + $totalHoldQty;
+                        $mergedCart[$bookId]['quantity'] = min($newQty, $availableQty);
+                    } else {
+                        $mergedCart[$bookId] = [
+                            'name' => $book->TenSach,
+                            'price' => $book->GiaBan,
+                            'quantity' => min($totalHoldQty, $availableQty),
+                            'image' => $book->HinhAnh,
+                        ];
+                    }
+                } else {
+                    \Log::warning('Số lượng trong CartHold vượt tồn kho:', [
+                        'book_id' => $bookId,
+                        'hold_qty' => $totalHoldQty,
+                        'available_qty' => $availableQty,
+                    ]);
+                }
+            }
+
+            // Kiểm tra tồn kho cho tất cả sách trong mergedCart
+            foreach ($mergedCart as $bookId => &$item) {
+                $book = Book::find($bookId);
+                if (!$book) {
+                    unset($mergedCart[$bookId]);
+                    \Log::warning('Loại bỏ sách không tồn tại:', ['book_id' => $bookId]);
+                    continue;
+                }
+
+                $totalHeldByOthers = CartHold::where('book_id', $bookId)
+                    ->where('user_id', '!=', $userId)
+                    ->where('session_id', '!=', $currentSessionId)
+                    ->where('expires_at', '>', now())
+                    ->sum('quantity');
+
+                $availableQty = $book->SoLuong - $totalHeldByOthers;
+                if ($item['quantity'] > $availableQty) {
+                    \Log::warning('Điều chỉnh số lượng do vượt tồn kho:', [
+                        'book_id' => $bookId,
+                        'original_qty' => $item['quantity'],
+                        'adjusted_qty' => $availableQty,
+                    ]);
+                    if ($availableQty > 0) {
+                        $item['quantity'] = $availableQty;
+                    } else {
+                        unset($mergedCart[$bookId]);
+                    }
+                }
+            }
+
+            // Cập nhật session
+            session()->put('cart', $mergedCart);
+            \Log::info('Cart merged successfully:', [
+                'user_id' => $userId,
+                'current_session_id' => $currentSessionId,
+                'final_cart' => $mergedCart,
+            ]);
+
+            // Cập nhật CartHold
+            foreach ($mergedCart as $bookId => $item) {
+                CartHold::updateOrCreate(
+                    [
+                        'user_id' => $userId,
+                        'session_id' => $currentSessionId,
+                        'book_id' => $bookId,
+                    ],
+                    [
+                        'quantity' => $item['quantity'],
+                        'expires_at' => now()->addMinutes(self::HOLD_DURATION_MINUTES),
+                    ]
+                );
+            }
+
+            // Xóa CartHold cũ của session chưa đăng nhập
+            CartHold::whereNull('user_id')
+                    ->where('session_id', $sessionIdToCheck)
+                    ->delete();
+
+            session()->flash('success', 'Giỏ hàng đã được đồng bộ thành công!');
+        } catch (\Exception $e) {
+            \Log::error('Cart merge error: ' . $e->getMessage(), ['exception' => $e]);
+            session()->flash('error', 'Không thể đồng bộ giỏ hàng: ' . $e->getMessage());
+        }
     }
 
     public function clear()
     {
+        $identifier = $this->getIdentifier();
+        CartHold::where(function ($query) use ($identifier) {
+            $query->where('user_id', $identifier['user_id'])
+                  ->orWhere(function ($q) use ($identifier) {
+                      $q->whereNull('user_id')->where('session_id', $identifier['session_id']);
+                  });
+        })->delete();
         session()->forget('cart');
-        return redirect()->back()->with('success', 'Đã xóa tất cả sản phẩm trong giỏ hàng!');
+        $this->syncCart();
+        return redirect()->back()->with('success', 'Đã xóa tất cả sản phẩm khỏi giỏ hàng!');
     }
 }

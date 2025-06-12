@@ -414,7 +414,7 @@
   <!-- Preloader -->
   @yield('scripts')
   <script src="{{ asset('js/cart.js') }}"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- Vendor JS Files -->
   <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ asset('js/swiper-bundle.min.js') }}"></script>
@@ -441,7 +441,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const bubble = document.getElementById('bubble-alert');
-        
+
         // Click để ẩn
         bubble.addEventListener('click', () => {
             bubble.style.opacity = '0';

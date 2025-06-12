@@ -25,12 +25,13 @@ Route::get('/about/sachthieunhi/ajax', [AboutController::class, 'sachThieuNhiAja
 Route::get('/about/sachhay/ajax', [AboutController::class, 'sachHayAjax'])->name('about.sachhay.ajax');
 
 // Giỏ hàng & thanh toán
-Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-Route::get('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
+Route::get('cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::get('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+Route::post('/cart/remove/{bookId}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('cart/merge', [CartController::class, 'mergeCart'])->name('cart.merge');
 // Danh mục
 Route::get('/category', [HomeController::class, 'category']);
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
