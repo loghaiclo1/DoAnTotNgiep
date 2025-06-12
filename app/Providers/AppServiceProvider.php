@@ -35,22 +35,37 @@ class AppServiceProvider extends ServiceProvider
                 ->get()
                 ->groupBy('ten_muc');
 
-            $dmCap2 = Category::where('parent_id', 1)->take(4)->get();
-
-            $dmCap3 = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
-
-            $dmCap3 = $dmCap3->map(function ($dm) {
-                $dm->book_count = Book::where('category_id', $dm->id)->count();
-                return $dm;
-            })->sortByDesc('book_count')->take(4)->values();
-
             $view->with([
-                'dmCap2' => $dmCap2,
-                'dmCap3' => $dmCap3,
+                'dmWithTop3' => $this->getDmWithTop3ByParent(1),
+                'dmWithTop3QT' => $this->getDmWithTop3ByParent(2),
                 'thongTinChung' => $thongTinChung,
                 'duLieuChanTrang' => $mucCon,
                 'tatCaDuLieu' => $tatCaDuLieu,
             ]);
+        });
+    }
+    private function getDmWithTop3ByParent($parentId)
+    {
+        $dmCap2 = Category::where('parent_id', $parentId)->get();
+        $dmCap3All = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
+
+        $books1 = Book::select('category_id')
+            ->selectRaw('COUNT(*) as book_count')
+            ->groupBy('category_id')
+            ->pluck('book_count', 'category_id');
+
+        $dmCap3All = $dmCap3All->map(function ($cat) use ($books1) {
+            $cat->book_count = $books1[$cat->id] ?? 0;
+            return $cat;
+        });
+
+        return $dmCap2->map(function ($dm2) use ($dmCap3All) {
+            $children = $dmCap3All->where('parent_id', $dm2->id)
+                ->sortByDesc('book_count')
+                ->take(4)
+                ->values();
+            $dm2->topChildren = $children;
+            return $dm2;
         });
     }
 }
