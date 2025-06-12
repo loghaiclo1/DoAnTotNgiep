@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'eStore - Tài khoản')
+@section('title', 'BookShop - Tài khoản')
 @section('content')
 
   <main class="main">
@@ -8,11 +8,11 @@
     <!-- Page Title -->
     <div class="page-title light-background">
       <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1 class="mb-2 mb-lg-0">Account</h1>
+        <h1 class="mb-2 mb-lg-0">Tài khoản</h1>
         <nav class="breadcrumbs">
           <ol>
-            <li><a href="https://bootstrapmade.com/content/demo/eStore/index.html">Home</a></li>
-            <li class="current">Account</li>
+            <li><a href=" {{url('/')}} ">Trang chủ</a></li>
+            <li class="current">Tài khoản</li>
           </ol>
         </nav>
       </div>
@@ -38,67 +38,68 @@
               <!-- User Info -->
               <div class="user-info aos-init aos-animate" data-aos="fade-right">
                 <div class="user-avatar">
-                  <img src="./Account - eStore Bootstrap Template_files/person-f-1.webp" alt="Profile" loading="lazy">
-                  <span class="status-badge"><i class="bi bi-shield-check"></i></span>
+                  <img src="{{ $user->avatar ?? asset('default-avatar.jpg') }}" alt="Profile" loading="lazy">
+                  <span class="status-badge">
+                    <i class="bi bi-shield-check"></i>
+                  </span>
                 </div>
-                <h4>Sarah Anderson</h4>
+                  <h4>{{ $user->Ho . ' ' . $user->Ten }}</h4>
                 <div class="user-status">
                   <i class="bi bi-award"></i>
-                  <span>Premium Member</span>
+                  <span>{{ $user->membership_status ?? 'Thành viên thường' }}</span>
                 </div>
               </div>
-
               <!-- Navigation Menu -->
               <nav class="menu-nav">
                 <ul class="nav flex-column" role="tablist">
                   <li class="nav-item" role="presentation">
                     <a class="nav-link active" data-bs-toggle="tab" href="https://bootstrapmade.com/content/demo/eStore/account.html#orders" aria-selected="true" role="tab">
                       <i class="bi bi-box-seam"></i>
-                      <span>My Orders</span>
+                      <span>Đơn hàng</span>
                       <span class="badge">3</span>
                     </a>
                   </li>
                   <li class="nav-item" role="presentation">
                     <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapmade.com/content/demo/eStore/account.html#wishlist" aria-selected="false" tabindex="-1" role="tab">
                       <i class="bi bi-heart"></i>
-                      <span>Wishlist</span>
+                      <span>Danh sách yêu thích</span>
                       <span class="badge">12</span>
                     </a>
                   </li>
                   <li class="nav-item" role="presentation">
                     <a class="nav-link" data-bs-toggle="tab" href="https://login.com/content/demo/eStore/account.html#wallet" aria-selected="false" tabindex="-1" role="tab">
                       <i class="bi bi-wallet2"></i>
-                      <span>Payment Methods</span>
+                      <span>Phương thức thanh toán</span>
                     </a>
                   </li>
                   <li class="nav-item" role="presentation">
                     <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapmade.com/content/demo/eStore/account.html#reviews" aria-selected="false" tabindex="-1" role="tab">
                       <i class="bi bi-star"></i>
-                      <span>My Reviews</span>
+                      <span>Đánh giá của tôi</span>
                     </a>
                   </li>
                   <li class="nav-item" role="presentation">
                     <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapmade.com/content/demo/eStore/account.html#addresses" aria-selected="false" tabindex="-1" role="tab">
                       <i class="bi bi-geo-alt"></i>
-                      <span>Addresses</span>
+                      <span>Địa chỉ</span>
                     </a>
                   </li>
                   <li class="nav-item" role="presentation">
                     <a class="nav-link" data-bs-toggle="tab" href="https://bootstrapmade.com/content/demo/eStore/account.html#settings" aria-selected="false" tabindex="-1" role="tab">
                       <i class="bi bi-gear"></i>
-                      <span>Account Settings</span>
+                      <span>Tùy chọn tài khoản</span>
                     </a>
                   </li>
                 </ul>
 
                 <div class="menu-footer">
-                  <a href="https://bootstrapmade.com/content/demo/eStore/account.html#" class="help-link">
+                  <a href=" {{ url('/contact') }} " class="help-link">
                     <i class="bi bi-question-circle"></i>
-                    <span>Help Center</span>
+                    <span>Hỗ trợ khách hàng</span>
                   </a>
-                  <a href="https://bootstrapmade.com/content/demo/eStore/account.html#" class="logout-link">
+                  <a href=" {{ url('/logout') }} " class="logout-link">
                     <i class="bi bi-box-arrow-right"></i>
-                    <span>Log Out</span>
+                    <span>Đăng xuất</span>
                   </a>
                 </div>
               </nav>

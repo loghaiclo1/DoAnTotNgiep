@@ -6,7 +6,7 @@
         <div class="categories-section">
             {{-- Hiển thị 4 danh mục cấp 2 --}}
             <div class="category-headers">
-                @foreach ($data->take(4) as $parent)
+                @foreach ($data as $parent)
                     <h4>{{ $parent->name }}</h4>
                 @endforeach
             </div>

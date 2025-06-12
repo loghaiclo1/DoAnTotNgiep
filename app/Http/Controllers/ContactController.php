@@ -9,7 +9,9 @@ class ContactController extends Controller
     public function index()
     {
         return view('homepage.contact');
-    }public function store(Request $request)
+    }
+    
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'ho_ten' => 'required|string|max:255',
