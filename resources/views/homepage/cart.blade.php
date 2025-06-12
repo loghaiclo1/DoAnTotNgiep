@@ -1,4 +1,3 @@
-```blade
 @extends('layout.main')
 
 @section('title', 'BookShop - Giỏ Hàng')
@@ -117,8 +116,7 @@
                                                 <button type="submit" class="btn btn-outline-accent me-2">
                                                     <i class="bi bi-arrow-clockwise"></i> Cập nhật
                                                 </button>
-                                                <a href="{{ route('cart.clear') }}"
-                                                   class="btn btn-outline-danger">
+                                                <a href="{{ route('cart.clear') }}" id="clear-cart-btn" class="btn btn-outline-danger">
                                                     <i class="bi bi-trash"></i> Xóa tất cả
                                                 </a>
                                             </div>
@@ -194,6 +192,7 @@
                 return Math.floor(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             }
 
+            // Xử lý xóa từng sản phẩm
             document.querySelectorAll('.remove-item').forEach(button => {
                 button.replaceWith(button.cloneNode(true));
             });
@@ -274,6 +273,7 @@
                 });
             });
 
+            // Xử lý tăng/giảm số lượng
             document.querySelectorAll('.increase-quantity, .decrease-quantity').forEach(button => {
                 button.replaceWith(button.cloneNode(true));
             });
@@ -370,7 +370,33 @@
                     });
                 });
             }
+
+          // Xử lý nút Xóa tất cả
+          const clearCartBtn = document.querySelector('#clear-cart-btn');
+            if (clearCartBtn) {
+                clearCartBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    console.log('Nút Xóa tất cả được nhấn');
+
+                    Swal.fire({
+                        title: 'Xác nhận xóa tất cả',
+                        text: 'Bạn có chắc muốn xóa toàn bộ sản phẩm khỏi giỏ hàng không?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Xóa tất cả',
+                        cancelButtonText: 'Hủy',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('Xác nhận xóa tất cả, chuyển hướng đến /cart/clear');
+                            window.location.href = '{{ route('cart.clear') }}';
+                        } else {
+                            console.log('Hủy xóa tất cả giỏ hàng');
+                        }
+                    });
+                });
+            } else {
+                console.error('Không tìm thấy nút #clear-cart-btn');
+            }
         });
     </script>
 @endsection
-```

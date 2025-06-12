@@ -550,5 +550,17 @@ class CartController extends Controller
         }
     }
 
-
+    public function clear()
+    {
+        $identifier = $this->getIdentifier();
+        CartHold::where(function ($query) use ($identifier) {
+            $query->where('user_id', $identifier['user_id'])
+                  ->orWhere(function ($q) use ($identifier) {
+                      $q->whereNull('user_id')->where('session_id', $identifier['session_id']);
+                  });
+        })->delete();
+        session()->forget('cart');
+        $this->syncCart();
+        return redirect()->back()->with('success', 'Đã xóa tất cả sản phẩm khỏi giỏ hàng!');
+    }
 }
