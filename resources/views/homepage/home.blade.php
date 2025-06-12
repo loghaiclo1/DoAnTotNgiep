@@ -220,7 +220,7 @@
 
                                 <div class="product-info">
                                     <h3 class="product-title">
-                                        <a href="{{ route('product.detail', $book->MaSach) }}">{{ $book->TenSach }}</a>
+                                        <a href="{{ route('product.detail', $book->slug) }}">{{ $book->TenSach }}</a>
                                     </h3>
                                     <div class="product-price">
                                         <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>

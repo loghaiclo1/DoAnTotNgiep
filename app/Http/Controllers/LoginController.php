@@ -16,9 +16,11 @@ class LoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
-            $user = Auth::user(); // Lấy thông tin người dùng đã đăng nhập
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
             $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
+            $cartController = new \App\Http\Controllers\CartController();
+            $cartController->mergeCart();
             return redirect()->intended('/')->with('success', $message);
         }
 
