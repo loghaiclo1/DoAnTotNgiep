@@ -47,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
     private function getDmWithTop3ByParent($parentId)
     {
         $dmCap2 = Category::where('parent_id', $parentId)->get();
+        
         $dmCap3All = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
 
         $books1 = Book::select('category_id')
@@ -59,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
             return $cat;
         });
 
-        return $dmCap2->map(function ($dm2) use ($dmCap3All) {
+        $dmCap2 = $dmCap2->map(function ($dm2) use ($dmCap3All) {
             $children = $dmCap3All->where('parent_id', $dm2->id)
                 ->sortByDesc('book_count')
                 ->take(4)
@@ -67,5 +68,7 @@ class AppServiceProvider extends ServiceProvider
             $dm2->topChildren = $children;
             return $dm2;
         });
+        
+        return $dmCap2->chunk(4);
     }
 }
