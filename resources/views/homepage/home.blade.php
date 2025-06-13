@@ -177,7 +177,6 @@
                                     </div>
                                     <h3 class="category-title" style="height: 40px">{{ $category->name }}</h3>
                                     <p class="category-count">{{ $category->demsach }} Sách</p>
-                                    <a href="{{ url('/category/' . $category->slug) }}" class="stretched-link"></a>
                                 </div>
                             </div>
                         @endforeach
@@ -318,7 +317,7 @@
 
     <!-- Thêm SweetAlert2 và JavaScript cho AJAX -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
+    {{-- <script>
         // Xử lý session thông báo (nếu có)
         @if (session('success'))
             Swal.fire({
@@ -338,6 +337,6 @@
                 timer: 3000
             });
         @endif
-        </script>
+        </script> --}}
 
 @endsection

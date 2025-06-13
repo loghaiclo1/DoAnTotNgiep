@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 // Trang chủ
 Route::get('/', [HomeController::class, 'index']);
@@ -43,13 +45,14 @@ Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('categ
 // Chi tiết sản phẩm
 Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
 
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 
 // Liên hệ
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Tài khoản
-Route::get('/account', [HomeController::class, 'account']);
+Route::get('/account', [AccountController::class, 'index'])->name('account');
 
 // Đăng nhập / Đăng ký
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

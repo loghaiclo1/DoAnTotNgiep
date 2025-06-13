@@ -7,11 +7,11 @@
         <!-- Page Title -->
         <div class="page-title light-background">
             <div class="container d-lg-flex justify-content-between align-items-center">
-                <h1 class="mb-2 mb-lg-0">Category</h1>
+                <h1 class="mb-2 mb-lg-0">Danh mục</h1>
                 <nav class="breadcrumbs">
                     <ol>
-                        <li><a href="index.html">Home</a></li>
-                        <li class="current">Category</li>
+                        <li><a href=" {{ uri('/') }} ">Trang chủ</a></li>
+                        <li class="current">Danh mục</li>
                     </ol>
                 </nav>
             </div>
@@ -27,7 +27,7 @@
                         <!-- Product Categories Widget -->
                         <div class="product-categories-widget widget-item">
 
-                            <h3 class="widget-title">Categories</h3>
+                            <h3 class="widget-title">Danh mục</h3>
 
                             <ul class="category-tree list-unstyled mb-0">
                                 <!-- Clothing Category -->
