@@ -1,6 +1,8 @@
+
 @extends('layout.main')
 
 @section('title', 'BookShop - Giỏ Hàng')
+
 @section('content')
     <main class="main">
         <!-- Page Title -->
@@ -19,11 +21,24 @@
         <!-- Cart Section -->
         <section id="cart" class="cart section">
             <div class="container" data-aos="fade-up" data-aos-delay="100">
+                <!-- Debug session -->
+                <div style="display: none;">Debug session: {{ print_r(session()->all(), true) }}</div>
+
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
                 @if (session('error'))
                     <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+                @if (session('cart_errors'))
+                    <div class="alert alert-warning">
+                        <strong>Thông báo giỏ hàng:</strong>
+                        <ul>
+                            @foreach (session('cart_errors') as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -53,7 +68,7 @@
                                 </div>
                             </div>
 
-                            @if (!is_array($cart))
+                            @if (!is_array($cart) || empty($cart))
                                 <p>Giỏ hàng của bạn đang trống.</p>
                             @else
                                 <form action="{{ route('cart.update') }}" method="POST" id="cartForm">
@@ -87,10 +102,10 @@
                                                     <div class="quantity-selector" data-book-id="{{ $id }}">
                                                         <button type="button" class="btn btn-sm btn-outline-secondary decrease-quantity"
                                                                 data-book-id="{{ $id }}" data-quantity="{{ $item['quantity'] }}"
-                                                                @if ($item['quantity'] <= 1) disabled @endif>-</button>
+                                                                @if ($item['quantity'] <= 0) disabled @endif>-</button>
                                                         <input type="number" name="quantity[{{ $id }}]"
                                                                class="quantity-input form-control d-inline-block w-25 text-center"
-                                                               value="{{ $item['quantity'] }}" min="1" max="10000">
+                                                               value="{{ $item['quantity'] }}" min="0" max="10000">
                                                         <button type="button" class="btn btn-sm btn-outline-secondary increase-quantity"
                                                                 data-book-id="{{ $id }}" data-quantity="{{ $item['quantity'] }}">+</button>
                                                     </div>
@@ -130,29 +145,24 @@
                     <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
                         <div class="cart-summary">
                             <h4 class="summary-title">Tổng đơn hàng</h4>
-
                             <div class="summary-item">
                                 <span class="summary-label"></span>
                                 <span class="summary-value" id="subtotal">{{ number_format($total, 0, ',', '.') }}₫</span>
                             </div>
-
                             <div class="summary-total">
                                 <span class="summary-label">Tổng cộng</span>
                                 <span class="summary-value" id="total">{{ number_format($total, 0, ',', '.') }}₫</span>
                             </div>
-
                             <div class="checkout-button">
                                 <a href="#" class="btn btn-accent w-100">
                                     Thanh toán <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
-
                             <div class="continue-shopping">
                                 <a href="{{ url('/') }}" class="btn btn-link w-100">
                                     <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
                                 </a>
                             </div>
-
                             <div class="payment-methods">
                                 <p class="payment-title">Phương thức thanh toán</p>
                                 <div class="payment-icons">
@@ -302,7 +312,7 @@
                     const quantityInput = this.closest('.quantity-selector').querySelector('.quantity-input');
                     let currentQuantity = parseInt(quantityInput.value);
 
-                    if (currentQuantity > 1) {
+                    if (currentQuantity > 0) {
                         currentQuantity -= 1;
                         updateQuantity(bookId, currentQuantity, quantityInput, this.closest('.cart-item'));
                     }
@@ -345,7 +355,7 @@
                         document.getElementById('subtotal').textContent = numberFormat(data.total) + '₫';
                         document.getElementById('total').textContent = numberFormat(data.total) + '₫';
                         const decreaseButton = cartItem.querySelector('.decrease-quantity');
-                        decreaseButton.disabled = newQuantity <= 1;
+                        decreaseButton.disabled = newQuantity <= 0;
                         Swal.fire({
                             icon: 'success',
                             title: 'Thành công',
@@ -354,11 +364,24 @@
                             showConfirmButton: false,
                         });
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: data.message || 'Cập nhật số lượng thất bại!',
-                        });
+                        if (data.needs_reload) {
+                            console.log('Phát hiện needs_reload từ update, reload trang');
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Cập nhật giỏ hàng',
+                                text: 'Số lượng vượt tồn kho, trang sẽ reload để cập nhật.',
+                                timer: 2000,
+                                showConfirmButton: false,
+                            }).then(() => {
+                                window.location.href = window.location.href;
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: data.message || 'Cập nhật số lượng thất bại!',
+                            });
+                        }
                     }
                 })
                 .catch(error => {
@@ -371,8 +394,8 @@
                 });
             }
 
-          // Xử lý nút Xóa tất cả
-          const clearCartBtn = document.querySelector('#clear-cart-btn');
+            // Xử lý nút Xóa tất cả
+            const clearCartBtn = document.querySelector('#clear-cart-btn');
             if (clearCartBtn) {
                 clearCartBtn.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -397,6 +420,96 @@
             } else {
                 console.error('Không tìm thấy nút #clear-cart-btn');
             }
+
+            // Ngăn nhập số âm
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', function () {
+                    if (this.value < 0) {
+                        this.value = 0;
+                    }
+                });
+            });
+            function checkStock() {
+                const bookIds = Array.from(document.querySelectorAll('.cart-item')).map(item => {
+                    const id = item.querySelector('.quantity-selector').getAttribute('data-book-id');
+                    return id ? parseInt(id) : null;
+                }).filter(id => id !== null);
+
+                console.log('Bắt đầu kiểm tra tồn kho, bookIds:', bookIds);
+                if (bookIds.length === 0) {
+                    console.log('Giỏ hàng trống, không kiểm tra tồn kho');
+                    return;
+                }
+
+                fetch('/cart/check-stock', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': token,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        _token: token,
+                        book_ids: bookIds
+                    })
+                })
+                .then(response => {
+                    console.log('Phản hồi kiểm tra tồn kho - Status:', response.status, 'URL:', response.url);
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`Lỗi server: ${response.status} - ${response.statusText}. Response: ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Dữ liệu phản hồi kiểm tra tồn kho:', data);
+                    if (data.needs_reload) {
+                        console.log('Phát hiện thay đổi tồn kho, chuẩn bị reload trang');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Cập nhật giỏ hàng',
+                            text: 'Tồn kho đã thay đổi, trang sẽ reload để cập nhật giỏ hàng.',
+                            timer: 2000,
+                            showConfirmButton: false,
+                        }).then(() => {
+                            console.log('Thực hiện reload trang từ checkStock');
+                            window.location.href = window.location.href;
+                        });
+                    } else {
+                        console.log('Tồn kho không thay đổi, không reload');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi kiểm tra tồn kho:', error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi kiểm tra tồn kho',
+                        text: error.message,
+                        timer: 3000,
+                        showConfirmButton: false,
+                    });
+                });
+            }
+
+            // Khởi tạo polling
+            console.log('Khởi tạo polling kiểm tra tồn kho');
+            const pollingInterval = setInterval(() => {
+                console.log('Chạy polling kiểm tra tồn kho');
+                checkStock();
+            }, 10000);
+            // Chạy lần đầu sau 5 giây
+            setTimeout(() => {
+                console.log('Chạy kiểm tra tồn kho lần đầu');
+                checkStock();
+            }, 5000);
+
+            // Dừng polling khi rời trang
+            window.addEventListener('beforeunload', () => {
+                console.log('Dừng polling khi rời trang');
+                clearInterval(pollingInterval);
+            });
         });
     </script>
 @endsection

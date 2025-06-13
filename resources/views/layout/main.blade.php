@@ -134,11 +134,11 @@
               <span class="badge">0</span>
             </a>
 
-            <!-- Cart -->
-            <a href="{{ url("/cart") }}" class="header-action-btn">
-              <i class="bi bi-cart3"></i>
-              <span class="badge">3</span>
+            <a href="{{ url('/cart') }}" class="header-action-btn">
+                <i class="bi bi-cart3"></i>
+                {{-- <span class="badge"></span> --}}
             </a>
+
 
             <!-- Mobile Navigation Toggle -->
             <i class="mobile-nav-toggle d-xl-none bi bi-list me-0"></i>
@@ -408,17 +408,17 @@
                   <div class="megamenu-content tab-content">
                     <!-- Sach VN Tab -->
                    <x-categorymenu
-                        :data="$dmWithTop3" 
-                        tab-id="vn-tab-pane" 
-                        tab-label="vn-tab" 
-                        :active="true" 
+                        :data="$dmWithTop3"
+                        tab-id="vn-tab-pane"
+                        tab-label="vn-tab"
+                        :active="true"
                     />
 
                     <x-categorymenu
-                        :data="$dmWithTop3QT" 
-                        tab-id="qt-tab-pane" 
-                        tab-label="qt-tab" 
-                        :active="false" 
+                        :data="$dmWithTop3QT"
+                        tab-id="qt-tab-pane"
+                        tab-label="qt-tab"
+                        :active="false"
                     />
                   </div>
                 </div><!-- End Products Mega Menu 2 Desktop View -->
@@ -615,6 +615,8 @@
 @endif
 @if (session('success'))
 <script>
+
+
     document.addEventListener('DOMContentLoaded', function () {
         const bubble = document.getElementById('bubble-alert');
 

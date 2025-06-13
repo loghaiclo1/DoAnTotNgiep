@@ -188,7 +188,7 @@ class CartController extends Controller
 
         Log::info('Cart before processing:', ['cart' => $cart, 'identifier' => $identifier]);
 
-        foreach ($cart as $bookId => $item) {
+        foreach ($cart as $bookId => &$item) {
             $book = Book::find($bookId);
             if (!$book) {
                 unset($cart[$bookId]);
@@ -207,16 +207,17 @@ class CartController extends Controller
                 continue;
             }
 
+            // Kiểm tra số lượng tồn kho khả dụng
             if ($item['quantity'] > $book->SoLuong) {
-                $errors[] = "Sách {$book->TenSach} chỉ còn $book->SoLuong quyển, không đủ {$item['quantity']} quyển. Đã xóa khỏi giỏ hàng.";
-                unset($cart[$bookId]);
-                CartHold::where(array_merge($identifier, ['book_id' => $bookId]))->delete();
-                Log::info('Removed book from cart: Quantity exceeded', [
+                $errors[] = "Số lượng {$item['quantity']} quyển của sách {$book->TenSach} không sẵn yêu cầu, số lượng đã được đặt về 0.";
+                $item['quantity'] = 0;
+                CartHold::where(array_merge($identifier, ['book_id' => $bookId]))
+                    ->update(['quantity' => 0, 'expires_at' => null]);
+                Log::info('Adjusted book quantity to 0 due to insufficient stock', [
                     'book_id' => $bookId,
                     'quantity' => $item['quantity'],
                     'stock' => $book->SoLuong
                 ]);
-                continue;
             }
         }
 
@@ -224,18 +225,22 @@ class CartController extends Controller
         $this->syncCart();
 
         Log::info('Cart after processing:', ['cart' => $cart, 'identifier' => $identifier]);
+        Log::info('Errors before flashing:', ['errors' => $errors]);
+
+        if (!empty($errors)) {
+            session()->flash('cart_errors', $errors);
+            session()->flash('cart_needs_reload', true);
+            Log::info('Flashed cart_errors and cart_needs_reload', ['errors' => $errors]);
+        }
+
+        Log::info('Session data before render:', ['session' => session()->all()]);
 
         $total = collect($cart)->sum(function ($item) {
             return $item['price'] * $item['quantity'];
         });
 
-        if (!empty($errors)) {
-            session()->flash('cart_errors', $errors);
-        }
-
         return view('homepage.cart', compact('cart', 'total'));
     }
-
     public function remove(Request $request, $bookId)
     {
         try {
@@ -342,7 +347,7 @@ class CartController extends Controller
                 if ($qty > $book->SoLuong) {
                     return response()->json([
                         'status' => 'error',
-                        'message' => "Số lượng yêu cầu $qty vượt quá tồn kho ($book->SoLuong)!"
+                        'message' => "Số lượng yêu cầu $qty không có sẵn!"
                     ], 400);
                 }
 
@@ -563,4 +568,86 @@ class CartController extends Controller
         $this->syncCart();
         return redirect()->back()->with('success', 'Đã xóa tất cả sản phẩm khỏi giỏ hàng!');
     }
+    public function checkStock(Request $request)
+    {
+        try {
+            $this->syncCart();
+            $cart = session()->get('cart', []);
+            $identifier = $this->getIdentifier();
+            $bookIds = $request->input('book_ids', []);
+
+            Log::info('Check stock request:', [
+                'book_ids' => $bookIds,
+                'cart' => $cart,
+                'identifier' => $identifier
+            ]);
+
+            if (empty($bookIds) || empty($cart)) {
+                Log::info('Check stock: Giỏ hàng hoặc book_ids rỗng, không cần reload.');
+                return response()->json(['needs_reload' => false], 200);
+            }
+
+            $errors = [];
+            foreach ($bookIds as $bookId) {
+                if (!isset($cart[$bookId])) {
+                    Log::info('Check stock: Sách không có trong giỏ hàng, bỏ qua.', ['book_id' => $bookId]);
+                    continue;
+                }
+
+                $book = Book::find($bookId);
+                if (!$book) {
+                    $errors[] = "Sách với mã $bookId không tồn tại.";
+                    Log::warning('Check stock: Book not found', ['book_id' => $bookId]);
+                    continue;
+                }
+
+                $item = $cart[$bookId];
+                if ($item['quantity'] > $book->SoLuong) {
+                    $errors[] = "Số lượng {$item['quantity']} quyển của sách {$book->TenSach} không sẵn yêu cầu, số lượng đã được đặt về 0.";
+                    $cart[$bookId]['quantity'] = 0;
+                    CartHold::where(array_merge($identifier, ['book_id' => $bookId]))
+                        ->update(['quantity' => 0, 'expires_at' => null]);
+                    Log::info('Check stock: Adjusted book quantity to 0 due to insufficient stock', [
+                        'book_id' => $bookId,
+                        'quantity' => $item['quantity'],
+                        'stock' => $book->SoLuong
+                    ]);
+                }
+            }
+
+            if (!empty($errors)) {
+                session()->put('cart', $cart);
+                $this->syncCart();
+                session()->flash('cart_errors', $errors);
+                session()->flash('cart_needs_reload', true);
+                Log::info('Check stock: Flashed cart_errors and cart_needs_reload', [
+                    'errors' => $errors,
+                    'session' => session()->all()
+                ]);
+                return response()->json(['needs_reload' => true], 200);
+            }
+
+            Log::info('Check stock: Không có lỗi tồn kho, không cần reload.');
+            return response()->json(['needs_reload' => false], 200);
+        } catch (\Exception $e) {
+            Log::error('Check stock: Lỗi hệ thống', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'needs_reload' => false,
+                'error' => 'Lỗi hệ thống khi kiểm tra tồn kho: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getCartQuantity()
+{
+    $cart = session('cart', []);
+    $totalQuantity = collect($cart)->sum('quantity');
+
+    return response()->json([
+        'cart_total_quantity' => $totalQuantity
+    ]);
+}
+
 }

@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         // Đăng ký lệnh Artisan tại đây
         \App\Console\Commands\CleanExpiredCartHolds::class,
+    
     ];
 
     /**
