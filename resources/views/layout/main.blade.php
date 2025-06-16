@@ -42,7 +42,7 @@
 
 <body class="index-page vsc-initialized" data-aos-easing="ease-in-out" data-aos-duration="600" data-aos-delay="0">
 
-  <header id="header" class="header position-relative">
+  <header id="header" class="header position-fixed top-0 start-0 w-100 z-100 bg-white shadow-sm">
 
     <!-- Main Header -->
     <div class="main-header">

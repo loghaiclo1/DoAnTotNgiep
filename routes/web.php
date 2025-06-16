@@ -39,7 +39,7 @@ Route::post('cart/update', [CartController::class, 'update'])->name('cart.update
 Route::post('cart/merge', [CartController::class, 'mergeCart'])->name('cart.merge');
 Route::post('/cart/check-stock', [CartController::class, 'checkStock']);
 // Danh mục
-Route::get('/category', [HomeController::class, 'category']);
+Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 
 // Chi tiết sản phẩm
