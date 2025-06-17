@@ -1,4 +1,4 @@
-@extends('layout.main')
+{{-- @extends('layout.main')
 
 @section('title', 'BookShop - Danh Mục')
 @section('content')
@@ -886,4 +886,4 @@
         </div>
 
     </main>
-@endsection
+@endsection --}}

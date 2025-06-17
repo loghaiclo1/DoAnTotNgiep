@@ -313,9 +313,9 @@
                     <div class="footer-widget footer-about">
                         <a href=" #" class="logo">
                             @if(isset($thongTinChung) && $thongTinChung->logo_url)
-                            <img src="{{ asset($thongTinChung->logo_url) }}" alt="{{ $thongTinChung->ten_cong_ty ?? 'Logo' }}" class="sitename">
+                            {{-- <img src="{{ asset($thongTinChung->logo_url) }}" alt="{{ $thongTinChung->ten_cong_ty ?? 'Logo' }}" class="sitename"> --}}
                         @else
-                            <span class="sitename">DEMO</span>
+                            <span class="sitename">BookShop</span>
                         @endif
                         </a>
                         @if(isset($thongTinChung))

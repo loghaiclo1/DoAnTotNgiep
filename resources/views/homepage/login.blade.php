@@ -30,7 +30,7 @@
                             <div class="tab-content">
 
                                 <!-- Login Form -->
-                                <div class="tab-pane fade show active" id="login-register-login-form" role="tabpanel">                                    
+                                <div class="tab-pane fade show active" id="login-register-login-form" role="tabpanel">
                                     <form action="{{ route('login') }}" method="POST">
                                         @csrf
 
@@ -75,11 +75,11 @@
 
                                 </div>
 
-                                <div class="col-12">
+                                {{-- <div class="col-12">
                                     <a href="{{ route('login') }}" class="btn btn-outline-danger btn-lg">
                                         <i class="bi bi-google me-2"></i>Đăng nhập bằng Google
                                     </a>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="col-12 text-center">
                                 <small>Nếu chưa có tài khoản, <a href="{{ route('register') }}">đăng kí ở đây</a></small>

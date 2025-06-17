@@ -40,7 +40,7 @@
                                 $book2 = $featuredBooks[1] ?? null;
                                 $book3 = $featuredBooks[2] ?? null;
                             @endphp
-                            <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="Sách nổi bật" class="main-product"
+                            <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="{{$book3->TenSach}}" class="main-product"
                                 loading="lazy" style="height: 500px">
 
                             @if ($book1)
@@ -223,12 +223,12 @@
                                     <div class="product-price">
                                         <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
                                     </div>
-                                    <div class="product-rating">
+                                    {{-- <div class="product-rating">
                                         @for ($i = 1; $i <= 5; $i++)
                                             <i class="bi {{ $i <= 5 - $index ? 'bi-star-fill' : 'bi-star' }}"></i>
                                         @endfor
                                         <span class="rating-count">({{ 10 + $index * 5 }} đánh giá)</span>
-                                    </div>
+                                    </div> --}}
                                     @if ($book->SoLuong == 0)
                                         <button class="btn btn-add-to-cart btn-disabled" disabled>
                                             <i class="bi bi-bag-plus me-2"></i>Hết hàng

@@ -13,17 +13,22 @@
                         </div>
                     </div>
                 <div class="row product-container isotope-container aos-init" data-aos="fade-up" data-aos-delay="200">
-                    
+
                     @foreach ($books as $book)
                         <div class="col-md-6 col-lg-3 product-item isotope-item ">
                             <div class="product-card">
                                 <div class="product-image">
                                     <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
                                         class="img-fluid uniform-img" loading="lazy">
-                                    <div class="product-overlay">
-                                        <a href="#" class="btn-cart"><i class="bi bi-cart-plus"></i> Thêm vào
-                                            giỏ</a>
-                                    </div>
+                                        <div class="product-overlay">
+                                            <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                                @csrf
+                                                <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                                <button type="submit" class="btn-cart">
+                                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                                </button>
+                                            </form>
+                                        </div>
                                 </div>
                                 <div class="product-info">
                                     <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>
