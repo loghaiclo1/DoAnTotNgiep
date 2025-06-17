@@ -480,7 +480,7 @@
                             response.forEach(function(book) {
                                 // Kiểm tra giá trị hợp lệ
                                 let title = book.title || 'Không có tiêu đề';
-                                let price = book.price ? book.price.toLocaleString('vi-VN') + ' ₫' : 'N/A';
+                                let price = book.price ? parseInt(book.price).toLocaleString('vi-VN') + ' ₫' : 'N/A';
                                 let image = book.image && book.image !== 'undefined' ? book.image : 'default.jpg';
                                 let slug = book.slug || '';
 
@@ -526,24 +526,77 @@
     </script>
 <style>
     .suggestions-list .suggestion-item {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
-    }
-    .suggestions-list .suggestion-item:hover {
-        background: #f8f9fa;
-    }
-    .suggestions-list .suggestion-item img {
-        width: 50px;
-        height: 70px;
-        object-fit: cover;
-        margin-right: 10px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    min-height: 80px; /* Đảm bảo chiều cao đồng đều */
+}
+
+.suggestions-list .suggestion-item:hover {
+    background: #f8f9fa;
+}
+
+.suggestions-list .suggestion-item .book-content {
+    display: flex;
+    align-items: center;
+    flex: 1; /* Chiếm phần lớn không gian */
+    min-width: 0; /* Ngăn tràn nội dung */
+}
+
+.suggestions-list .suggestion-item img {
+    width: 50px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 10%;
+    flex-shrink: 0; /* Ngăn hình ảnh co lại */
+}
+
+.suggestions-list .suggestion-item .book-info {
+    flex: 1;
+    min-width: 0; /* Ngăn tràn nội dung */
+    max-width: 70%; /* Giới hạn chiều rộng tối đa của tiêu đề */
+}
+
+.suggestions-list .suggestion-item .book-info .title {
+    font-size: 14px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Ngăn tiêu đề xuống dòng */
+    margin: 0;
+    padding-right: 10%x; /* Tạo khoảng cách với cột giá */
+}
+
+.suggestions-list .suggestion-item .price {
+    flex: 0 0 80px; /* Tăng kích thước cột giá để ổn định */
+    text-align: right;
+    color: #dc3545;
+    padding-left: 10%; /* Khoảng cách với cột trái */
+    margin: 0;
+    white-space: nowrap; /* Ngăn giá xuống dòng */
+}
+
+/* Đảm bảo container không bị tràn */
+.suggestions-list {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+    .suggestions-list .suggestion-item {
+        flex-direction: column;
+        align-items: flex-start;
     }
     .suggestions-list .suggestion-item .price {
-        margin-left: auto;
-        color: #dc3545;
+        text-align: left;
+        padding-left: 0;
+        margin-top: 5px;
+        flex: 0 0 auto;
     }
+    .suggestions-list .suggestion-item .book-info {
+        max-width: 100%; /* Hủy giới hạn trên màn hình nhỏ */
+    }
+}
 </style>
 </body></html>
