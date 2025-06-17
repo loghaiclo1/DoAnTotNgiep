@@ -439,10 +439,17 @@
       }
 
       // Helper function to update price displays
-      function updateDisplays() {
-        minPriceDisplay.textContent = `$${minValue}`;
-        maxPriceDisplay.textContent = `$${maxValue}`;
+      function formatCurrencyVND(number) {
+          return Number(number).toLocaleString('vi-VN') + ' VND';
       }
+
+      function updateDisplays() {
+          minPriceDisplay.textContent = formatCurrencyVND(minValue);
+          maxPriceDisplay.textContent = formatCurrencyVND(maxValue);
+      }
+      document.querySelector('.min-price-input').value = parseInt(minValue);
+      document.querySelector('.max-price-input').value = parseInt(maxValue);``
+
     });
   }
   priceRangeWidget();
