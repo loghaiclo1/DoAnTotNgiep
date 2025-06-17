@@ -1,4 +1,4 @@
-{{-- @extends('layout.main')
+ @extends('layout.main')
 
 @section('title', 'BookShop - Danh Mục')
 @section('content')
@@ -264,7 +264,12 @@
                                                         <button type="button" class="quick-action-btn"><i class="bi bi-eye"></i></button>
                                                     </div>
                                                     <div class="add-to-cart-container">
-                                                        <button type="button" class="add-to-cart-btn">Thêm vào giỏ</button>
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                                            @csrf
+                                                            <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                                            <button type="submit" class="add-to-cart-btn">Thêm vào giỏ</button>
+
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>

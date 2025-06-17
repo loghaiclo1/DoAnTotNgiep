@@ -57,16 +57,15 @@
           </a>
 
           <!-- Search -->
-          <form class="search-form desktop-search-form" action="{{ url('/search') }}" method="GET">
-            <div class="input-group">
-              <input type="text" name="query" class="form-control" placeholder="Tìm kiếm sách">
-              <button class="btn" type="submit">
-                <i class="bi bi-search"></i>
-              </button>
+          <form class="search-form" action="{{ url('/search-results') }}" method="GET">
+            <div class="input-group" style="position: relative;">
+                <input type="text" name="query" class="form-control" placeholder="Tìm kiếm sách" required id="search-input" autocomplete="off">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i> Tìm kiếm
+                </button>
+                <div id="suggestions" class="suggestions-list" style="display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #ddd; z-index: 1000; width: 100%; max-height: 300px; overflow-y: auto;"></div>
             </div>
-          </form>
-
-
+        </form>
           <!-- Actions -->
           <div class="header-actions d-flex align-items-center justify-content-end">
 
@@ -430,7 +429,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script defer="" src="./js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9490ba9f9852409c&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.5.0&quot;,&quot;token&quot;:&quot;68c5ca450bae485a842ff76066d69420&quot;}" crossorigin="anonymous"></script>
 @if (session('success'))
     <div id="bubble-alert" class="login-success">
@@ -439,7 +438,6 @@
 @endif
 @if (session('success'))
 <script>
-
 
     document.addEventListener('DOMContentLoaded', function () {
         const bubble = document.getElementById('bubble-alert');
@@ -457,7 +455,95 @@
         }, 3000);
     });
 </script>
+
 @endif
+<script>
+    $(document).ready(function() {
+        console.log('jQuery loaded and document ready');
 
+        $('#search-input').on('input', function() {
+            let query = $(this).val().trim();
+            console.log('Search query:', query);
 
+            if (query.length > 0) {
+                $.ajax({
+                    url: '{{ url("/search-suggestions") }}',
+                    method: 'GET',
+                    data: { query: query },
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log('Suggestions received:', response);
+                        let suggestions = $('#suggestions');
+                        suggestions.empty();
+
+                        if (Array.isArray(response) && response.length > 0) {
+                            response.forEach(function(book) {
+                                // Kiểm tra giá trị hợp lệ
+                                let title = book.title || 'Không có tiêu đề';
+                                let price = book.price ? book.price.toLocaleString('vi-VN') + ' ₫' : 'N/A';
+                                let image = book.image && book.image !== 'undefined' ? book.image : 'default.jpg';
+                                let slug = book.slug || '';
+
+                                let div = $('<div>')
+                                    .addClass('suggestion-item')
+                                    .html(`
+                                        <img src="{{ url('image/book') }}/${image}" alt="${title}" onerror="this.src='{{ url('image/book/default.jpg') }}'">
+                                        <span>${title}</span>
+                                        <span class="price">${price}</span>
+                                    `)
+                                    .on('click', function() {
+                                        if (slug) {
+                                            // Chuyển hướng đến trang chi tiết sách
+                                            window.location.href = '{{ url("/sp") }}/' + slug;
+                                        } else {
+                                            console.error('Slug not found for book:', title);
+                                        }
+                                    });
+                                suggestions.append(div);
+                            });
+                            suggestions.show();
+                        } else {
+                            suggestions.hide();
+                            console.log('No suggestions found');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', status, error, xhr.responseText);
+                        $('#suggestions').hide();
+                    }
+                });
+            } else {
+                $('#suggestions').hide();
+            }
+        });
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.input-group').length) {
+                $('#suggestions').hide();
+            }
+        });
+    });
+    </script>
+<style>
+    .suggestions-list .suggestion-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+    .suggestions-list .suggestion-item:hover {
+        background: #f8f9fa;
+    }
+    .suggestions-list .suggestion-item img {
+        width: 50px;
+        height: 70px;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+    .suggestions-list .suggestion-item .price {
+        margin-left: auto;
+        color: #dc3545;
+    }
+</style>
 </body></html>

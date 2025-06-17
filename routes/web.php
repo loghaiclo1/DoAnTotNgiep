@@ -62,3 +62,7 @@ Route::get('/register', [RegisterController::class, 'show'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/search', [BookController::class, 'search']);
+Route::get('/search-results', [BookController::class, 'searchResults'])->name('search.results');
+Route::get('/search-suggestions', [BookController::class, 'searchSuggestions']);
