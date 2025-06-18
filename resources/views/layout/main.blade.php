@@ -57,11 +57,11 @@
           </a>
 
           <!-- Search -->
-          <form class="search-form" action="{{ url('/search-results') }}" method="GET">
-            <div class="input-group" style="position: relative;">
+          <form class="search-form" action="{{ url('/search-results') }}" method="GET" style="min-width: 400px;">
+            <div class="input-group">
                 <input type="text" name="query" class="form-control" placeholder="Tìm kiếm sách" required id="search-input" autocomplete="off">
                 <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Tìm kiếm
+                    <i class="bi bi-search"></i>
                 </button>
                 <div id="suggestions" class="suggestions-list" style="display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #ddd; z-index: 1000; width: 100%; max-height: 300px; overflow-y: auto;"></div>
             </div>

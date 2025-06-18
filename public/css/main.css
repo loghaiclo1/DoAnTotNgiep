@@ -12232,3 +12232,63 @@ section,
   transition: opacity 0.5s ease;
   text-align: center;
 }
+
+.active-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 14px;
+    border-top: 0 !important;
+}
+
+.active-filter-label {
+    font-weight: bold;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.filter-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e9f0ff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #1a3e92;
+    white-space: nowrap;
+}
+
+.filter-tag a.filter-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    color: #1a3e92;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.filter-tag a.filter-remove:hover {
+    color: red;
+}
+
+.clear-all-btn {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.filter-container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}

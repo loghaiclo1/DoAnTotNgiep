@@ -108,12 +108,70 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                {{-- Nút áp dụng --}}
-                                <div class="filter-actions mt-3">
-                                    <button type="submit" class="btn btn-sm btn-primary w-100">Lọc</button>
+                        <!-- Sắp xếp -->
+                        <div class="filter-item mb-4">
+                            <h3 class="form-label fw-bold widget-title">Sắp xếp</h3>
+                            <div class="form-check-group d-flex flex-wrap text-start" style="display: flex; flex-wrap: wrap;">
+                                @php $currentSort = request('sort'); @endphp
+
+                                <div class="form-check" style="width: 50%">
+                                    <input class="form-check-input" type="radio" name="sort" value="" {{ $currentSort == '' ? 'checked' : '' }}>
+                                    <label class="form-check-label">Mới nhất</label>
+                                </div>
+
+                                <div class="form-check" style="width: 50%">
+                                    <input class="form-check-input" type="radio" name="sort" value="price_asc" {{ $currentSort == 'price_asc' ? 'checked' : '' }}>
+                                    <label class="form-check-label">Giá: Thấp → Cao</label>
+                                </div>
+
+                                <div class="form-check" style="width: 50%">
+                                    <input class="form-check-input" type="radio" name="sort" value="price_desc" {{ $currentSort == 'price_desc' ? 'checked' : '' }}>
+                                    <label class="form-check-label">Giá: Cao → Thấp</label>
+                                </div>
+
+                                <div class="form-check" style="width: 50%">
+                                    <input class="form-check-input" type="radio" name="sort" value="bestseller" {{ $currentSort == 'bestseller' ? 'checked' : '' }}>
+                                    <label class="form-check-label">Bán chạy nhất</label>
                                 </div>
                             </div>
+                        </div>
+
+
+                        <!-- Hiển thị mỗi trang -->
+                        <div class="filter-item">
+                            <h3 class="form-label fw-bold widget-title">Hiển thị</h3>
+                            <div class="form-check-group d-flex flex-wrap gap-2" style="display: flex; flex-wrap: wrap;">
+                                {{-- Lấy giá trị hiện tại của per_page từ request --}}
+                                @php $currentPerPage = request('per_page'); @endphp
+
+                                <div class="form-check form-check-inline" style="width: 40%">
+                                    <input class="form-check-input" type="radio" name="per_page" value="12" {{ $currentPerPage == '12' ? 'checked' : '' }}>
+                                    <span class="form-check-label">12 / trang</span>
+                                </div>
+
+                                <div class="form-check form-check-inline" style="width: 40%">
+                                    <input class="form-check-input" type="radio" name="per_page" value="24" {{ $currentPerPage == '24' ? 'checked' : '' }}>
+                                    <span class="form-check-label">24 / trang</span>
+                                </div>
+
+                                <div class="form-check form-check-inline" style="width: 40%">
+                                    <input class="form-check-input" type="radio" name="per_page" value="48" {{ $currentPerPage == '48' ? 'checked' : '' }}>
+                                    <span class="form-check-label">48 / trang</span>
+                                </div>
+
+                                <div class="form-check form-check-inline" style="width: 40%">
+                                    <input class="form-check-input" type="radio" name="per_page" value="96" {{ $currentPerPage == '96' ? 'checked' : '' }}>
+                                    <span class="form-check-label">96 / trang</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Nút áp dụng --}}
+                        <div class="filter-actions mt-3">
+                            <button type="submit" class="btn btn-sm btn-primary w-100">Lọc</button>
                         </div>
                     </div>
                 </div>
@@ -126,65 +184,10 @@
                         <div class="container" data-aos="fade-up">
                                 <!-- Filter and Sort Options -->
                                 <div class="filter-container mb-4" data-aos="fade-up" data-aos-delay="100">
-                                    <div class="row g-3 align-items-end">
-                                        <!-- Tìm kiếm sách -->
-                                        <div class="col-12 col-md-6 col-lg-3">
-                                            <div class="filter-item search-form">
-                                                <label for="productSearch" class="form-label fw-bold">Tìm kiếm sách</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" id="productSearch" name="search"
-                                                        placeholder="Nhập tên sách..." value="{{ request('search') }}">
-                                                    <button class="btn btn-primary" type="submit">
-                                                        <i class="bi bi-search"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Lọc theo giá -->
-                                        <div class="col-12 col-md-6 col-lg-3">
-                                            <div class="filter-item">
-                                                <label for="priceRange" class="form-label fw-bold">Khoảng giá</label>
-                                                <select class="form-select" id="priceRange" name="price_range">
-                                                    <option value="">Tất cả</option>
-                                                    <option value="1" {{ request('price_range') == '1' ? 'selected' : '' }}>Dưới 25.000đ</option>
-                                                    <option value="2" {{ request('price_range') == '2' ? 'selected' : '' }}>25.000 - 50.000đ</option>
-                                                    <option value="3" {{ request('price_range') == '3' ? 'selected' : '' }}>50.000 - 100.000đ</option>
-                                                    <option value="4" {{ request('price_range') == '4' ? 'selected' : '' }}>Trên 100.000đ</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- Sắp xếp -->
-                                        <div class="col-12 col-md-6 col-lg-3">
-                                            <div class="filter-item">
-                                                <label for="sortBy" class="form-label fw-bold">Sắp xếp</label>
-                                                <select class="form-select" id="sortBy" name="sort">
-                                                    <option value="">Mới nhất</option>
-                                                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá: Thấp → Cao</option>
-                                                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá: Cao → Thấp</option>
-                                                    <option value="bestseller" {{ request('sort') == 'bestseller' ? 'selected' : '' }}>Bán chạy nhất</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- Hiển thị mỗi trang -->
-                                        <div class="col-12 col-md-6 col-lg-2">
-                                            <div class="filter-item">
-                                                <label for="itemsPerPage" class="form-label fw-bold">Hiển thị</label>
-                                                <select class="form-select" id="itemsPerPage" name="per_page" style="width: 130px">
-                                                    <option value="12" {{ request('per_page') == '12' ? 'selected' : '' }}>12 / trang</option>
-                                                    <option value="24" {{ request('per_page') == '24' ? 'selected' : '' }}>24 / trang</option>
-                                                    <option value="48" {{ request('per_page') == '48' ? 'selected' : '' }}>48 / trang</option>
-                                                    <option value="96" {{ request('per_page') == '96' ? 'selected' : '' }}>96 / trang</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    
                                    <!-- Bộ lọc đang áp dụng -->
                                     <div class="row mt-3">
-                                        <div class="col-12" data-aos="fade-up" data-aos-delay="200">
+                                        <div class="col-12 pt-0 mt-0" data-aos="fade-up" data-aos-delay="200">
                                             <div class="active-filters">
                                                 <span class="active-filter-label">Bộ lọc đang áp dụng:</span>
                                                 <div class="filter-tags">
@@ -235,11 +238,9 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </form>
                         </div>
-
                     </section><!-- /Category Header Section -->
 
                     <!-- Category Product List Section -->
@@ -260,8 +261,9 @@
                                                 <div class="product-overlay">
                                                     <div class="product-quick-actions">
                                                         <button type="button" class="quick-action-btn"><i class="bi bi-heart"></i></button>
-                                                        <button type="button" class="quick-action-btn"><i class="bi bi-arrow-repeat"></i></button>
-                                                        <button type="button" class="quick-action-btn"><i class="bi bi-eye"></i></button>
+                                                        <a href="{{ route('product.detail', $book->slug) }}" class="quick-action-btn">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
                                                     </div>
                                                     <div class="add-to-cart-container">
                                                         <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
@@ -275,7 +277,7 @@
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-details">
-                                                    <h3 class="product-title"><a href="#">{{ $book->TenSach }}</a></h3>
+                                                    <h3 class="product-title"><a href="{{ route('product.detail', $book->slug) }}">{{ $book->TenSach }}</a></h3>
                                                     <div class="product-price">
                                                         @if($book->GiaGoc && $book->GiaGoc > $book->GiaBan)
                                                             <span class="original">{{ number_format($book->GiaGoc) }}đ</span>
