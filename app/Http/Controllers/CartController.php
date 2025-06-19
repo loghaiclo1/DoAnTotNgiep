@@ -433,20 +433,17 @@ class CartController extends Controller
                 'initial_cart' => $cart,
             ]);
 
-            // Lấy bản ghi CartHold của user và session cũ, nhóm theo book_id
+            // Lấy và nhóm bản ghi CartHold
             $userHolds = CartHold::where(function ($query) use ($userId, $sessionIdToCheck) {
                 $query->where('user_id', $userId)
                       ->orWhere(function ($q) use ($sessionIdToCheck) {
                           $q->whereNull('user_id')->where('session_id', $sessionIdToCheck);
                       });
-            })->where('expires_at', '>', now())
-              ->get()
-              ->groupBy('book_id'); // Nhóm để xử lý trùng lặp
+            })->get()->groupBy('book_id');
 
-            // Khởi tạo mergedCart từ session cart
+            // Khởi tạo mergedCart
             $mergedCart = $cart;
 
-            // Gộp từ CartHold
             foreach ($userHolds as $bookId => $holds) {
                 $book = Book::find($bookId);
                 if (!$book) {
@@ -454,23 +451,11 @@ class CartController extends Controller
                     continue;
                 }
 
-                // Tính tổng số lượng từ tất cả bản ghi CartHold cho book_id
                 $totalHoldQty = $holds->sum('quantity');
-
-                // Tính số lượng giữ bởi người khác
-                $totalHeldByOthers = CartHold::where('book_id', $bookId)
-                    ->where(function ($query) use ($userId, $currentSessionId) {
-                        $query->where('user_id', '!=', $userId)
-                              ->orWhereNull('user_id');
-                    })->where('session_id', '!=', $currentSessionId)
-                    ->where('expires_at', '>', now())
-                    ->sum('quantity');
-
-                $availableQty = $book->SoLuong - $totalHeldByOthers;
+                $availableQty = $book->SoLuong;
 
                 if ($totalHoldQty <= $availableQty) {
                     if (isset($mergedCart[$bookId])) {
-                        // Cộng dồn số lượng
                         $newQty = $mergedCart[$bookId]['quantity'] + $totalHoldQty;
                         $mergedCart[$bookId]['quantity'] = min($newQty, $availableQty);
                     } else {
@@ -490,63 +475,25 @@ class CartController extends Controller
                 }
             }
 
-            // Kiểm tra tồn kho cho tất cả sách trong mergedCart
-            foreach ($mergedCart as $bookId => &$item) {
-                $book = Book::find($bookId);
-                if (!$book) {
-                    unset($mergedCart[$bookId]);
-                    \Log::warning('Loại bỏ sách không tồn tại:', ['book_id' => $bookId]);
-                    continue;
-                }
-
-                $totalHeldByOthers = CartHold::where('book_id', $bookId)
-                    ->where('user_id', '!=', $userId)
-                    ->where('session_id', '!=', $currentSessionId)
-                    ->where('expires_at', '>', now())
-                    ->sum('quantity');
-
-                $availableQty = $book->SoLuong - $totalHeldByOthers;
-                if ($item['quantity'] > $availableQty) {
-                    \Log::warning('Điều chỉnh số lượng do vượt tồn kho:', [
-                        'book_id' => $bookId,
-                        'original_qty' => $item['quantity'],
-                        'adjusted_qty' => $availableQty,
-                    ]);
-                    if ($availableQty > 0) {
-                        $item['quantity'] = $availableQty;
-                    } else {
-                        unset($mergedCart[$bookId]);
-                    }
-                }
-            }
-
             // Cập nhật session
             session()->put('cart', $mergedCart);
-            \Log::info('Cart merged successfully:', [
-                'user_id' => $userId,
-                'current_session_id' => $currentSessionId,
-                'final_cart' => $mergedCart,
-            ]);
 
-            // Cập nhật CartHold
+            // Xóa tất cả bản ghi CartHold cũ của user
+            CartHold::where('user_id', $userId)->delete();
+
+            // Tạo lại CartHold từ mergedCart
             foreach ($mergedCart as $bookId => $item) {
-                CartHold::updateOrCreate(
-                    [
-                        'user_id' => $userId,
-                        'session_id' => $currentSessionId,
-                        'book_id' => $bookId,
-                    ],
-                    [
-                        'quantity' => $item['quantity'],
-                        'expires_at' => now()->addMinutes(self::HOLD_DURATION_MINUTES),
-                    ]
-                );
+                CartHold::create([
+                    'user_id' => $userId,
+                    'session_id' => $currentSessionId,
+                    'book_id' => $bookId,
+                    'quantity' => $item['quantity'],
+                    'expires_at' => null, // Không dùng expires_at
+                ]);
             }
 
-            // Xóa CartHold cũ của session chưa đăng nhập
-            CartHold::whereNull('user_id')
-                    ->where('session_id', $sessionIdToCheck)
-                    ->delete();
+            // Xóa CartHold của session chưa đăng nhập
+            CartHold::whereNull('user_id')->where('session_id', $sessionIdToCheck)->delete();
 
             session()->flash('success', 'Giỏ hàng đã được đồng bộ thành công!');
         } catch (\Exception $e) {

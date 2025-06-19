@@ -184,7 +184,7 @@
                         <div class="container" data-aos="fade-up">
                                 <!-- Filter and Sort Options -->
                                 <div class="filter-container mb-4" data-aos="fade-up" data-aos-delay="100">
-                                    
+
                                    <!-- Bộ lọc đang áp dụng -->
                                     <div class="row mt-3">
                                         <div class="col-12 pt-0 mt-0" data-aos="fade-up" data-aos-delay="200">
@@ -257,7 +257,8 @@
                                                 @else
                                                     <span class="product-label">New</span>
                                                 @endif
-                                                <img src="{{ asset( 'image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" class="main-img" loading="lazy">
+                                                <img src="{{ asset('image/book/' . ltrim($item['book']->HinhAnh, '/')) }}" alt="{{ $item['book']->TenSach }}">
+
                                                 <div class="product-overlay">
                                                     <div class="product-quick-actions">
                                                         <button type="button" class="quick-action-btn"><i class="bi bi-heart"></i></button>

@@ -11,7 +11,9 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
-
+use App\Http\Controllers\APIController;
+use App\Http\Controllers\VNPayController;
+use App\Http\Controllers\PromoController;
 // Trang chủ
 Route::get('/', [HomeController::class, 'index']);
 
@@ -45,14 +47,17 @@ Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('categ
 // Chi tiết sản phẩm
 Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
 
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+
 
 // Liên hệ
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Tài khoản
-Route::get('/account', [AccountController::class, 'index'])->name('account');
+Route::middleware('auth')->group(function () {
+    Route::get('/account', [AccountController::class, 'index'])->name('account');
+});
+
 
 // Đăng nhập / Đăng ký
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -66,3 +71,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/search', [BookController::class, 'search']);
 Route::get('/search-results', [BookController::class, 'searchResults'])->name('search.results');
 Route::get('/search-suggestions', [BookController::class, 'searchSuggestions']);
+Route::post('/user/addresses', [AddressController::class, 'store'])->name('user.addresses.store');
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+Route::post('/vnpay/create-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment')->middleware('web');
+Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])
+    ->name('vnpay.return')
+    ->middleware('web');
+    Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.apply');

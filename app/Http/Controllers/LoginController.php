@@ -19,9 +19,20 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
+
+            // Gọi hàm mergeCart từ CartController
             $cartController = new \App\Http\Controllers\CartController();
             $cartController->mergeCart();
-            return redirect()->intended('/')->with('success', $message);
+
+            // Lấy returnUrl từ request (được gửi từ client-side)
+            $returnUrl = $request->input('returnUrl', '/');
+
+            // Kiểm tra xem returnUrl có hợp lệ không (chỉ cho phép /cart hoặc /)
+            if (!in_array($returnUrl, ['/cart', '/'])) {
+                $returnUrl = '/';
+            }
+
+            return redirect($returnUrl)->with('success', $message);
         }
 
         return back()->withErrors([

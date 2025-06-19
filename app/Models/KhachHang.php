@@ -14,4 +14,10 @@ class KhachHang extends Authenticatable
     public function getAuthPassword()
 {
     return $this->MatKhau;
-}}
+}
+public function addresses()
+{
+    return $this->hasMany(DiaChiNhanHang::class, 'khachhang_id', 'MaKhachHang');
+}
+
+}

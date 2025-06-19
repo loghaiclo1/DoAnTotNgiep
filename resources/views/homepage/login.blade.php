@@ -33,7 +33,7 @@
                                 <div class="tab-pane fade show active" id="login-register-login-form" role="tabpanel">
                                     <form action="{{ route('login') }}" method="POST">
                                         @csrf
-
+                                        <input type="hidden" name="returnUrl" value="{{ request('returnUrl') }}">
                                         @if ($errors->any())
                                             <div class="alert alert-danger">
                                                 @foreach ($errors->all() as $error)

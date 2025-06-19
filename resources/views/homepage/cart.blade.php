@@ -154,24 +154,26 @@
                                 <span class="summary-value" id="total">{{ number_format($total, 0, ',', '.') }}₫</span>
                             </div>
                             <div class="checkout-button">
-                                <a href="#" class="btn btn-accent w-100">
-                                    Thanh toán <i class="bi bi-arrow-right"></i>
-                                </a>
+                                @auth
+                                    <!-- Đã đăng nhập: chuyển đến trang checkout -->
+                                    <a href="{{ route('checkout') }}" class="btn btn-accent w-100">
+                                        Thanh toán <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                @endauth
+
+                                @guest
+                                    <!-- Chưa đăng nhập: popup cảnh báo -->
+                                    <a href="#" class="btn btn-accent w-100" onclick="showLoginPopup(event, '{{ route('login') }}')">
+                                        Thanh toán <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                @endauth
                             </div>
                             <div class="continue-shopping">
                                 <a href="{{ url('/') }}" class="btn btn-link w-100">
                                     <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
                                 </a>
                             </div>
-                            <div class="payment-methods">
-                                <p class="payment-title">Phương thức thanh toán</p>
-                                <div class="payment-icons">
-                                    <i class="bi bi-credit-card-2-front"></i>
-                                    <i class="bi bi-paypal"></i>
-                                    <i class="bi bi-wallet2"></i>
-                                    <i class="bi bi-apple"></i>
-                                    <i class="bi bi-google"></i>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -511,5 +513,26 @@
                 clearInterval(pollingInterval);
             });
         });
+function showLoginPopup(event, loginUrl) {
+    event.preventDefault();
+
+    // Lấy URL hiện tại (ví dụ: /gio-hang)
+    const currentUrl = window.location.pathname;
+
+    Swal.fire({
+        icon: 'warning',
+        title: 'Chưa đăng nhập',
+        text: 'Bạn cần đăng nhập trước khi thanh toán!',
+        confirmButtonText: 'Đăng nhập ngay',
+        showCancelButton: true,
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Gắn returnUrl vào URL đăng nhập
+            window.location.href = loginUrl + "?returnUrl=" + encodeURIComponent(currentUrl);
+        }
+    });
+}
+
     </script>
 @endsection

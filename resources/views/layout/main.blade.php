@@ -157,7 +157,7 @@
               {{-- <li><a href=" {{ url('/about') }} ">Giới thiệu</a></li> --}}
               <li><a href=" {{ url('/category') }} ">Danh mục</a></li>
               <li><a href=" {{ url('/cart') }} ">Giỏ hàng</a></li>
-              <li><a href=" {{ url('/checkout') }} ">Thanh toán</a></li>
+              {{-- <li><a href=" {{ url('/checkout') }} ">Thanh toán</a></li> --}}
 
               <!-- Products Mega Menu 2 -->
               <li class="products-megamenu-2"><span>Danh mục sách</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
