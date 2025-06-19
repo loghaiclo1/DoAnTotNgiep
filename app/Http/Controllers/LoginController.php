@@ -12,33 +12,38 @@ class LoginController extends Controller
         return view('homepage.login');
     }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
+    if (Auth::attempt($credentials)) {
+        $user = Auth::user();
+        $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
 
-            // Gọi hàm mergeCart từ CartController
-            $cartController = new \App\Http\Controllers\CartController();
-            $cartController->mergeCart();
+        // Gộp giỏ hàng (nếu có)
+        $cartController = new \App\Http\Controllers\CartController();
+        $cartController->mergeCart();
 
-            // Lấy returnUrl từ request (được gửi từ client-side)
-            $returnUrl = $request->input('returnUrl', '/');
-
-            // Kiểm tra xem returnUrl có hợp lệ không (chỉ cho phép /cart hoặc /)
-            if (!in_array($returnUrl, ['/cart', '/'])) {
-                $returnUrl = '/';
-            }
-
-            return redirect($returnUrl)->with('success', $message);
+        // ✅ Check role: nếu là admin thì redirect /admin
+        if ($user->role === 'admin') {
+            return redirect('/admin')->with('success', $message);
         }
 
-        return back()->withErrors([
-            'email' => 'Email hoặc mật khẩu không đúng.',
-        ])->withInput();
+        // ✅ Người dùng thường: về trang trước hoặc / nếu không có
+        $returnUrl = $request->input('returnUrl', '/');
+        if (!in_array($returnUrl, ['/cart', '/'])) {
+            $returnUrl = '/';
+        }
+
+        return redirect($returnUrl)->with('success', $message);
     }
+
+    // Nếu đăng nhập sai
+    return back()->withErrors([
+        'email' => 'Email hoặc mật khẩu không đúng.',
+    ])->withInput();
+}
+
 
     public function logout(Request $request)
     {

@@ -251,14 +251,13 @@
                                 @foreach ($books as $book)
                                     <div class="col-md-6 col-lg-4">
                                         <div class="product-box">
-                                            <div class="product-thumb">
+                                            <div class="product-thumb" style="position: relative; height: 261.33px;">
                                                 @if($book->giam_gia)
                                                     <span class="product-label product-label-sale">-{{ $book->giam_gia }}%</span>
                                                 @else
                                                     <span class="product-label">New</span>
                                                 @endif
-                                                {{-- <img src="{{ asset('image/book/' . ltrim($item['book']->HinhAnh, '/')) }}" alt="{{ $item['book']->TenSach }}"> --}}
-
+                                                <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="width: 100%; max-height: 300px; object-fit: cover;">
                                                 <div class="product-overlay">
                                                     <div class="product-quick-actions">
                                                         <button type="button" class="quick-action-btn"><i class="bi bi-heart"></i></button>
@@ -271,7 +270,6 @@
                                                             @csrf
                                                             <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
                                                             <button type="submit" class="add-to-cart-btn">Thêm vào giỏ</button>
-
                                                         </form>
                                                     </div>
                                                 </div>

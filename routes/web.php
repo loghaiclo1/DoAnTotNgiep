@@ -14,6 +14,9 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\APIController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\AddressController;
+use App\Http\Controllers\AdminController;
+
 // Trang chủ
 Route::get('/', [HomeController::class, 'index']);
 
@@ -47,8 +50,6 @@ Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('categ
 // Chi tiết sản phẩm
 Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
 
-
-
 // Liên hệ
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
@@ -57,7 +58,6 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'index'])->name('account');
 });
-
 
 // Đăng nhập / Đăng ký
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -80,4 +80,8 @@ Route::post('/vnpay/create-payment', [VNPayController::class, 'createPayment'])-
 Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])
     ->name('vnpay.return')
     ->middleware('web');
-    Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.apply');
+Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.apply');
+
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index']);
+});

@@ -23,7 +23,7 @@ class RegisterController extends Controller
         $khachhang->Email = $request->email;
         $khachhang->MatKhau = Hash::make($request->matkhau);
         $khachhang->TrangThai = 1;
-        $khachhang->NgayTao = now();
+        $khachhang->created_at = now();
         $khachhang->save();
 
         return redirect()->route('register')->with('register_success', true);

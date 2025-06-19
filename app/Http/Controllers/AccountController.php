@@ -12,7 +12,7 @@ class AccountController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
+        $user = auth::user();
         $orders = HoaDon::with(['chitiethoadon.sach', 'phuongthucthanhtoan'])
             ->where('MaKhachHang', $user->MaKhachHang)
             ->orderByDesc('NgayLap')
