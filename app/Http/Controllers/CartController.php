@@ -46,9 +46,9 @@ class CartController extends Controller
             // Lấy tất cả bản ghi CartHold của user hoặc session
             $userHolds = CartHold::where(function ($query) use ($userId, $sessionId) {
                 $query->where('user_id', $userId)
-                      ->orWhere(function ($q) use ($sessionId) {
-                          $q->whereNull('user_id')->where('session_id', $sessionId);
-                      });
+                    ->orWhere(function ($q) use ($sessionId) {
+                        $q->whereNull('user_id')->where('session_id', $sessionId);
+                    });
             })->get()->keyBy('book_id');
 
             $updatedCart = [];
@@ -93,7 +93,6 @@ class CartController extends Controller
                 ->where('session_id', $sessionId)
                 ->whereNotIn('book_id', array_keys($updatedCart))
                 ->delete();
-
         } catch (\Exception $e) {
             Log::error('syncCart: Error syncing cart.', [
                 'user_id' => $userId,
@@ -436,9 +435,9 @@ class CartController extends Controller
             // Lấy và nhóm bản ghi CartHold
             $userHolds = CartHold::where(function ($query) use ($userId, $sessionIdToCheck) {
                 $query->where('user_id', $userId)
-                      ->orWhere(function ($q) use ($sessionIdToCheck) {
-                          $q->whereNull('user_id')->where('session_id', $sessionIdToCheck);
-                      });
+                    ->orWhere(function ($q) use ($sessionIdToCheck) {
+                        $q->whereNull('user_id')->where('session_id', $sessionIdToCheck);
+                    });
             })->get()->groupBy('book_id');
 
             // Khởi tạo mergedCart
@@ -507,9 +506,9 @@ class CartController extends Controller
         $identifier = $this->getIdentifier();
         CartHold::where(function ($query) use ($identifier) {
             $query->where('user_id', $identifier['user_id'])
-                  ->orWhere(function ($q) use ($identifier) {
-                      $q->whereNull('user_id')->where('session_id', $identifier['session_id']);
-                  });
+                ->orWhere(function ($q) use ($identifier) {
+                    $q->whereNull('user_id')->where('session_id', $identifier['session_id']);
+                });
         })->delete();
         session()->forget('cart');
         $this->syncCart();
@@ -588,13 +587,12 @@ class CartController extends Controller
         }
     }
     public function getCartQuantity()
-{
-    $cart = session('cart', []);
-    $totalQuantity = collect($cart)->sum('quantity');
+    {
+        $cart = session('cart', []);
+        $totalQuantity = collect($cart)->sum('quantity');
 
-    return response()->json([
-        'cart_total_quantity' => $totalQuantity
-    ]);
-}
-
+        return response()->json([
+            'cart_total_quantity' => $totalQuantity
+        ]);
+    }
 }

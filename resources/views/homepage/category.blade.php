@@ -257,7 +257,7 @@
                                                 @else
                                                     <span class="product-label">New</span>
                                                 @endif
-                                                <img src="{{ asset('image/book/' . ltrim($item['book']->HinhAnh, '/')) }}" alt="{{ $item['book']->TenSach }}">
+                                                {{-- <img src="{{ asset('image/book/' . ltrim($item['book']->HinhAnh, '/')) }}" alt="{{ $item['book']->TenSach }}"> --}}
 
                                                 <div class="product-overlay">
                                                     <div class="product-quick-actions">

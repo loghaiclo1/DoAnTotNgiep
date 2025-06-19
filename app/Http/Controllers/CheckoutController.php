@@ -180,6 +180,10 @@ class CheckoutController extends Controller
             $cartItemCount = count($groupedCartItems);
             $cartTotal = 0;
             $cartDetails = [];
+
+            Session::forget(['groupedCartItems', 'promo']);
+            CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
+            
             foreach ($groupedCartItems as $item) {
                 $cartTotal += $item['quantity'] * $item['book']['GiaBan'];
                 $cartDetails[] = [
@@ -274,9 +278,10 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            // Làm sạch giỏ hàng và session
-            CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
-            Session::forget(['groupedCartItems', 'promo']);
+            // // Làm sạch giỏ hàng và session                        
+            // Session::forget(['groupedCartItems', 'promo']);
+
+            // CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
 
             Log::info('Đặt hàng thành công', [
                 'user_id' => $userId,
