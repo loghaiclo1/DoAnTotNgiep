@@ -82,6 +82,14 @@ Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])
     ->middleware('web');
 Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.apply');
 
-Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'index']);
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
+    Route::get('/',  [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/orders', fn () => view('admin.orders'))->name('orders');
+    Route::get('/accounts', fn () => view('admin.accounts'))->name('accounts');
+    Route::get('/books', fn () => view('admin.books'))->name('books');
+    Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
+    Route::get('/categories', fn () => view('admin.categories'))->name('categories');
+    Route::get('contacts', [App\Http\Controllers\Admin\ContactController::class, 'index'])->name('contacts');
+    Route::put('contacts/{id}/update-status', [App\Http\Controllers\Admin\ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
 });
