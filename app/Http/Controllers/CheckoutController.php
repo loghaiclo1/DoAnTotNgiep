@@ -32,7 +32,7 @@ class CheckoutController extends Controller
         CartHold::where('user_id', $userId)
             ->where(function ($query) use ($sessionId) {
                 $query->where('session_id', '!=', $sessionId)
-                      ->orWhere('created_at', '<', now()->subHours(24));
+                    ->orWhere('created_at', '<', now()->subHours(24));
             })
             ->delete();
 
@@ -111,7 +111,7 @@ class CheckoutController extends Controller
 
         // Lưu groupedCartItems vào session, xóa dữ liệu cũ
         Session::forget('groupedCartItems');
-        Session::put('groupedCartItems', $groupedCartItems);
+        Session::put('groupedCartItems', $groupedCartItems->toArray());
 
         $tinhThanhs = TinhThanh::select('id', 'ten')->orderBy('ten')->get();
         return view('homepage.checkout', compact('groupedCartItems', 'subtotal', 'shipping', 'total', 'tinhThanhs'));
@@ -119,9 +119,15 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
+
         try {
             $userId = Auth::id();
             $sessionId = Session::getId();
+            Log::debug('groupedCartItems in session trước khi đặt hàng:', [
+                'session_id' => $sessionId,
+                'data' => session('groupedCartItems')
+            ]);
+
             Log::info('Bắt đầu xử lý đơn hàng', [
                 'request' => $request->all(),
                 'user_id' => $userId,
@@ -183,7 +189,7 @@ class CheckoutController extends Controller
 
             Session::forget(['groupedCartItems', 'promo']);
             CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
-            
+
             foreach ($groupedCartItems as $item) {
                 $cartTotal += $item['quantity'] * $item['book']['GiaBan'];
                 $cartDetails[] = [
