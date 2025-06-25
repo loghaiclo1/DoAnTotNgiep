@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Home;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,7 +22,7 @@ public function login(Request $request)
         $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
 
         // Gộp giỏ hàng (nếu có)
-        $cartController = new \App\Http\Controllers\CartController();
+        $cartController = new \App\Http\Controllers\Home\CartController();
         $cartController->mergeCart();
 
         // ✅ Check role: nếu là admin thì redirect /admin

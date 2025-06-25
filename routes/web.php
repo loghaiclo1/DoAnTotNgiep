@@ -1,21 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\AboutController;
-use App\Http\Controllers\AccountController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\APIController;
-use App\Http\Controllers\VNPayController;
-use App\Http\Controllers\PromoController;
-use App\Http\Controllers\AddressController;
-use App\Http\Controllers\AdminController;
+
+use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Home\ContactController;
+use App\Http\Controllers\Home\AboutController;
+use App\Http\Controllers\Home\AccountController;
+use App\Http\Controllers\Home\CategoryController;
+use App\Http\Controllers\Home\BookController;
+use App\Http\Controllers\Home\RegisterController;
+use App\Http\Controllers\Home\LoginController;
+use App\Http\Controllers\Home\CartController;
+use App\Http\Controllers\Home\CheckoutController;
+use App\Http\Controllers\Home\APIController;
+use App\Http\Controllers\Home\VNPayController;
+use App\Http\Controllers\Home\PromoController;
+use App\Http\Controllers\Home\AddressController;
+use App\Http\Controllers\Home\AdminController;
 
 // Trang chủ
 Route::get('/', [HomeController::class, 'index']);
