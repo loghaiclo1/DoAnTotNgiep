@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Home;
 
+use App\Http\Controllers\Controller;
 use App\Models\QuanHuyen;
 use App\Models\PhuongXa;
 
