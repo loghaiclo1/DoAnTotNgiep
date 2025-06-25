@@ -10,6 +10,7 @@ use App\Models\QuanHuyen;
 use App\Models\PhuongXa;
 use App\Models\DiaChiNhanHang;
 use App\Models\CartHold;
+use App\Models\Book;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -19,250 +20,194 @@ class CheckoutController extends Controller
     public function index()
     {
         if (!Auth::check()) {
-            $returnUrl = request()->url();
-            return redirect()->route('login')->with('returnUrl', $returnUrl)->with('error', 'Vui lòng đăng nhập để thanh toán.');
+            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để thanh toán.');
         }
 
         $userId = Auth::id();
         $sessionId = Session::getId();
         $promo = session('promo');
         $discountAmount = 0;
+        $shipping = 0;
 
-        // Làm sạch CartHold không thuộc session hiện tại hoặc cũ hơn 24 giờ
-        CartHold::where('user_id', $userId)
-            ->where(function ($query) use ($sessionId) {
-                $query->where('session_id', '!=', $sessionId)
-                    ->orWhere('created_at', '<', now()->subHours(24));
-            })
-            ->delete();
-
-        // Lấy giỏ hàng từ CartHold cho user và session hiện tại
-        $cartItems = CartHold::where('user_id', $userId)
+        // Gộp các bản ghi trùng lặp trong cart_hold
+        $duplicateHolds = CartHold::where('user_id', $userId)
             ->where('session_id', $sessionId)
-            ->with('book')
+            ->groupBy(['user_id', 'session_id', 'book_id'])
+            ->havingRaw('COUNT(*) > 1')
+            ->select(['book_id', \DB::raw('COUNT(*) as count'), \DB::raw('SUM(quantity) as total_quantity')])
             ->get();
 
-        // Log dữ liệu CartHold thô
-        Log::info('CartHold raw data', [
-            'user_id' => $userId,
-            'session_id' => $sessionId,
-            'cartItems' => $cartItems->toArray(),
-        ]);
+        foreach ($duplicateHolds as $duplicate) {
+            $firstId = CartHold::where('user_id', $userId)
+                ->where('session_id', $sessionId)
+                ->where('book_id', $duplicate->book_id)
+                ->min('id');
 
-        // Nhóm sản phẩm theo book_id
+            CartHold::where('id', $firstId)->update(['quantity' => $duplicate->total_quantity]);
+
+            CartHold::where('user_id', $userId)
+                ->where('session_id', $sessionId)
+                ->where('book_id', $duplicate->book_id)
+                ->where('id', '!=', $firstId)
+                ->delete();
+        }
+
+        // Dọn sạch cart cũ
+        CartHold::where('user_id', $userId)
+            ->where(function ($q) use ($sessionId) {
+                $q->where('session_id', '!=', $sessionId)
+                  ->orWhere('created_at', '<', now()->subHours(24));
+            })->delete();
+
+        $cartItems = CartHold::where('user_id', $userId)
+            ->where('session_id', $sessionId)
+            ->with(['book' => function ($q) {
+                $q->select('MaSach', 'TenSach', 'GiaBan', 'HinhAnh');
+            }])->get();
+
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Giỏ hàng trống.');
+        }
+
         $groupedCartItems = $cartItems->groupBy('book_id')->map(function ($items) {
-            $firstItem = $items->first();
+            $first = $items->first();
             return [
-                'book' => $firstItem->book,
-                'quantity' => $items->sum('quantity'),
+                'book' => [
+                    'MaSach' => $first->book->MaSach,
+                    'TenSach' => $first->book->TenSach,
+                    'GiaBan' => $first->book->GiaBan,
+                    'HinhAnh' => $first->book->HinhAnh,
+                ],
+                'quantity' => $items->sum('quantity')
             ];
         })->values();
 
-        // Kiểm tra giỏ hàng trống
         if ($groupedCartItems->isEmpty()) {
-            Log::warning('Giỏ hàng trống sau khi nhóm', [
-                'user_id' => $userId,
-                'session_id' => $sessionId
-            ]);
-            return redirect()->route('cart')->with('error', 'Giỏ hàng trống. Vui lòng thêm sản phẩm.');
+            return redirect()->route('cart.index')->with('error', 'Giỏ hàng không hợp lệ.');
         }
 
-        // Kiểm tra dữ liệu hợp lệ
-        foreach ($groupedCartItems as $item) {
-            if (!isset($item['book']['MaSach'], $item['book']['GiaBan']) || $item['quantity'] <= 0) {
-                Log::error('Dữ liệu giỏ hàng không hợp lệ', [
-                    'user_id' => $userId,
-                    'item' => $item
-                ]);
-                return redirect()->route('cart')->with('error', 'Dữ liệu giỏ hàng không hợp lệ. Vui lòng kiểm tra lại.');
-            }
-        }
+        $subtotal = $groupedCartItems->sum(fn ($item) => $item['quantity'] * $item['book']['GiaBan']);
 
-        // Tính tổng tiền
-        $subtotal = $groupedCartItems->sum(function ($item) {
-            return $item['quantity'] * $item['book']['GiaBan'];
-        });
-
-        // Áp dụng khuyến mãi
         if ($promo) {
-            Log::info('Áp dụng khuyến mãi', ['promo' => $promo]);
-            if ($promo['Kieu'] === 'percent') {
-                $discountAmount = ($subtotal * $promo['GiaTri']) / 100;
-            } else {
-                $discountAmount = $promo['GiaTri'];
-            }
+            $discountAmount = $promo['Kieu'] === 'percent'
+                ? ($subtotal * $promo['GiaTri']) / 100
+                : $promo['GiaTri'];
         }
 
-        $shipping = 0;
         $total = max(0, $subtotal + $shipping - $discountAmount);
-
-        // Log dữ liệu trước khi render
-        Log::info('Checkout index data', [
-            'user_id' => $userId,
-            'session_id' => $sessionId,
-            'groupedCartItems' => $groupedCartItems->toArray(),
-            'subtotal' => $subtotal,
-            'discountAmount' => $discountAmount,
-            'total' => $total,
-            'promo' => $promo,
-            'total_quantity' => $groupedCartItems->sum('quantity'),
-            'total_items' => count($groupedCartItems),
-        ]);
-
-        // Lưu groupedCartItems vào session, xóa dữ liệu cũ
-        Session::forget('groupedCartItems');
         Session::put('groupedCartItems', $groupedCartItems->toArray());
 
         $tinhThanhs = TinhThanh::select('id', 'ten')->orderBy('ten')->get();
-        return view('homepage.checkout', compact('groupedCartItems', 'subtotal', 'shipping', 'total', 'tinhThanhs'));
-    }
 
+        return view('homepage.checkout', compact('groupedCartItems', 'subtotal', 'shipping', 'total', 'tinhThanhs', 'discountAmount', 'promo'));
+    }
     public function store(Request $request)
     {
-
         try {
             $userId = Auth::id();
             $sessionId = Session::getId();
-            Log::debug('groupedCartItems in session trước khi đặt hàng:', [
-                'session_id' => $sessionId,
-                'data' => session('groupedCartItems')
-            ]);
 
-            Log::info('Bắt đầu xử lý đơn hàng', [
-                'request' => $request->all(),
+            Log::info('Bắt đầu xử lý đặt hàng', [
                 'user_id' => $userId,
                 'session_id' => $sessionId,
-                'cart' => session('groupedCartItems', []),
+                'request_data' => $request->all()
             ]);
 
-            if (!Auth::check()) {
-                Log::error('Người dùng chưa đăng nhập', ['session_id' => $sessionId]);
-                return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để đặt hàng.');
-            }
-
-            // Xác thực dữ liệu
             $validated = $request->validate([
-                'khachhang_id' => 'required|exists:khachhang,MaKhachHang',
                 'ten_nguoi_nhan' => 'required|string|max:255',
-                'so_dien_thoai' => 'required|regex:/^[0-9]{10}$/',
+                'so_dien_thoai' => 'required|string|regex:/^[0-9]{10}$/',
+                'dia_chi_cu_the' => 'required|string|max:255',
                 'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
                 'quan_huyen_id' => 'required|exists:quan_huyens,id',
                 'phuong_xa_id' => 'required|exists:phuong_xas,id',
-                'dia_chi_cu_the' => 'required|string|max:255',
-                'payment_method' => 'required|in:cod,vnpay',
-                'subtotal' => 'required|numeric|min:0',
-                'shipping' => 'required|numeric|min:0',
                 'total' => 'required|numeric|min:0',
+                'phuong_thuc_thanh_toan' => 'required|in:cod,vnpay',
                 'ghi_chu' => 'nullable|string|max:1000',
             ]);
-
-            Log::info('Xác thực dữ liệu thành công', [
-                'user_id' => $userId,
-                'validated' => $validated
-            ]);
-
-            // Lấy giỏ hàng từ session
+            $validated['khachhang_id'] = $userId;
             $groupedCartItems = session('groupedCartItems', []);
             if (empty($groupedCartItems)) {
-                Log::error('Giỏ hàng rỗng', [
-                    'user_id' => $userId,
-                    'khachhang_id' => $request->khachhang_id
-                ]);
-                return redirect()->back()->with('error', 'Giỏ hàng rỗng. Vui lòng thêm sản phẩm.');
+                Log::warning('Giỏ hàng rỗng trong session', ['user_id' => $userId]);
+                return redirect()->route('cart.index')->with('error', 'Giỏ hàng rỗng.');
             }
 
-            // Kiểm tra dữ liệu giỏ hàng
-            foreach ($groupedCartItems as $item) {
-                if (!isset($item['book']['MaSach'], $item['book']['GiaBan'], $item['quantity']) || $item['quantity'] <= 0) {
-                    Log::error('Dữ liệu giỏ hàng không hợp lệ', [
-                        'user_id' => $userId,
-                        'item' => $item
-                    ]);
-                    return redirect()->back()->with('error', 'Dữ liệu giỏ hàng không hợp lệ.');
-                }
-            }
-
-            // Tính toán tổng tiền và kiểm tra
-            $cartItemCount = count($groupedCartItems);
-            $cartTotal = 0;
-            $cartDetails = [];
-
-            Session::forget(['groupedCartItems', 'promo']);
-            CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
-
-            foreach ($groupedCartItems as $item) {
-                $cartTotal += $item['quantity'] * $item['book']['GiaBan'];
-                $cartDetails[] = [
-                    'MaSach' => $item['book']['MaSach'],
-                    'TenSach' => $item['book']['TenSach'],
-                    'Quantity' => $item['quantity'],
-                    'GiaBan' => $item['book']['GiaBan'],
-                ];
-            }
-
+            $cartTotal = collect($groupedCartItems)->sum(fn($item) => $item['quantity'] * $item['book']['GiaBan']);
             $promo = session('promo');
-            $discountAmount = 0;
-            if ($promo) {
-                if ($promo['Kieu'] === 'percent') {
-                    $discountAmount = ($cartTotal * $promo['GiaTri']) / 100;
-                } else {
-                    $discountAmount = $promo['GiaTri'];
-                }
-            }
 
-            $shipping = $request->shipping;
+            $discountAmount = $promo ? (
+                $promo['Kieu'] === 'percent'
+                    ? ($cartTotal * $promo['GiaTri']) / 100
+                    : $promo['GiaTri']
+            ) : 0;
+
+            $shipping = 0;
             $expectedTotal = max(0, $cartTotal + $shipping - $discountAmount);
 
-            // Kiểm tra tổng tiền
-            if (round($expectedTotal) != round($request->total)) {
-                Log::error('Tổng tiền không khớp', [
-                    'user_id' => $userId,
-                    'request_total' => $request->total,
-                    'calculated_total' => $expectedTotal,
-                    'cart_total' => $cartTotal,
-                    'discount_amount' => $discountAmount,
-                    'cart_count' => $cartItemCount,
-                    'cart_details' => $cartDetails,
-                ]);
-                return redirect()->back()->with('error', 'Tổng tiền không hợp lệ. Vui lòng kiểm tra giỏ hàng.');
-            }
-
-            // Tạo địa chỉ giao hàng
-            $tinhThanh = TinhThanh::findOrFail($request->tinh_thanh_id)->ten;
-            $quanHuyen = QuanHuyen::findOrFail($request->quan_huyen_id)->ten;
-            $phuongXa = PhuongXa::findOrFail($request->phuong_xa_id)->ten;
-            $diaChi = "{$request->dia_chi_cu_the}, {$phuongXa}, {$quanHuyen}, {$tinhThanh}";
-
-            // Ánh xạ phương thức thanh toán
-            $paymentMethodMapping = ['cod' => 1, 'vnpay' => 2];
-            $maPhuongThuc = $paymentMethodMapping[$request->payment_method] ?? 1;
-
-            // Tạo hóa đơn
-            $hoadon = HoaDon::create([
-                'MaKhachHang' => $request->khachhang_id,
-                'NgayLap' => now(),
-                'TongTien' => $request->total,
-                'TrangThai' => 'Đang chờ',
-                'PT_ThanhToan' => $maPhuongThuc,
-                'DiaChi' => $diaChi,
-                'SoDienThoai' => $request->so_dien_thoai,
-                'GhiChu' => $request->ghi_chu,
+            Log::debug('Tính toán đơn hàng', [
+                'cartTotal' => $cartTotal,
+                'discount' => $discountAmount,
+                'shipping' => $shipping,
+                'expectedTotal' => $expectedTotal,
+                'validatedTotal' => $validated['total']
             ]);
 
-            // Tạo chi tiết hóa đơn
-            $existingItems = [];
-            foreach ($groupedCartItems as $item) {
-                $bookId = $item['book']['MaSach'];
-                if (isset($existingItems[$bookId])) {
-                    Log::warning('Duplicate book detected in ChiTietHoaDon', [
-                        'user_id' => $userId,
-                        'MaSach' => $bookId,
-                        'quantity' => $item['quantity'],
-                    ]);
-                    continue;
-                }
-                $existingItems[$bookId] = true;
+            if (abs($expectedTotal - $validated['total']) > 0.01) {
+                Log::warning('Tổng tiền không khớp', [
+                    'expected' => $expectedTotal,
+                    'submitted' => $validated['total']
+                ]);
+                return redirect()->route('cart.index')->with('error', 'Tổng tiền không khớp.');
+            }
 
+            if ($request->input('phuong_thuc_thanh_toan') === 'vnpay') {
+                $validated['khachhang_id'] = $userId;
+                $diaChi = [
+                    'ten' => $validated['ten_nguoi_nhan'],
+                    'sdt' => $validated['so_dien_thoai'],
+                    'dia_chi_cu_the' => $validated['dia_chi_cu_the'],
+                    'tinh_thanh_id' => $validated['tinh_thanh_id'],
+                    'quan_huyen_id' => $validated['quan_huyen_id'],
+                    'phuong_xa_id' => $validated['phuong_xa_id'],
+                ];
+
+                session()->put('vnpay_order', [
+                    'validated' => $validated, // đã bao gồm 'khachhang_id'
+                    'groupedCartItems' => $groupedCartItems,
+                    'cartTotal' => $cartTotal,
+                    'discountAmount' => $discountAmount,
+                    'shipping' => $shipping,
+                    'expectedTotal' => $expectedTotal,
+                    'diaChi' => $diaChi,
+                ]);
+
+                Log::info('Chuyển hướng sang VNPay', [
+                    'user_id' => $userId,
+                    'expectedTotal' => $expectedTotal
+                ]);
+
+                return redirect()->route('vnpay.payment');
+            }
+            // Nếu chọn COD, tiến hành lưu hóa đơn như bình thường
+            $methodMap = ['cod' => 1, 'vnpay' => 2];
+            $methodId = $methodMap[$request->input('phuong_thuc_thanh_toan')] ?? null;
+
+            Log::debug('Tạo hóa đơn mới', ['method_id' => $methodId]);
+
+            $hoadon = HoaDon::create([
+                'MaKhachHang' => $userId,
+                'NgayLap' => now(),
+                'TongTien' => $cartTotal,
+                'DiaChiGiaoHang' => $validated['dia_chi_cu_the'],
+                'MaTinhThanh' => $validated['tinh_thanh_id'],
+                'MaQuanHuyen' => $validated['quan_huyen_id'],
+                'MaPhuongXa' => $validated['phuong_xa_id'],
+                'TenNguoiNhan' => $validated['ten_nguoi_nhan'],
+                'SoDienThoai' => $validated['so_dien_thoai'],
+                'TrangThai' => 'Đang chờ',
+                'PT_ThanhToan' => $methodId,
+            ]);
+
+            foreach ($groupedCartItems as $item) {
                 ChiTietHoaDon::create([
                     'MaHoaDon' => $hoadon->MaHoaDon,
                     'MaSach' => $item['book']['MaSach'],
@@ -271,42 +216,35 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            // Lưu địa chỉ nếu yêu cầu
             if ($request->has('save-address')) {
                 DiaChiNhanHang::create([
-                    'khachhang_id' => $request->khachhang_id,
-                    'ten_nguoi_nhan' => $request->ten_nguoi_nhan,
-                    'so_dien_thoai' => $request->so_dien_thoai,
-                    'dia_chi_cu_the' => $request->dia_chi_cu_the,
-                    'phuong_xa_id' => $request->phuong_xa_id,
-                    'quan_huyen_id' => $request->quan_huyen_id,
-                    'tinh_thanh_id' => $request->tinh_thanh_id,
+                    'MaKhachHang' => $userId,
+                    'TenNguoiNhan' => $validated['ten_nguoi_nhan'],
+                    'SoDienThoai' => $validated['so_dien_thoai'],
+                    'DiaChi' => $validated['dia_chi_cu_the'],
+                    'MaTinhThanh' => $validated['tinh_thanh_id'],
+                    'MaQuanHuyen' => $validated['quan_huyen_id'],
+                    'MaPhuongXa' => $validated['phuong_xa_id'],
                 ]);
             }
 
-            // // Làm sạch giỏ hàng và session                        
-            // Session::forget(['groupedCartItems', 'promo']);
+            Session::forget(['groupedCartItems', 'promo', 'cart']);
+            CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
 
-            // CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
-
-            Log::info('Đặt hàng thành công', [
-                'user_id' => $userId,
-                'MaHoaDon' => $hoadon->MaHoaDon,
-                'cart_details' => $cartDetails,
-                'total' => $request->total,
-            ]);
+            Log::info('Đặt hàng thành công', ['user_id' => $userId]);
 
             return redirect()->route('account')->with('success', 'Đặt hàng thành công!');
-        } catch (\Exception $e) {
-            Log::error('Lỗi khi lưu đơn hàng: ' . $e->getMessage(), [
-                'user_id' => $userId,
-                'request' => $request->all(),
-                'cart' => session('groupedCartItems', []),
-                'trace' => $e->getTraceAsString(),
+
+        } catch (\Throwable $e) {
+            Log::error('Lỗi khi đặt hàng: ' . $e->getMessage(), [
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
             ]);
-            return redirect()->back()->with('error', 'Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.');
+
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi đặt hàng.')->withInput();
         }
     }
+
+
 }

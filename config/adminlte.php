@@ -331,6 +331,20 @@ return [
             'url'  => 'admin/contacts',
             'icon' => 'fas fa-envelope',
         ],
+        [
+            'text' => 'Phiếu nhập',
+            'icon' => 'fas fa-file-invoice',
+            'submenu' => [
+                [
+                    'text' => 'Danh sách phiếu nhập',
+                    'url'  => 'admin/phieunhap',
+                ],
+                [
+                    'text' => 'Tạo phiếu mới',
+                    'url'  => 'admin/phieunhap/create',
+                ],
+            ],
+        ],
     ],
 
 

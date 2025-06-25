@@ -3,51 +3,61 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\View;
 use App\Models\Footer;
 use App\Models\Category;
 use App\Models\Book;
-
+use Illuminate\Contracts\Foundation\Application as AppContract;
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        View::composer('*', function ($view) {
-            // Lấy thông tin chung
-            $thongTinChung = Footer::where('loai_du_lieu', 'thong_tin_chung')->first();
+        if ($this->app->runningInConsole() && !$this->app->runningUnitTests()) {
+            return;
+        }
 
-            // Lấy tất cả dữ liệu (bao gồm cả thong_tin_chung và muc_con) để hiển thị toàn bộ
-            $tatCaDuLieu = Footer::all();
+        $this->bootViewComposer();
 
-            // Lấy các mục con và nhóm theo ten_muc
-            $mucCon = Footer::where('loai_du_lieu', 'muc_con')
-                ->get()
-                ->groupBy('ten_muc');
-
-            $view->with([
-                'dmWithTop3' => $this->getDmWithTop3ByParent(1),
-                'dmWithTop3QT' => $this->getDmWithTop3ByParent(2),
-                'thongTinChung' => $thongTinChung,
-                'duLieuChanTrang' => $mucCon,
-                'tatCaDuLieu' => $tatCaDuLieu,
-            ]);
-        });
+        if (file_exists(base_path('routes/channels.php'))) {
+            Broadcast::routes();
+            require base_path('routes/channels.php');
+        }
     }
+
+    protected function bootViewComposer()
+    {
+        try {
+            View::composer('*', function ($view) {
+                $thongTinChung = Footer::where('loai_du_lieu', 'thong_tin_chung')->first();
+                $tatCaDuLieu = Footer::all();
+                $mucCon = Footer::where('loai_du_lieu', 'muc_con')
+                    ->get()
+                    ->groupBy('ten_muc');
+
+                $view->with([
+                    'dmWithTop3'     => $this->getDmWithTop3ByParent(1),
+                    'dmWithTop3QT'   => $this->getDmWithTop3ByParent(2),
+                    'thongTinChung'  => $thongTinChung,
+                    'duLieuChanTrang'=> $mucCon,
+                    'tatCaDuLieu'    => $tatCaDuLieu,
+                ]);
+            });
+        } catch (\Exception $e) {
+            \Log::error("View Composer Error: " . $e->getMessage());
+        }
+    }
+
+
     private function getDmWithTop3ByParent($parentId)
     {
         $dmCap2 = Category::where('parent_id', $parentId)->get();
-        
         $dmCap3All = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
 
         $books1 = Book::select('category_id')
@@ -68,7 +78,7 @@ class AppServiceProvider extends ServiceProvider
             $dm2->topChildren = $children;
             return $dm2;
         });
-        
+
         return $dmCap2->chunk(4);
     }
 }

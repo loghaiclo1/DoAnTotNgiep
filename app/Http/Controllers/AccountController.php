@@ -31,4 +31,26 @@ class AccountController extends Controller
         }
         return view('homepage.account', compact('user', 'orders', 'addresses'));
     }
+    public function getOrderStatus($id)
+{
+    $order = HoaDon::find($id);
+
+    if (!$order) {
+        return response()->json(['status' => 'not_found'], 404);
+    }
+
+    $statusMap = [
+        'Đang chờ' => 'processing',
+        'Đã xác nhận' => 'confirmed',
+        'Đang giao' => 'shipping',
+        'Hoàn tất' => 'completed',
+        'Đã hủy' => 'cancelled',
+    ];
+
+    return response()->json([
+        'status' => $order->TrangThai,
+        'class' => $statusMap[$order->TrangThai] ?? 'processing'
+    ]);
+}
+
 }

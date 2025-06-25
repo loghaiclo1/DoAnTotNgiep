@@ -14,6 +14,15 @@
             </nav>
         </div>
     </div>
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
     <section id="checkout" class="checkout section">
         <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -124,14 +133,14 @@
                                     <div class="section-content">
                                         <div class="payment-options">
                                             <div class="payment-option active">
-                                                <input type="radio" name="payment_method" id="cod" value="cod" checked>
+                                                <input type="radio" name="phuong_thuc_thanh_toan" id="cod" value="cod" checked>
                                                 <label for="cod">
                                                     <span class="payment-icon"><i class="bi bi-cash"></i></span>
                                                     <span class="payment-label">Thanh toán khi nhận hàng (COD)</span>
                                                 </label>
                                             </div>
                                             <div class="payment-option">
-                                                <input type="radio" name="payment_method" id="vnpay" value="vnpay">
+                                                <input type="radio" name="phuong_thuc_thanh_toan" id="vnpay" value="vnpay">
                                                 <label for="vnpay">
                                                     <span class="payment-icon"><i class="bi bi-credit-card"></i></span>
                                                     <span class="payment-label">Thanh toán bằng VNPay</span>
@@ -187,19 +196,20 @@
                         <div class="order-summary-content">
                             <div class="order-items">
                                 @foreach ($groupedCartItems as $item)
-                                    <div class="order-item">
-                                        <div class="order-item-image">
-                                            <img src="{{ asset('image/book/' . ltrim($item['book']->HinhAnh, '/')) }}" alt="{{ $item['book']->TenSach }}">
-                                        </div>
-                                        <div class="order-item-details">
-                                            <h4>{{ $item['book']->TenSach }}</h4>
-                                            <div class="order-item-price">
-                                                <span class="quantity">{{ $item['quantity'] }} ×</span>
-                                                <span class="price">{{ number_format($item['book']->GiaBan, 0, ',', '.') }} ₫</span>
-                                            </div>
+                                <div class="order-item">
+                                    <div class="order-item-image">
+                                        <img src="{{ asset('image/book/' . ltrim($item['book']['HinhAnh'], '/')) }}" alt="{{ $item['book']['TenSach'] }}">
+                                    </div>
+                                    <div class="order-item-details">
+                                        <h4>{{ $item['book']['TenSach'] }}</h4>
+                                        <div class="order-item-price">
+                                            <span class="quantity">{{ $item['quantity'] }} ×</span>
+                                            <span class="price">{{ number_format($item['book']['GiaBan'], 0, ',', '.') }} ₫</span>
                                         </div>
                                     </div>
-                                @endforeach
+                                </div>
+                            @endforeach
+
                             </div>
                             <div class="promo-code mb-3">
                                 <div class="input-group">

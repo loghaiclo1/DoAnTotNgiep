@@ -5,7 +5,7 @@
 @section('content')
 <main class="main">
     <!-- Page Title -->
-    
+
     <div class="page-title light-background">
         <div class="container d-lg-flex justify-content-between align-items-center">
             <h1 class="mb-2 mb-lg-0">Tài khoản</h1>
@@ -117,7 +117,7 @@
 
                                 <div class="orders-grid">
                                     @forelse ($orders as $order)
-                                        <div class="order-card" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
+                     <div class="order-card" data-order-id="{{ $order->MaHoaDon }}" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
                                             <div class="order-header">
                                                 <div class="order-id">
                                                     <span class="label">Mã Đơn Hàng:</span>
@@ -146,7 +146,8 @@
                                                             ];
                                                             $statusClass = $statusMap[$order->TrangThai] ?? 'processing';
                                                         @endphp
-                                                        <span class="status {{ $statusClass }}">{{ $order->TrangThai }}</span>
+                                               <span class="status {{ $statusClass }}" data-status-for="{{ $order->MaHoaDon }}">{{ $order->TrangThai }}</span>
+
                                                     </div>
                                                     <div class="info-row">
                                                         <span>Sản Phẩm</span>
@@ -198,7 +199,16 @@
                                                         <div class="info-grid">
                                                             <div class="info-item">
                                                                 <span class="label">Phương Thức Thanh Toán</span>
-                                                                <span class="value">{{ $order->phuongthucthanhtoan->TenPhuongThuc }}</span>
+                                                                <span class="value">
+                                                                    @if ($order->PT_ThanhToan == 1)
+                                                                        Thanh toán khi nhận hàng (COD)
+                                                                    @elseif ($order->PT_ThanhToan == 2)
+                                                                        Thanh toán VNPay
+                                                                    @else
+                                                                        Không xác định
+                                                                    @endif
+                                                                </span>
+
                                                             </div>
                                                             <div class="info-item">
                                                                 <span class="label">Phương Thức Vận Chuyển</span>
@@ -211,30 +221,42 @@
                                                         <h5>Sản Phẩm ({{ $order->chitiethoadon->sum('SoLuong') }})</h5>
                                                         <div class="order-items">
                                                             @php
-                                                            $groupedItems = $order->chitiethoadon->groupBy('MaSach');
-                                                        @endphp
-
-                                                        @foreach ($groupedItems as $maSach => $items)
-                                                            @php
-                                                                $first = $items->first(); // dùng để lấy thông tin sách
-                                                                $soLuong = $items->sum('SoLuong');
-                                                                $donGia = $first->DonGia;
-                                                                $tongTien = $donGia * $soLuong;
+                                                                $groupedItems = $order->chitiethoadon->groupBy('MaSach');
                                                             @endphp
-                                                            <div class="item">
-                                                                <img src="{{ asset('image/book/' . ltrim($first->sach->HinhAnh, '/')) }}" alt="{{ $first->sach->TenSach }}" loading="lazy">
-                                                                <div class="item-info">
-                                                                    <h6>{{ $first->sach->TenSach }}</h6>
-                                                                    <div class="item-meta">
-                                                                        <span class="sku">Mã Sách: {{ $maSach }}</span>
-                                                                        <span class="qty">Số lượng: {{ $soLuong }}</span>
+
+                                                            @foreach ($groupedItems as $maSach => $items)
+                                                                @php
+                                                                    $first = $items->first();
+                                                                    $soLuong = $items->sum('SoLuong');
+                                                                    $donGia = $first->DonGia ?? 0;
+                                                                    $tongTien = $donGia * $soLuong;
+                                                                    $tenSach = $first->sach->TenSach ?? 'Không tìm thấy sách';
+                                                                    $hinhAnh = $first->sach->HinhAnh ?? 'no-image.png';
+                                                                @endphp
+
+                                                                <div class="item d-flex align-items-center mb-3">
+                                                                    <img src="{{ asset('image/book/' . ltrim($hinhAnh, '/')) }}"
+                                                                         alt="{{ $tenSach }}"
+                                                                         loading="lazy"
+                                                                         width="80"
+                                                                         class="me-3 rounded shadow-sm border">
+
+                                                                    <div class="item-info flex-grow-1">
+                                                                        <h6 class="mb-1">{{ $tenSach }}</h6>
+                                                                        <div class="item-meta text-muted small">
+                                                                            <span class="d-block">Mã Sách: {{ $maSach }}</span>
+                                                                            <span class="d-block">Số lượng: {{ $soLuong }}</span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="item-price text-end fw-bold">
+                                                                        {{ number_format($tongTien, 0, ',', '.') }} ₫
                                                                     </div>
                                                                 </div>
-                                                                <div class="item-price">{{ number_format($tongTien, 0, ',', '.') }} ₫</div>
-                                                            </div>
-                                                        @endforeach
+                                                            @endforeach
                                                         </div>
                                                     </div>
+
 
                                                     <div class="detail-section">
                                                         <h5>Chi Tiết Giá</h5>
@@ -346,4 +368,29 @@
         </div>
     </section><!-- /Account Section -->
 </main>
+
+<script>
+    // Lặp qua các đơn hàng của người dùng để đăng ký kênh
+    @foreach ($orders as $order)
+        Echo.private('orders.{{ $order->id }}')
+            .listen('OrderStatusUpdated', (e) => {
+                const statusSpan = document.querySelector('#status-order-{{ $order->id }}');
+                if (statusSpan) {
+                    statusSpan.textContent = e.status;
+
+                    // Cập nhật class nếu cần
+                    const classMap = {
+                        'Đang chờ': 'processing',
+                        'Đã xác nhận': 'confirmed',
+                        'Đang giao': 'shipping',
+                        'Hoàn tất': 'completed',
+                        'Đã hủy': 'cancelled',
+                    };
+
+                    statusSpan.className = 'status ' + (classMap[e.status] || 'processing');
+                }
+            });
+    @endforeach
+</script>
+
 @endsection

@@ -23,12 +23,18 @@ class VNPayController extends Controller
 
     public function createPayment(Request $request)
     {
-        $total = $request->input('total');
-        if (!$total || $total <= 0) {
+        $orderSession = session('vnpay_order');
+        if (!$orderSession || !isset($orderSession['expectedTotal'])) {
+            return response()->json(['message' => 'Không tìm thấy thông tin đơn hàng trong session.'], 400);
+        }
+
+        $total = (float) $orderSession['expectedTotal'];
+        if ($total <= 0) {
             return response()->json(['message' => 'Tổng tiền không hợp lệ.'], 400);
         }
 
-        $validated = $request->except('_token');
+        // Use validated data from session instead of request
+        $validated = $orderSession['validated'];
         $groupedCartItems = session('groupedCartItems', []);
 
         // Làm sạch dữ liệu giỏ hàng để tránh trùng lặp

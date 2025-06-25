@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
-
+use App\Events\OrderStatusUpdated;
+use App\Models\Order;
 class OrderController extends Controller
 {
     public function index(Request $request)
@@ -34,4 +35,17 @@ class OrderController extends Controller
 
         return view('admin.orders', compact('orders'));
     }
+
+public function update(Request $request, $id)
+{
+    $order = Order::findOrFail($id);
+
+    // Cập nhật trạng thái
+    $order->trang_thai = $request->input('trang_thai');
+    $order->save();
+
+    event(new OrderStatusUpdated($order->id, $order->trang_thai));
+
+    return redirect()->back()->with('success', 'Cập nhật trạng thái thành công!');
+}
 }

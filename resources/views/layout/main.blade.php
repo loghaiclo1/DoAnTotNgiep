@@ -599,4 +599,20 @@
     }
 }
 </style>
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script src="https://unpkg.com/laravel-echo/dist/echo.iife.js"></script>
+
+<script>
+    // Khởi tạo Laravel Echo
+    window.Pusher = Pusher;
+
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: '{{ env("PUSHER_APP_KEY") }}',
+        cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
+        forceTLS: true,
+        encrypted: true
+    });
+</script>
+
 </body></html>

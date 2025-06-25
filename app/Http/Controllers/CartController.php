@@ -24,7 +24,6 @@ class CartController extends Controller
         Log::info('Current identifier:', $identifier);
         return $identifier;
     }
-
     protected function syncCart()
     {
         if (!Auth::check()) {
@@ -36,14 +35,15 @@ class CartController extends Controller
         $sessionId = session()->getId();
         $cart = session()->get('cart', []);
 
-        Log::info('Starting cart sync:', [
+        // Log trước khi đồng bộ
+        Log::info('syncCart: Before sync:', [
             'user_id' => $userId,
             'session_id' => $sessionId,
-            'initial_cart' => $cart
+            'session_cart' => $cart,
+            'cart_hold' => CartHold::where('user_id', $userId)->where('session_id', $sessionId)->get()->toArray(),
         ]);
 
         try {
-            // Lấy tất cả bản ghi CartHold của user hoặc session
             $userHolds = CartHold::where(function ($query) use ($userId, $sessionId) {
                 $query->where('user_id', $userId)
                     ->orWhere(function ($q) use ($sessionId) {
@@ -54,54 +54,44 @@ class CartController extends Controller
             $updatedCart = [];
             foreach ($userHolds as $bookId => $hold) {
                 $book = Book::find($bookId);
-                if ($book) {
-                    // Chỉ kiểm tra SoLuong của sách
-                    if ($hold->quantity <= $book->SoLuong) {
-                        $updatedCart[$bookId] = [
-                            'name' => $book->TenSach,
-                            'price' => $book->GiaBan,
-                            'quantity' => $hold->quantity,
-                            'image' => $book->HinhAnh,
-                        ];
-                    } else {
-                        Log::warning('syncCart: Quantity exceeds stock, removing.', [
-                            'book_id' => $bookId,
-                            'quantity' => $hold->quantity,
-                            'stock' => $book->SoLuong
-                        ]);
-                    }
+                if ($book && $hold->quantity <= $book->SoLuong) {
+                    $updatedCart[$bookId] = [
+                        'name' => $book->TenSach,
+                        'price' => $book->GiaBan,
+                        'quantity' => $hold->quantity,
+                        'image' => $book->HinhAnh,
+                    ];
                 }
             }
 
             session()->put('cart', $updatedCart);
-            Log::info('Cart synced:', [
-                'user_id' => $userId,
-                'session_id' => $sessionId,
-                'cart' => $updatedCart
-            ]);
 
-            // Cập nhật CartHold cho user
             foreach ($updatedCart as $bookId => $item) {
                 CartHold::updateOrCreate(
                     ['user_id' => $userId, 'session_id' => $sessionId, 'book_id' => $bookId],
-                    ['quantity' => $item['quantity'], 'expires_at' => null] // Không dùng expires_at
+                    ['quantity' => $item['quantity'], 'expires_at' => null]
                 );
             }
 
-            // Xóa CartHold không còn trong giỏ
             CartHold::where('user_id', $userId)
                 ->where('session_id', $sessionId)
                 ->whereNotIn('book_id', array_keys($updatedCart))
                 ->delete();
-        } catch (\Exception $e) {
-            Log::error('syncCart: Error syncing cart.', [
+
+            // Log sau khi đồng bộ
+            Log::info('syncCart: After sync:', [
                 'user_id' => $userId,
                 'session_id' => $sessionId,
-                'exception' => $e->getMessage()
+                'session_cart' => session('cart'),
+                'cart_hold' => CartHold::where('user_id', $userId)->where('session_id', $sessionId)->get()->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('syncCart: Error syncing cart:', [
+                'user_id' => $userId,
+                'exception' => $e->getMessage(),
             ]);
         }
     }
-
     public function add(Request $request)
     {
         $bookId = $request->input('book_id');
@@ -123,6 +113,7 @@ class CartController extends Controller
         }
 
         try {
+            // Khởi tạo $book
             $book = Book::findOrFail($bookId);
 
             if ($book->SoLuong < 1) {
@@ -134,10 +125,15 @@ class CartController extends Controller
             $cart = session()->get('cart', []);
             $currentQty = isset($cart[$bookId]) ? $cart[$bookId]['quantity'] : 0;
 
-            // Chỉ kiểm tra SoLuong
+            // Kiểm tra CartHold hiện tại
+            $existingHold = CartHold::where(array_merge($identifier, ['book_id' => $bookId]))->first();
+            if ($existingHold) {
+                $currentQty = $existingHold->quantity;
+            }
+
             $newQty = $currentQty + $quantity;
             if ($newQty > $book->SoLuong) {
-                return response()->json(['status' => 'error', 'message' => "Số lượng yêu cầu $newQty không có sẵn!."], 400)
+                return response()->json(['status' => 'error', 'message' => "Số lượng yêu cầu $newQty không có sẵn!"], 400)
                     ->header('Content-Type', 'application/json; charset=utf-8');
             }
 
@@ -153,7 +149,7 @@ class CartController extends Controller
 
             CartHold::updateOrCreate(
                 array_merge($identifier, ['book_id' => $bookId]),
-                ['quantity' => $newQty, 'expires_at' => null] // Không dùng expires_at
+                ['quantity' => $newQty, 'expires_at' => null]
             );
 
             $this->syncCart();
@@ -177,14 +173,22 @@ class CartController extends Controller
                 ->header('Content-Type', 'application/json; charset=utf-8');
         }
     }
-
     public function index()
     {
         $this->syncCart();
         $cart = session()->get('cart', []);
         $identifier = $this->getIdentifier();
         $errors = [];
-
+// Log dữ liệu giỏ hàng
+            Log::info('Cart index data:', [
+                'user_id' => $identifier['user_id'],
+                'session_id' => $identifier['session_id'],
+                'session_cart' => $cart,
+                'cart_hold' => CartHold::where('user_id', $identifier['user_id'])
+                    ->where('session_id', $identifier['session_id'])
+                    ->get()->toArray(),
+                'total_quantity' => collect($cart)->sum('quantity'),
+            ]);
         Log::info('Cart before processing:', ['cart' => $cart, 'identifier' => $identifier]);
 
         foreach ($cart as $bookId => &$item) {

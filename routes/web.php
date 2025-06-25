@@ -16,6 +16,8 @@ use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PhieuNhapController;
 
 // Trang chủ
 Route::get('/', [HomeController::class, 'index']);
@@ -76,20 +78,26 @@ Route::post('/user/addresses', [AddressController::class, 'store'])->name('user.
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-Route::post('/vnpay/create-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment')->middleware('web');
-Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])
-    ->name('vnpay.return')
-    ->middleware('web');
+Route::get('/vnpay/create-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
+Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])->name('vnpay.return');
 Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.apply');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/',  [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/',  [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/orders', fn () => view('admin.orders'))->name('orders');
     Route::get('/accounts', fn () => view('admin.accounts'))->name('accounts');
-    Route::get('/books', fn () => view('admin.books'))->name('books');
     Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
     Route::get('/categories', fn () => view('admin.categories'))->name('categories');
-    Route::get('contacts', [App\Http\Controllers\Admin\ContactController::class, 'index'])->name('contacts');
-    Route::put('contacts/{id}/update-status', [App\Http\Controllers\Admin\ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
+
+    Route::resource('books', App\Http\Controllers\Admin\BookController::class)->except(['show']);
+
+    Route::get('contacts', [ContactController::class, 'index'])->name('contacts');
+    Route::put('contacts/{id}/update-status', [ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
+    Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
+    Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
+Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
+
 });
+
+Route::put('/admin/orders/{id}', [OrderController::class, 'update'])->name('admin.orders.update');
