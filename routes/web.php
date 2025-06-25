@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Home\ContactController;
 use App\Http\Controllers\Home\AboutController;
@@ -88,10 +87,10 @@ Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.appl
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/',  [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/orders', fn () => view('admin.orders'))->name('orders');
-    Route::get('/accounts', fn () => view('admin.accounts'))->name('accounts');
-    Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
-    Route::get('/categories', fn () => view('admin.categories'))->name('categories');
+    Route::get('/orders', fn() => view('admin.orders'))->name('orders');
+    Route::get('/accounts', fn() => view('admin.accounts'))->name('accounts');
+    Route::get('/reviews', fn() => view('admin.reviews'))->name('reviews');
+    Route::get('/categories', fn() => view('admin.categories'))->name('categories');
 
     Route::resource('books', App\Http\Controllers\Admin\BookController::class)->except(['show']);
 
@@ -99,8 +98,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::put('contacts/{id}/update-status', [ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
-Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
-
+    Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
 });
 
 Route::put('/admin/orders/{id}', [OrderController::class, 'update'])->name('admin.orders.update');
@@ -171,10 +169,10 @@ Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.appl
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/',  [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/orders', fn () => view('admin.orders'))->name('orders');
-    Route::get('/accounts', fn () => view('admin.accounts'))->name('accounts');
-    Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
-    Route::get('/categories', fn () => view('admin.categories'))->name('categories');
+    Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])->names('orders');
+    Route::get('/accounts', fn() => view('admin.accounts'))->name('accounts');
+    Route::get('/reviews', fn() => view('admin.reviews'))->name('reviews');
+    Route::get('/categories', fn() => view('admin.categories'))->name('categories');
 
     Route::resource('books', App\Http\Controllers\Admin\BookController::class)->except(['show']);
 
@@ -182,8 +180,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::put('contacts/{id}/update-status', [ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
-Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
-
+    Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
 });
-
-Route::put('/admin/orders/{id}', [OrderController::class, 'update'])->name('admin.orders.update');

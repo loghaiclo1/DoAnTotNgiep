@@ -114,10 +114,9 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="orders-grid">
                                     @forelse ($orders as $order)
-                     <div class="order-card" data-order-id="{{ $order->MaHoaDon }}" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
+                                    <div class="order-card" data-order-id="{{ $order->MaHoaDon }}" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
                                             <div class="order-header">
                                                 <div class="order-id">
                                                     <span class="label">Mã Đơn Hàng:</span>
@@ -140,8 +139,10 @@
                                                         @php
                                                             $statusMap = [
                                                                 'Đang chờ' => 'processing',
+                                                                'Đã xác nhận' => 'confirmed',
                                                                 'Đang giao hàng' => 'shipped',
-                                                                'Hoàn thành' => 'delivered',
+                                                                'Hoàn thành' => 'completed',
+                                                                'Hoàn tất' => 'completed',
                                                                 'Hủy đơn' => 'cancelled',
                                                             ];
                                                             $statusClass = $statusMap[$order->TrangThai] ?? 'processing';
@@ -166,18 +167,30 @@
 
                                             <!-- Order Tracking -->
                                             <div class="collapse tracking-info" id="tracking{{ $order->MaHoaDon }}">
-                                                <div class="tracking-timeline">
+                                                <div class="tracking-timeline {{ $order->TrangThai === 'Hủy đơn' ? 'cancelled-timeline' : '' }}">
                                                     @php
-                                                        $trackingSteps = [
-                                                            ['status' => 'Đang chờ', 'label' => 'Đơn Hàng Đã Đặt', 'desc' => 'Đơn hàng đã được nhận và đang chờ xử lý', 'completed' => true],
-                                                            ['status' => 'Đang giao hàng', 'label' => 'Đang Giao Hàng', 'desc' => 'Đơn hàng đang được vận chuyển', 'completed' => in_array($order->TrangThai, ['Đang giao hàng', 'Hoàn thành'])],
-                                                            ['status' => 'Hoàn thành', 'label' => 'Đã Giao Hàng', 'desc' => 'Đơn hàng đã được giao thành công', 'completed' => $order->TrangThai === 'Hoàn thành'],
+                                                        $isCancelled = $order->TrangThai === 'Hủy đơn';
+
+                                                        $trackingSteps = $isCancelled
+                                                        ? [
+                                                            ['status' => 'Hủy đơn', 'label' => 'Đơn Hàng Đã Hủy', 'desc' => 'Đơn hàng này đã bị hủy và không được xử lý', 'completed' => true]
+                                                        ] : [
+                                                            ['status' => 'Đang chờ', 'label' => 'Đơn Hàng Đã Đặt', 'desc' => 'Đơn hàng đang chờ xác nhận', 'completed' => true],
+                                                            ['status' => 'Đã xác nhận', 'label' => 'Đã Xác Nhận', 'desc' => 'Đơn hàng đã được xác nhận', 'completed' => in_array($order->TrangThai, ['Đã xác nhận', 'Đang giao hàng', 'Hoàn thành', 'Hoàn tất'])],
+                                                            ['status' => 'Đang giao hàng', 'label' => 'Đang Giao Hàng', 'desc' => 'Đơn hàng đang được vận chuyển', 'completed' => in_array($order->TrangThai, ['Đang giao hàng', 'Hoàn thành', 'Hoàn tất'])],
+                                                            ['status' => 'Hoàn thành', 'label' => 'Đã Giao Hàng', 'desc' => 'Đơn hàng đã được giao thành công', 'completed' => in_array($order->TrangThai, ['Hoàn thành', 'Hoàn tất'])],
                                                         ];
                                                     @endphp
                                                     @foreach ($trackingSteps as $step)
                                                         <div class="timeline-item {{ $step['completed'] ? 'completed' : ($order->TrangThai === $step['status'] ? 'active' : '') }}">
                                                             <div class="timeline-icon">
-                                                                <i class="bi {{ $step['completed'] ? 'bi-check-circle-fill' : ($step['status'] === 'Đang giao hàng' ? 'bi-truck' : 'bi-house-door') }}"></i>
+                                                                <i class="bi 
+                                                                    @if($step['status'] === 'Hủy đơn') bi-x-circle-fill
+                                                                    @elseif($step['completed']) bi-check-circle-fill
+                                                                    @elseif($step['status'] === 'Đang giao hàng') bi-truck
+                                                                    @else bi-house-door
+                                                                    @endif
+                                                                "></i>
                                                             </div>
                                                             <div class="timeline-content">
                                                                 <h5>{{ $step['label'] }}</h5>
@@ -290,6 +303,7 @@
                                         <p>Chưa có đơn hàng nào.</p>
                                     @endforelse
                                 </div>
+                                
                             </div>
                                     <!-- Địa chỉ Tab -->
 

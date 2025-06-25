@@ -12292,3 +12292,31 @@ section,
     margin-top: 0 !important;
     padding-top: 0 !important;
 }
+
+.status.processing { background-color: #f0ad4e; color: white; }     /* vàng */
+.status.confirmed  { background-color: #5bc0de; color: white; }     /* xanh dương nhạt */
+.status.shipped    { background-color: #337ab7; color: white; }     /* xanh biển */
+.status.completed  { background-color: #5cb85c; color: white; }     /* xanh lá */
+.status.cancelled  { background-color: #d9534f; color: white; }     /* đỏ */
+
+/* Mặc định timeline */
+.timeline-item.completed .timeline-icon {
+    color: green;
+}
+.timeline-item.active .timeline-icon {
+    color: blue;
+}
+.timeline-item:not(.completed):not(.active) .timeline-icon {
+    color: #ccc;
+}
+
+/* Trạng thái bị hủy */
+.cancelled-timeline .timeline-item .timeline-icon {
+    color: #dc3545 !important;         /* Màu đỏ cho icon */
+    border-color: #dc3545 !important;  /* Viền đỏ nếu có */
+}
+
+.cancelled-timeline .timeline-item .bi {
+    color: #dc3545 !important;         /* Icon ❌ cũng đỏ */
+}
+
