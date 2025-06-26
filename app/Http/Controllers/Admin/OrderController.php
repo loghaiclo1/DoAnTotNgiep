@@ -95,7 +95,8 @@ class OrderController extends Controller
         // Nếu hợp lệ thì cập nhật
         $donhang->TrangThai = $trangThaiMoi;
         $donhang->save();
-
+        event(new OrderStatusUpdated($donhang->MaHoaDon, $donhang->TrangThai));
+        \Log::info('Gửi broadcast cho đơn hàng: ' . $donhang->MaHoaDon);
         return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
     }
 }

@@ -147,7 +147,9 @@
                                                             ];
                                                             $statusClass = $statusMap[$order->TrangThai] ?? 'processing';
                                                         @endphp
-                                               <span class="status {{ $statusClass }}" data-status-for="{{ $order->MaHoaDon }}">{{ $order->TrangThai }}</span>
+                                                <span class="status {{ $statusClass }}" id="status-order-{{ $order->MaHoaDon }}" data-status-for="{{ $order->MaHoaDon }}">
+                                                    {{ $order->TrangThai }}
+                                                </span>
 
                                                     </div>
                                                     <div class="info-row">
@@ -184,7 +186,7 @@
                                                     @foreach ($trackingSteps as $step)
                                                         <div class="timeline-item {{ $step['completed'] ? 'completed' : ($order->TrangThai === $step['status'] ? 'active' : '') }}">
                                                             <div class="timeline-icon">
-                                                                <i class="bi 
+                                                                <i class="bi
                                                                     @if($step['status'] === 'Hủy đơn') bi-x-circle-fill
                                                                     @elseif($step['completed']) bi-check-circle-fill
                                                                     @elseif($step['status'] === 'Đang giao hàng') bi-truck
@@ -303,7 +305,7 @@
                                         <p>Chưa có đơn hàng nào.</p>
                                     @endforelse
                                 </div>
-                                
+
                             </div>
                                     <!-- Địa chỉ Tab -->
 
@@ -382,29 +384,4 @@
         </div>
     </section><!-- /Account Section -->
 </main>
-
-<script>
-    // Lặp qua các đơn hàng của người dùng để đăng ký kênh
-    @foreach ($orders as $order)
-        Echo.private('orders.{{ $order->id }}')
-            .listen('OrderStatusUpdated', (e) => {
-                const statusSpan = document.querySelector('#status-order-{{ $order->id }}');
-                if (statusSpan) {
-                    statusSpan.textContent = e.status;
-
-                    // Cập nhật class nếu cần
-                    const classMap = {
-                        'Đang chờ': 'processing',
-                        'Đã xác nhận': 'confirmed',
-                        'Đang giao': 'shipping',
-                        'Hoàn tất': 'completed',
-                        'Đã hủy': 'cancelled',
-                    };
-
-                    statusSpan.className = 'status ' + (classMap[e.status] || 'processing');
-                }
-            });
-    @endforeach
-</script>
-
 @endsection

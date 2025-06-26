@@ -2,6 +2,6 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('order.{orderId}', function ($user, $orderId) {
-    return true; // Hoặc xác thực quyền nếu cần
+Broadcast::channel('orders.{orderId}', function ($user, $orderId) {
+    return true; // Hoặc kiểm tra quyền nếu cần
 });
