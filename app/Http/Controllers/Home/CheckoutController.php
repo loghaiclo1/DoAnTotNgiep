@@ -207,7 +207,7 @@ class CheckoutController extends Controller
                 'MaKhachHang'  => $userId,
                 'NgayLap'      => now(),
                 'TongTien'     => $cartTotal,
-                'DiaChi'       => $diaChiDayDu, 
+                'DiaChi'       => $diaChiDayDu,
                 'TenNguoiNhan' => $validated['ten_nguoi_nhan'],
                 'SoDienThoai'  => $validated['so_dien_thoai'],
                 'TrangThai'    => 'Đang chờ',

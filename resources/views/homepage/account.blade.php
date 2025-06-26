@@ -307,41 +307,83 @@
                                 </div>
 
                             </div>
-                                    <!-- Địa chỉ Tab -->
 
-                                <div class="tab-pane fade" id="addresses" role="tabpanel">
-                                    <div class="section-header" data-aos="fade-up">
-                                        <h2>Địa Chỉ Giao Hàng</h2>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-                                            Thêm Địa Chỉ Mới
-                                        </button>
-
-                                    </div>
-                                    @if ($addresses->isEmpty())
-                                        <p>Bạn chưa thêm địa chỉ giao hàng nào.</p>
-                                    @else
-                                        <div class="address-list row">
-                                            @foreach ($addresses as $address)
-                                                <div class="col-md-6">
-                                                    <div class="card mb-3" data-aos="fade-up">
-                                                        <div class="card-body">
-                                                            <h5 class="card-title">{{ $address->TenNguoiNhan }}</h5>
-                                                            <p class="card-text">
-                                                                {{ $address->DiaChi }}<br>
-                                                                SĐT: {{ $address->SoDienThoai }}
-                                                            </p>
-                                                            @if ($address->MacDinh)
-                                                                <span class="badge bg-success">Mặc định</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                            <div class="tab-pane fade" id="addresses" role="tabpanel">
+                                <div class="section-header" data-aos="fade-up">
+                                    <h2>Địa Chỉ Giao Hàng</h2>
                                 </div>
+
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                                        Thêm Địa Chỉ Mới
+                                    </button>
+                                </div>
+
+                                @if ($addresses->isEmpty())
+                                <p>Bạn chưa thêm địa chỉ giao hàng nào.</p>
+                                  @else
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" data-aos="fade-up">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Người nhận</th>
+                                                <th>Địa chỉ</th>
+                                                <th>SĐT</th>
+                                                <th>Mặc định</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($addresses as $address)
+                                                <tr>
+                                                    <td>{{ $address->ten_nguoi_nhan }}</td>
+                                                    <td>
+                                                        {{ $address->dia_chi_cu_the }},
+                                                        {{ optional($address->phuongXa)->ten }},
+                                                        {{ optional($address->quanHuyen)->ten }},
+                                                        {{ optional($address->tinhThanh)->ten }}
+                                                    </td>
+                                                    <td>{{ $address->so_dien_thoai }}</td>
+                                                    <td>
+                                                        @if ($address->mac_dinh)
+                                                            <span class="badge bg-success">Mặc định</span>
+                                                        @else
+                                                            <form action="{{ route('address.setDefault', $address->id) }}" method="POST" style="display:inline;">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <button type="submit" class="btn btn-sm btn-outline-primary">Chọn</button>
+                                                            </form>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <button type="button"
+                                                        class="btn btn-sm btn-warning edit-address-btn"
+                                                        data-id="{{ $address->id }}"
+                                                        data-ten="{{ $address->ten_nguoi_nhan }}"
+                                                        data-sdt="{{ $address->so_dien_thoai }}"
+                                                        data-diachi="{{ $address->dia_chi_cu_the }}"
+                                                        data-tinh="{{ $address->tinh_thanh_id }}"
+                                                        data-quan="{{ $address->quan_huyen_id }}"
+                                                        data-phuong="{{ $address->phuong_xa_id }}">
+                                                        Sửa
+                                                    </button>
+
+
+
+                                                        <!-- Nút xóa -->
+                                                        <form action="{{ route('user.addresses.destroy', $address->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này không?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
+
 
                             <!-- Settings Tab -->
                             <div class="tab-pane fade" id="settings" role="tabpanel">
@@ -431,11 +473,7 @@
                                 <label for="dia_chi_cu_the" class="form-label">Địa chỉ cụ thể</label>
                                 <input type="text" name="dia_chi_cu_the" id="dia_chi_cu_the" class="form-control" required placeholder="Số nhà, tên đường...">
                             </div>
-                        </div>
-                           <div class="form-check mb-2">
-                            <input type="checkbox" name="mac_dinh" class="form-check-input" id="mac_dinh">
-                            <label class="form-check-label" for="mac_dinh">Đặt làm địa chỉ mặc định</label>
-                        </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                             <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
@@ -446,44 +484,123 @@
             </div>
         </div>
 
+
+
     </section><!-- /Account Section -->
+    <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <form method="POST" action="" id="editAddressForm">
+            @csrf
+            @method('PUT')
+            <div class="modal-content">
+              <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editAddressModalLabel">Sửa địa chỉ</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <input type="text" name="ten_nguoi_nhan" id="edit_ten_nguoi_nhan" class="form-control mb-2" placeholder="Tên người nhận" required>
+                <input type="text" name="so_dien_thoai" id="edit_so_dien_thoai" class="form-control mb-2" placeholder="SĐT" required>
+                <input type="text" name="dia_chi_cu_the" id="edit_dia_chi_cu_the" class="form-control mb-2" placeholder="Địa chỉ cụ thể" required>
+
+                <select name="tinh_thanh_id" id="edit_tinh_thanh_id" class="form-select mb-2" required>
+                  <option value="">-- Chọn Tỉnh / Thành --</option>
+                  @foreach ($tinhThanhs as $tinh)
+                    <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
+                  @endforeach
+                </select>
+
+                <select name="quan_huyen_id" id="edit_quan_huyen_id" class="form-select mb-2" required></select>
+                <select name="phuong_xa_id" id="edit_phuong_xa_id" class="form-select mb-2" required></select>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
 </main>
 <script>
-        document.getElementById('so_dien_thoai')?.addEventListener('input', function() {
-        validatePhone(this.value);
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+        const form = document.getElementById('editAddressForm');
 
-    document.getElementById('tinh_thanh_id')?.addEventListener('change', function() {
-        const tinhThanhId = this.value;
-        if (tinhThanhId) {
-            fetch(`/api/quan-huyen/${tinhThanhId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const quanHuyenSelect = document.getElementById('quan_huyen_id');
-                    quanHuyenSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                    data.forEach(item => {
-                        quanHuyenSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
-                    });
-                    document.getElementById('phuong_xa_id').innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                })
-                .catch(error => console.error('Lỗi tải Quận/Huyện:', error));
-        }
-    });
+        document.querySelectorAll('.edit-address-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const id = this.dataset.id;
+                const ten = this.dataset.ten;
+                const sdt = this.dataset.sdt;
+                const diachi = this.dataset.diachi;
+                const tinh = this.dataset.tinh;
+                const quan = this.dataset.quan;
+                const phuong = this.dataset.phuong;
 
-    document.getElementById('quan_huyen_id')?.addEventListener('change', function() {
-        const quanHuyenId = this.value;
-        if (quanHuyenId) {
-            fetch(`/api/phuong-xa/${quanHuyenId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const phuongXaSelect = document.getElementById('phuong_xa_id');
-                    phuongXaSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                    data.forEach(item => {
-                        phuongXaSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
+                // Gán các giá trị cơ bản trước
+                form.action = `/user/addresses/${id}`;
+                document.getElementById('edit_ten_nguoi_nhan').value = ten;
+                document.getElementById('edit_so_dien_thoai').value = sdt;
+                document.getElementById('edit_dia_chi_cu_the').value = diachi;
+                document.getElementById('edit_tinh_thanh_id').value = tinh;
+
+                try {
+                    // Gọi đồng thời 2 API quận và xã
+                    const [quanRes, phuongRes] = await Promise.all([
+                        fetch(`/api/quan-huyen/${tinh}`),
+                        fetch(`/api/phuong-xa/${quan}`)
+                    ]);
+
+                    const quans = await quanRes.json();
+                    const phuongs = await phuongRes.json();
+
+                    const quanSelect = document.getElementById('edit_quan_huyen_id');
+                    const phuongSelect = document.getElementById('edit_phuong_xa_id');
+
+                    quanSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                    quans.forEach(item => {
+                        quanSelect.innerHTML += `<option value="${item.id}" ${item.id == quan ? 'selected' : ''}>${item.ten}</option>`;
                     });
-                })
-                .catch(error => console.error('Lỗi tải Phường/Xã:', error));
-        }
+
+                    phuongSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                    phuongs.forEach(item => {
+                        phuongSelect.innerHTML += `<option value="${item.id}" ${item.id == phuong ? 'selected' : ''}>${item.ten}</option>`;
+                    });
+
+                    editModal.show(); // Mở modal sau khi load xong
+                } catch (err) {
+                    console.error('Lỗi khi tải địa chỉ:', err);
+                    alert('Không thể tải dữ liệu địa chỉ. Vui lòng thử lại.');
+                }
+            });
+        });
+
+        // Khi chọn tỉnh trong modal sửa
+        document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function () {
+            fetch(`/api/quan-huyen/${this.value}`)
+                .then(res => res.json())
+                .then(data => {
+                    const quanSelect = document.getElementById('edit_quan_huyen_id');
+                    quanSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                    data.forEach(item => {
+                        quanSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
+                    });
+                    document.getElementById('edit_phuong_xa_id').innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                });
+        });
+
+        // Khi chọn quận trong modal sửa
+        document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function () {
+            fetch(`/api/phuong-xa/${this.value}`)
+                .then(res => res.json())
+                .then(data => {
+                    const phuongSelect = document.getElementById('edit_phuong_xa_id');
+                    phuongSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                    data.forEach(item => {
+                        phuongSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
+                    });
+                });
+        });
     });
-</script>
+    </script>
+
+
 @endsection
