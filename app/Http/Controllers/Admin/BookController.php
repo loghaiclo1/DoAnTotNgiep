@@ -53,7 +53,8 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'TenSach' => 'required|string|max:255',
+            'TenSach' => 'required|string|max:255|unique:sach,TenSach',
+
             'GiaNhap' => 'required|numeric|min:1000',
             'GiaBan' => 'required|numeric|min:1000',
             'SoLuong' => 'required|integer|min:0',
@@ -81,7 +82,7 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
         $data = $request->validate([
-            'TenSach' => 'required|string|max:255',
+            'TenSach' => 'required|string|max:255|unique:sach,TenSach,' . $book->MaSach . ',MaSach',
             'GiaNhap' => 'required|numeric|min:1000',
             'GiaBan' => 'required|numeric|min:1000',
             'SoLuong' => 'required|integer|min:0',

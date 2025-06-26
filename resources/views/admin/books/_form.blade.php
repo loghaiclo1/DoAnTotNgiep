@@ -1,6 +1,9 @@
 <div class="form-group">
     <label for="TenSach">Tên sách</label>
-    <input type="text" name="TenSach" id="TenSach" class="form-control" value="{{ old('TenSach', optional($book)->TenSach) }}" required>
+    <input type="text" name="TenSach" id="TenSach" class="form-control @error('TenSach') is-invalid @enderror" value="{{ old('TenSach', optional($book)->TenSach) }}" required>
+    @error('TenSach')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
 </div>
 
 <div class="form-group">
@@ -68,10 +71,14 @@
 
 <div class="form-group">
     <label for="HinhAnh">Hình ảnh (jpg, jpeg, png, webp)</label>
-    <input type="file" name="HinhAnh" id="HinhAnh" class="form-control-file" accept=".jpg,.jpeg,.png,.webp">
+    <input type="file" name="HinhAnh" id="HinhAnh" class="form-control-file @error('HinhAnh') is-invalid @enderror" accept=".jpg,.jpeg,.png,.webp" {{ isset($book) ? '' : 'required' }}>
+    @error('HinhAnh')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+
     @if(isset($book) && $book->HinhAnh)
         <div class="mt-2">
-            <img src="{{ asset('storage/' . $book->HinhAnh) }}" alt="Hình hiện tại" width="100">
+            <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="Hình hiện tại" width="100">
         </div>
     @endif
 </div>

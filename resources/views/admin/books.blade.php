@@ -7,7 +7,16 @@
 @stop
 
 @section('content')
-
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <strong>Đã có lỗi xảy ra!</strong>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     {{-- Hiển thị thông báo --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
