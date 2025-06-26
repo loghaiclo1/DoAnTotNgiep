@@ -23,4 +23,5 @@ class KhachHang extends Authenticatable
     {
         return $this->role === 'admin';
     }
+    
 }

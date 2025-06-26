@@ -31,6 +31,7 @@ class CheckoutController extends Controller
         $promo = session('promo');
         $discountAmount = 0;
         $shipping = 0;
+        $addresses = Auth::user()->addresses ?? collect();
 
         // Gộp các bản ghi trùng lặp trong cart_hold
         $duplicateHolds = CartHold::where('user_id', $userId)
@@ -59,7 +60,7 @@ class CheckoutController extends Controller
         CartHold::where('user_id', $userId)
             ->where(function ($q) use ($sessionId) {
                 $q->where('session_id', '!=', $sessionId)
-                  ->orWhere('created_at', '<', now()->subHours(24));
+                    ->orWhere('created_at', '<', now()->subHours(24));
             })->delete();
 
         $cartItems = CartHold::where('user_id', $userId)
@@ -89,7 +90,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Giỏ hàng không hợp lệ.');
         }
 
-        $subtotal = $groupedCartItems->sum(fn ($item) => $item['quantity'] * $item['book']['GiaBan']);
+        $subtotal = $groupedCartItems->sum(fn($item) => $item['quantity'] * $item['book']['GiaBan']);
 
         if ($promo) {
             $discountAmount = $promo['Kieu'] === 'percent'
@@ -102,8 +103,18 @@ class CheckoutController extends Controller
 
         $tinhThanhs = TinhThanh::select('id', 'ten')->orderBy('ten')->get();
 
-        return view('homepage.checkout', compact('groupedCartItems', 'subtotal', 'shipping', 'total', 'tinhThanhs', 'discountAmount', 'promo'));
+        return view('homepage.checkout', compact(
+            'groupedCartItems',
+            'subtotal',
+            'shipping',
+            'total',
+            'tinhThanhs',
+            'discountAmount',
+            'promo',
+            'addresses'
+        ));
     }
+
     public function store(Request $request)
     {
         try {
@@ -116,17 +127,38 @@ class CheckoutController extends Controller
                 'request_data' => $request->all()
             ]);
 
-            $validated = $request->validate([
-                'ten_nguoi_nhan' => 'required|string|max:255',
-                'so_dien_thoai' => 'required|string|regex:/^[0-9]{10}$/',
-                'dia_chi_cu_the' => 'required|string|max:255',
-                'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
-                'quan_huyen_id' => 'required|exists:quan_huyens,id',
-                'phuong_xa_id' => 'required|exists:phuong_xas,id',
-                'total' => 'required|numeric|min:0',
-                'phuong_thuc_thanh_toan' => 'required|in:cod,vnpay',
-                'ghi_chu' => 'nullable|string|max:1000',
-            ]);
+            if ($request->filled('dia_chi_id')) {
+                // Nếu chọn địa chỉ có sẵn
+                $address = DiaChiNhanHang::where('id', $request->dia_chi_id)
+                    ->where('khachhang_id', $userId)
+                    ->firstOrFail();
+
+                $validated = [
+                    'ten_nguoi_nhan'   => $address->ten_nguoi_nhan,
+                    'so_dien_thoai'    => $address->so_dien_thoai,
+                    'dia_chi_cu_the'   => $address->dia_chi_cu_the,
+                    'tinh_thanh_id'    => $address->tinh_thanh_id,
+                    'quan_huyen_id'    => $address->quan_huyen_id,
+                    'phuong_xa_id'     => $address->phuong_xa_id,
+                    'total'            => $request->input('total'),
+                    'phuong_thuc_thanh_toan' => $request->input('phuong_thuc_thanh_toan'),
+                    'ghi_chu'          => $request->input('ghi_chu'),
+                ];
+            } else {
+                // Nếu nhập địa chỉ mới thì validate đầy đủ
+                $validated = $request->validate([
+                    'ten_nguoi_nhan' => 'required|string|max:255',
+                    'so_dien_thoai' => 'required|string|regex:/^[0-9]{10}$/',
+                    'dia_chi_cu_the' => 'required|string|max:255',
+                    'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
+                    'quan_huyen_id' => 'required|exists:quan_huyens,id',
+                    'phuong_xa_id' => 'required|exists:phuong_xas,id',
+                    'total' => 'required|numeric|min:0',
+                    'phuong_thuc_thanh_toan' => 'required|in:cod,vnpay',
+                    'ghi_chu' => 'nullable|string|max:1000',
+                ]);
+            }
+
             $validated['khachhang_id'] = $userId;
             $groupedCartItems = session('groupedCartItems', []);
             if (empty($groupedCartItems)) {
@@ -139,8 +171,8 @@ class CheckoutController extends Controller
 
             $discountAmount = $promo ? (
                 $promo['Kieu'] === 'percent'
-                    ? ($cartTotal * $promo['GiaTri']) / 100
-                    : $promo['GiaTri']
+                ? ($cartTotal * $promo['GiaTri']) / 100
+                : $promo['GiaTri']
             ) : 0;
 
             $shipping = 0;
@@ -224,15 +256,30 @@ class CheckoutController extends Controller
             }
 
             if ($request->has('save-address')) {
-                DiaChiNhanHang::create([
-                    'MaKhachHang' => $userId,
-                    'TenNguoiNhan' => $validated['ten_nguoi_nhan'],
-                    'SoDienThoai' => $validated['so_dien_thoai'],
-                    'DiaChi' => $validated['dia_chi_cu_the'],
-                    'MaTinhThanh' => $validated['tinh_thanh_id'],
-                    'MaQuanHuyen' => $validated['quan_huyen_id'],
-                    'MaPhuongXa' => $validated['phuong_xa_id'],
-                ]);
+                $isFirstAddress = DiaChiNhanHang::where('khachhang_id', $userId)->count() === 0;
+
+                // Kiểm tra địa chỉ đã tồn tại chưa
+                $existing = DiaChiNhanHang::where([
+                    'khachhang_id'      => $userId,
+                    'ten_nguoi_nhan'    => $validated['ten_nguoi_nhan'],
+                    'so_dien_thoai'     => $validated['so_dien_thoai'],
+                    'dia_chi_cu_the'    => $validated['dia_chi_cu_the'],
+                    'tinh_thanh_id'     => $validated['tinh_thanh_id'],
+                    'quan_huyen_id'     => $validated['quan_huyen_id'],
+                    'phuong_xa_id'      => $validated['phuong_xa_id'],
+                ])->first();
+                if (!$existing) {
+                    DiaChiNhanHang::create([
+                        'khachhang_id' => $userId,
+                        'ten_nguoi_nhan' => $validated['ten_nguoi_nhan'],
+                        'so_dien_thoai' => $validated['so_dien_thoai'],
+                        'dia_chi_cu_the' => $validated['dia_chi_cu_the'],
+                        'tinh_thanh_id' => $validated['tinh_thanh_id'],
+                        'quan_huyen_id' => $validated['quan_huyen_id'],
+                        'phuong_xa_id' => $validated['phuong_xa_id'],
+                        'MacDinh' => $isFirstAddress, // Đặt địa chỉ đầu tiên là mặc định
+                    ]);
+                }
             }
 
             Session::forget(['groupedCartItems', 'promo', 'cart']);
@@ -241,7 +288,6 @@ class CheckoutController extends Controller
             Log::info('Đặt hàng thành công', ['user_id' => $userId]);
 
             return redirect()->route('account')->with('success', 'Đặt hàng thành công!');
-
         } catch (\Throwable $e) {
             Log::error('Lỗi khi đặt hàng: ' . $e->getMessage(), [
                 'line' => $e->getLine(),
@@ -252,6 +298,4 @@ class CheckoutController extends Controller
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi đặt hàng.')->withInput();
         }
     }
-
-
 }

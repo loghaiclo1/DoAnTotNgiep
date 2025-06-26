@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\TinhThanh;
 use App\Models\QuanHuyen;
 use App\Models\PhuongXa;
+
 class AccountController extends Controller
 {
     public function index()
@@ -40,25 +41,24 @@ class AccountController extends Controller
         return view('homepage.account', compact('user', 'orders', 'addresses', 'tinhThanhs'));
     }
     public function getOrderStatus($id)
-{
-    $order = HoaDon::find($id);
+    {
+        $order = HoaDon::find($id);
 
-    if (!$order) {
-        return response()->json(['status' => 'not_found'], 404);
+        if (!$order) {
+            return response()->json(['status' => 'not_found'], 404);
+        }
+
+        $statusMap = [
+            'Đang chờ' => 'processing',
+            'Đã xác nhận' => 'confirmed',
+            'Đang giao' => 'shipping',
+            'Hoàn tất' => 'completed',
+            'Đã hủy' => 'cancelled',
+        ];
+
+        return response()->json([
+            'status' => $order->TrangThai,
+            'class' => $statusMap[$order->TrangThai] ?? 'processing'
+        ]);
     }
-
-    $statusMap = [
-        'Đang chờ' => 'processing',
-        'Đã xác nhận' => 'confirmed',
-        'Đang giao' => 'shipping',
-        'Hoàn tất' => 'completed',
-        'Đã hủy' => 'cancelled',
-    ];
-
-    return response()->json([
-        'status' => $order->TrangThai,
-        'class' => $statusMap[$order->TrangThai] ?? 'processing'
-    ]);
-}
-
 }

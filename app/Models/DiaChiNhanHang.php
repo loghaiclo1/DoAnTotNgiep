@@ -15,9 +15,10 @@ class DiaChiNhanHang extends Model
         'ten_nguoi_nhan',
         'so_dien_thoai',
         'dia_chi_cu_the',
-        'phuong_xa_id',
-        'quan_huyen_id',
         'tinh_thanh_id',
+        'quan_huyen_id',
+        'phuong_xa_id',
+        'mac_dinh',
     ];
 
     public function tinhThanh()
@@ -33,5 +34,9 @@ class DiaChiNhanHang extends Model
     public function phuongXa()
     {
         return $this->belongsTo(PhuongXa::class, 'phuong_xa_id', 'id');
+    }
+    public function khachhang()
+    {
+        return $this->belongsTo(KhachHang::class, 'khachhang_id', 'MaKhachHang');
     }
 }

@@ -28,6 +28,6 @@ class Hoadon extends Model
 
     public function khachhang()
     {
-        return $this->belongsTo(Khachhang::class, 'MaKhachHang', 'khachhang_id');
+        return $this->belongsTo(Khachhang::class, 'MaKhachHang', 'MaKhachHang');
     }
 }
