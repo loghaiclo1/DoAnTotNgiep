@@ -317,6 +317,7 @@
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
                                             Thêm Địa Chỉ Mới
                                         </button>
+
                                     </div>
                                     @if ($addresses->isEmpty())
                                         <p>Bạn chưa thêm địa chỉ giao hàng nào.</p>
@@ -382,6 +383,107 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="{{ route('user.addresses.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addAddressLabel">Thêm địa chỉ mới</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="ten_nguoi_nhan" class="form-label">Tên người nhận</label>
+                                <input type="text" name="ten_nguoi_nhan" id="ten_nguoi_nhan" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="so_dien_thoai" class="form-label">Số điện thoại</label>
+                                <input type="text" name="so_dien_thoai" id="so_dien_thoai" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tinh_thanh_id" class="form-label">Tỉnh / Thành phố</label>
+                                <select name="tinh_thanh_id" id="tinh_thanh_id" class="form-select" required>
+                                    <option value="">-- Chọn Tỉnh / Thành --</option>
+                                    @foreach($tinhThanhs as $tinh)
+                                        <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="quan_huyen_id" class="form-label">Quận / Huyện</label>
+                                <select name="quan_huyen_id" id="quan_huyen_id" class="form-select" required>
+                                    <option value="">-- Chọn Quận / Huyện --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phuong_xa_id" class="form-label">Phường / Xã</label>
+                                <select name="phuong_xa_id" id="phuong_xa_id" class="form-select" required>
+                                    <option value="">-- Chọn Phường / Xã --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dia_chi_cu_the" class="form-label">Địa chỉ cụ thể</label>
+                                <input type="text" name="dia_chi_cu_the" id="dia_chi_cu_the" class="form-control" required placeholder="Số nhà, tên đường...">
+                            </div>
+                        </div>
+                           <div class="form-check mb-2">
+                            <input type="checkbox" name="mac_dinh" class="form-check-input" id="mac_dinh">
+                            <label class="form-check-label" for="mac_dinh">Đặt làm địa chỉ mặc định</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </section><!-- /Account Section -->
 </main>
+<script>
+        document.getElementById('so_dien_thoai')?.addEventListener('input', function() {
+        validatePhone(this.value);
+    });
+
+    document.getElementById('tinh_thanh_id')?.addEventListener('change', function() {
+        const tinhThanhId = this.value;
+        if (tinhThanhId) {
+            fetch(`/api/quan-huyen/${tinhThanhId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const quanHuyenSelect = document.getElementById('quan_huyen_id');
+                    quanHuyenSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                    data.forEach(item => {
+                        quanHuyenSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
+                    });
+                    document.getElementById('phuong_xa_id').innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                })
+                .catch(error => console.error('Lỗi tải Quận/Huyện:', error));
+        }
+    });
+
+    document.getElementById('quan_huyen_id')?.addEventListener('change', function() {
+        const quanHuyenId = this.value;
+        if (quanHuyenId) {
+            fetch(`/api/phuong-xa/${quanHuyenId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const phuongXaSelect = document.getElementById('phuong_xa_id');
+                    phuongXaSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                    data.forEach(item => {
+                        phuongXaSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
+                    });
+                })
+                .catch(error => console.error('Lỗi tải Phường/Xã:', error));
+        }
+    });
+</script>
 @endsection

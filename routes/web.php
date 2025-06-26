@@ -183,3 +183,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
 });
+

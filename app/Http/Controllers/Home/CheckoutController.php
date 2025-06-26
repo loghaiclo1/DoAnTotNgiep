@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
+
+
 use Illuminate\Http\Request;
 use App\Models\HoaDon;
 use App\Models\ChiTietHoaDon;
@@ -191,20 +193,24 @@ class CheckoutController extends Controller
             // Nếu chọn COD, tiến hành lưu hóa đơn như bình thường
             $methodMap = ['cod' => 1, 'vnpay' => 2];
             $methodId = $methodMap[$request->input('phuong_thuc_thanh_toan')] ?? null;
+            $tinhThanh = TinhThanh::find($validated['tinh_thanh_id'])?->ten;
+            $quanHuyen  = QuanHuyen::find($validated['quan_huyen_id'])?->ten;
+            $phuongXa   = PhuongXa::find($validated['phuong_xa_id'])?->ten;
 
+            // Gộp thành chuỗi đầy đủ
+            $diaChiDayDu = $validated['dia_chi_cu_the'] . ', ' . $phuongXa . ', ' . $quanHuyen . ', ' . $tinhThanh;
+
+            $diaChiDayDu = "{$validated['dia_chi_cu_the']}, {$phuongXa}, {$quanHuyen}, {$tinhThanh}";
             Log::debug('Tạo hóa đơn mới', ['method_id' => $methodId]);
 
             $hoadon = HoaDon::create([
-                'MaKhachHang' => $userId,
-                'NgayLap' => now(),
-                'TongTien' => $cartTotal,
-                'DiaChiGiaoHang' => $validated['dia_chi_cu_the'],
-                'MaTinhThanh' => $validated['tinh_thanh_id'],
-                'MaQuanHuyen' => $validated['quan_huyen_id'],
-                'MaPhuongXa' => $validated['phuong_xa_id'],
+                'MaKhachHang'  => $userId,
+                'NgayLap'      => now(),
+                'TongTien'     => $cartTotal,
+                'DiaChi'       => $diaChiDayDu, 
                 'TenNguoiNhan' => $validated['ten_nguoi_nhan'],
-                'SoDienThoai' => $validated['so_dien_thoai'],
-                'TrangThai' => 'Đang chờ',
+                'SoDienThoai'  => $validated['so_dien_thoai'],
+                'TrangThai'    => 'Đang chờ',
                 'PT_ThanhToan' => $methodId,
             ]);
 

@@ -8,18 +8,24 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Hoadon;
 use App\Models\Book;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\TinhThanh;
+use App\Models\QuanHuyen;
+use App\Models\PhuongXa;
 class AccountController extends Controller
 {
     public function index()
     {
-        $user = auth::user();
+        $user = auth()->user();
+        $addresses = $user->addresses ?? collect();
         $orders = HoaDon::with(['chitiethoadon.sach', 'phuongthucthanhtoan'])
             ->where('MaKhachHang', $user->MaKhachHang)
             ->orderByDesc('NgayLap')
             ->get();
 
-        $addresses = $user->addresses; // Thêm dòng này
+        $addresses = $user->addresses;
+        $tinhThanhs = TinhThanh::all();
+
+        // Log chi tiết đơn hàng (tuỳ chọn debug)
         foreach ($orders as $order) {
             foreach ($order->chitiethoadon as $item) {
                 Log::info("Chi tiết đơn {$order->MaHoaDon}", [
@@ -30,7 +36,8 @@ class AccountController extends Controller
                 ]);
             }
         }
-        return view('homepage.account', compact('user', 'orders', 'addresses'));
+
+        return view('homepage.account', compact('user', 'orders', 'addresses', 'tinhThanhs'));
     }
     public function getOrderStatus($id)
 {

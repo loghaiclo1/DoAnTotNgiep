@@ -12,5 +12,4 @@ class PhuongThucThanhToan extends Model
 
     protected $fillable = ['MaPhuongThuc', 'TenPhuongThuc'];
 
-    // Quan hệ nếu có...
 }

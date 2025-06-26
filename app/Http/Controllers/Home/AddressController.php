@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Home;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\HoaDon;
 use App\Models\ChiTietHoaDon;
@@ -45,4 +44,5 @@ class AddressController extends Controller
 
         return redirect()->back()->with('success', 'Thêm địa chỉ thành công!');
     }
+
 }
