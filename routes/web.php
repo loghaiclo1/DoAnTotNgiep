@@ -17,6 +17,7 @@ use App\Http\Controllers\Home\VNPayController;
 use App\Http\Controllers\Home\PromoController;
 use App\Http\Controllers\Home\AddressController;
 
+
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PhieuNhapController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
@@ -176,8 +177,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
 
     Route::resource('books', App\Http\Controllers\Admin\BookController::class)->except(['show']);
 
-    Route::get('contacts', [ContactController::class, 'index'])->name('contacts');
-    Route::put('contacts/{id}/update-status', [ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
+    Route::get('contacts', [App\Http\Controllers\Admin\ContactController::class, 'index'])->name('contacts');
+    Route::put('contacts/{id}/update-status', [App\Http\Controllers\Admin\ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
