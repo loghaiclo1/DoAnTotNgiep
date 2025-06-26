@@ -104,8 +104,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])->names('orders');
     Route::get('/accounts', fn () => view('admin.accounts'))->name('accounts');
     Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
-    Route::get('/categories', fn () => view('admin.categories'))->name('categories');
-
     Route::resource('books', AdminBookController::class)->except(['show']);
 
     Route::get('contacts', [AdminContactController::class, 'index'])->name('contacts');
@@ -114,4 +112,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
+    Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
 });

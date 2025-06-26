@@ -521,21 +521,57 @@
       </div>
 </main>
 <script>
+    // Hàm load Quận/Huyện theo ID tỉnh
+    function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
+        fetch(`/api/quan-huyen/${provinceId}`)
+            .then(response => response.json())
+            .then(data => {
+                const districtSelect = document.getElementById(districtSelectId);
+                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                data.forEach(item => {
+                    districtSelect.innerHTML += `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+                });
+
+                if (resetWard) {
+                    const wardSelect = document.getElementById(districtSelectId.replace('quan_huyen', 'phuong_xa'));
+                    if (wardSelect) wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                }
+            })
+            .catch(err => console.error('Lỗi tải Quận/Huyện:', err));
+    }
+
+    // Hàm load Phường/Xã theo ID quận
+    function loadWards(districtId, wardSelectId, selectedId = null) {
+        fetch(`/api/phuong-xa/${districtId}`)
+            .then(response => response.json())
+            .then(data => {
+                const wardSelect = document.getElementById(wardSelectId);
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                data.forEach(item => {
+                    wardSelect.innerHTML += `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+                });
+            })
+            .catch(err => console.error('Lỗi tải Phường/Xã:', err));
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        // --- Trang checkout chính ---
+        document.getElementById('tinh_thanh_id')?.addEventListener('change', function () {
+            loadDistricts(this.value, 'quan_huyen_id');
+        });
+
+        document.getElementById('quan_huyen_id')?.addEventListener('change', function () {
+            loadWards(this.value, 'phuong_xa_id');
+        });
+
+        // --- Modal Sửa địa chỉ ---
         const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
         const form = document.getElementById('editAddressForm');
 
         document.querySelectorAll('.edit-address-btn').forEach(button => {
             button.addEventListener('click', async function () {
-                const id = this.dataset.id;
-                const ten = this.dataset.ten;
-                const sdt = this.dataset.sdt;
-                const diachi = this.dataset.diachi;
-                const tinh = this.dataset.tinh;
-                const quan = this.dataset.quan;
-                const phuong = this.dataset.phuong;
+                const { id, ten, sdt, diachi, tinh, quan, phuong } = this.dataset;
 
-                // Gán các giá trị cơ bản trước
                 form.action = `/user/addresses/${id}`;
                 document.getElementById('edit_ten_nguoi_nhan').value = ten;
                 document.getElementById('edit_so_dien_thoai').value = sdt;
@@ -543,64 +579,26 @@
                 document.getElementById('edit_tinh_thanh_id').value = tinh;
 
                 try {
-                    // Gọi đồng thời 2 API quận và xã
-                    const [quanRes, phuongRes] = await Promise.all([
-                        fetch(`/api/quan-huyen/${tinh}`),
-                        fetch(`/api/phuong-xa/${quan}`)
-                    ]);
-
-                    const quans = await quanRes.json();
-                    const phuongs = await phuongRes.json();
-
-                    const quanSelect = document.getElementById('edit_quan_huyen_id');
-                    const phuongSelect = document.getElementById('edit_phuong_xa_id');
-
-                    quanSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                    quans.forEach(item => {
-                        quanSelect.innerHTML += `<option value="${item.id}" ${item.id == quan ? 'selected' : ''}>${item.ten}</option>`;
-                    });
-
-                    phuongSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                    phuongs.forEach(item => {
-                        phuongSelect.innerHTML += `<option value="${item.id}" ${item.id == phuong ? 'selected' : ''}>${item.ten}</option>`;
-                    });
-
-                    editModal.show(); // Mở modal sau khi load xong
-                } catch (err) {
+                    await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
+                    await loadWards(quan, 'edit_phuong_xa_id', phuong);
+                    editModal.show();
+                } catch (err) {image.png
                     console.error('Lỗi khi tải địa chỉ:', err);
                     alert('Không thể tải dữ liệu địa chỉ. Vui lòng thử lại.');
                 }
             });
         });
 
-        // Khi chọn tỉnh trong modal sửa
         document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function () {
-            fetch(`/api/quan-huyen/${this.value}`)
-                .then(res => res.json())
-                .then(data => {
-                    const quanSelect = document.getElementById('edit_quan_huyen_id');
-                    quanSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                    data.forEach(item => {
-                        quanSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
-                    });
-                    document.getElementById('edit_phuong_xa_id').innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                });
+            loadDistricts(this.value, 'edit_quan_huyen_id');
         });
 
-        // Khi chọn quận trong modal sửa
         document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function () {
-            fetch(`/api/phuong-xa/${this.value}`)
-                .then(res => res.json())
-                .then(data => {
-                    const phuongSelect = document.getElementById('edit_phuong_xa_id');
-                    phuongSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                    data.forEach(item => {
-                        phuongSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
-                    });
-                });
+            loadWards(this.value, 'edit_phuong_xa_id');
         });
     });
-    </script>
+</script>
+
 
 
 @endsection

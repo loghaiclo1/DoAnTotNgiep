@@ -25,9 +25,8 @@ class Hoadon extends Model
     {
         return $this->belongsTo(Phuongthucthanhtoan::class, 'PT_ThanhToan', 'MaPhuongThuc');
     }
-
     public function khachhang()
     {
-        return $this->belongsTo(Khachhang::class, 'MaKhachHang', 'khachhang_id');
+        return $this->belongsTo(Khachhang::class, 'MaKhachHang', 'MaKhachHang');
     }
 }
