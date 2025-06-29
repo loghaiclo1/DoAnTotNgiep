@@ -20,7 +20,8 @@ use App\Http\Controllers\Home\{
 };
 use App\Http\Controllers\Auth\{
     ForgotPasswordController,
-    ResetPasswordController
+    ResetPasswordController,
+    SocialController
 };
 
 use App\Http\Controllers\Admin\{
@@ -32,7 +33,7 @@ use App\Http\Controllers\Admin\{
 };
 
 // Trang chủ
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // About
 Route::prefix('about')->name('about.')->group(function () {
@@ -91,6 +92,11 @@ Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkE
 
 Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+// Đăng nhập bằng Google
+Route::get('/auth/google', [SocialController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialController::class, 'handleGoogleCallback']);
+
 // Tìm kiếm
 Route::get('/search', [BookController::class, 'search']);
 Route::get('/search-results', [BookController::class, 'searchResults'])->name('search.results');

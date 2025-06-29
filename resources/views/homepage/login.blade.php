@@ -75,13 +75,13 @@
 
                                 </div>
 
-                                {{-- <div class="col-12">
-                                    <a href="{{ route('login') }}" class="btn btn-outline-danger btn-lg">
-                                        <i class="bi bi-google me-2"></i>Đăng nhập bằng Google
+                                <div class="col-12 mt-3 d-grid">
+                                    <a href="{{ route('auth.google') }}" class="btn btn-outline-danger btn-lg" style="font-size: 1.05rem">
+                                        <i class="bi bi-google"></i> Đăng nhập bằng Google
                                     </a>
-                                </div> --}}
+                                </div>
                             </div>
-                            <div class="col-12 text-center">
+                            <div class="col-12 text-center" style="margin-top: 1rem">
                                 <small>Nếu chưa có tài khoản, <a href="{{ route('register') }}">đăng kí ở đây</a></small>
                             </div>
                         </div>
