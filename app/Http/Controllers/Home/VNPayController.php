@@ -85,7 +85,7 @@ class VNPayController extends Controller
 
         $hashdata = '';
         foreach ($inputData as $key => $value) {
-            $hashdata .= urlencode($key).'='.urlencode($value).'&';
+            $hashdata .= urlencode($key) . '=' . urlencode($value) . '&';
         }
         $hashdata = rtrim($hashdata, '&');
 
@@ -104,7 +104,7 @@ class VNPayController extends Controller
         ksort($data);
         $hashdata = '';
         foreach ($data as $k => $v) {
-            $hashdata .= urlencode($k).'='.urlencode($v).'&';
+            $hashdata .= urlencode($k) . '=' . urlencode($v) . '&';
         }
         $hashdata = rtrim($hashdata, '&');
 
@@ -156,7 +156,7 @@ class VNPayController extends Controller
                 'NgayLap'     => now(),
                 'TongTien'    => $validated['total'],
                 'TrangThai'   => 'Đang chờ',
-                'PT_ThanhToan'=> 2,
+                'PT_ThanhToan' => 2,
                 'DiaChi'      => $diaChi,
                 'SoDienThoai' => $validated['so_dien_thoai'],
                 'GhiChu'      => $validated['ghi_chu'] ?? null,

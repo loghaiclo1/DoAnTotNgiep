@@ -18,6 +18,10 @@ use App\Http\Controllers\Home\{
     PromoController,
     AddressController
 };
+use App\Http\Controllers\Auth\{
+    ForgotPasswordController,
+    ResetPasswordController
+};
 
 use App\Http\Controllers\Admin\{
     DashboardController,
@@ -81,6 +85,12 @@ Route::get('/register', [RegisterController::class, 'show'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Quên mật khẩu
+Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 // Tìm kiếm
 Route::get('/search', [BookController::class, 'search']);
 Route::get('/search-results', [BookController::class, 'searchResults'])->name('search.results');

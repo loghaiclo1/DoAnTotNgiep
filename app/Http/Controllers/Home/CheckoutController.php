@@ -219,7 +219,6 @@ class CheckoutController extends Controller
                     'user_id' => $userId,
                     'expectedTotal' => $expectedTotal
                 ]);
-
                 return redirect()->route('vnpay.payment');
             }
             // Nếu chọn COD, tiến hành lưu hóa đơn như bình thường
