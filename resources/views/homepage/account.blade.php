@@ -198,7 +198,9 @@
                                                                 <h5>{{ $step['label'] }}</h5>
                                                                 <p>{{ $step['desc'] }}</p>
                                                                 @if ($step['completed'] || $order->TrangThai === $step['status'])
-                                                                    <span class="timeline-date">{{ $order->NgayLap->format('M d, Y - h:i A') }}</span>
+                                                                <span class="timeline-date" id="timeline-date-{{ $order->MaHoaDon }}-{{ \Illuminate\Support\Str::slug($step['status']) }}">
+                                                                    {{ $order->NgayLap->format('M d, Y - h:i A') }}
+                                                                </span>
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -598,10 +600,4 @@
         });
     });
 </script>
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> e454749007ffcfa3eea61b1b3d8f3b75806629c0
 @endsection

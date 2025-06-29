@@ -61,18 +61,7 @@
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="form-group mb-3">
-                                                <label for="so_dien_thoai">Số Điện Thoại <span
-                                                        class="text-danger">*</span></label>
-                                                <input type="tel" class="form-control" name="so_dien_thoai"
-                                                    id="so_dien_thoai" placeholder="Nhập số điện thoại"
-                                                    value="{{ old('so_dien_thoai') }}" pattern="[0-9]{10}" required
-                                                    title="Vui lòng nhập số điện thoại 10 chữ số">
-                                                <div id="so_dien_thoai_error" class="text-danger"></div>
-                                                @error('so_dien_thoai')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
                                             <div class="form-group mb-3">
                                                 <label for="ghi_chu">Ghi Chú</label>
                                                 <textarea name="ghi_chu" class="form-control" id="ghi_chu" placeholder="Nhập ghi chú (nếu có)" rows="4">{{ old('ghi_chu') }}</textarea>
@@ -147,25 +136,24 @@
                                                             class="text-danger">*</span></label>
                                                     <select class="form-select" id="dia_chi_id" name="dia_chi_id" required>
                                                         @foreach ($addresses as $address)
-                                                            <option value="{{ $address->id }}">
-                                                                {{ $address->khachhang->Ho }} {{ $address->khachhang->Ten }} -
-                                                                {{ $address->dia_chi_cu_the }},
-                                                                {{ optional($address->phuongXa)->ten }},
-                                                                {{ optional($address->quanHuyen)->ten }},
-                                                                {{ optional($address->tinhThanh)->ten }} -
-                                                                {{ $address->SoDienThoai }}
-                                                                @if ($address->MacDinh)
-                                                                    (Mặc định)
-                                                                @endif
-                                                            </option>
+                                                        <option value="{{ $address->id }}" data-sdt="{{ $address->SoDienThoai }}">
+                                                            {{ $address->khachhang->Ho }} {{ $address->khachhang->Ten }} -
+                                                            {{ $address->dia_chi_cu_the }},
+                                                            {{ optional($address->phuongXa)->ten }},
+                                                            {{ optional($address->quanHuyen)->ten }},
+                                                            {{ optional($address->tinhThanh)->ten }} -
+                                                            {{ $address->so_dien_thoai }}
+                                                            @if ($address->MacDinh)
+                                                                (Mặc định)
+                                                            @endif
+                                                        </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
 
                                                 {{-- Nút thêm địa chỉ mới --}}
                                                 <div class="mb-3">
-                                                    <button type="button" class="btn btn-outline-primary btn-sm"
-                                                        id="show-new-address">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm" id="show-new-address">
                                                         + Thêm địa chỉ mới
                                                     </button>
                                                 </div>
@@ -359,7 +347,18 @@
             return true;
         }
     }
+    document.addEventListener('DOMContentLoaded', function () {
+        const diaChiIdSelect = document.getElementById('dia_chi_id');
+        const sdtInput = document.getElementById('so_dien_thoai');
 
+        if (diaChiIdSelect && sdtInput) {
+            const selectedOption = diaChiIdSelect.options[diaChiIdSelect.selectedIndex];
+            const phone = selectedOption.getAttribute('data-sdt');
+            if (phone) {
+                sdtInput.value = phone;
+            }
+        }
+    });
     document.getElementById('so_dien_thoai')?.addEventListener('input', function () {
         validatePhone(this.value);
     });
@@ -405,43 +404,85 @@
     });
 
     document.getElementById('show-new-address')?.addEventListener('click', () => {
-    // Hiện form địa chỉ mới
-    document.getElementById('new-address-form').style.display = 'block';
-
-    // XÓA chọn địa chỉ cũ
+    const newForm = document.getElementById('new-address-form');
     const diaChiId = document.getElementById('dia_chi_id');
-    if (diaChiId) {
-        diaChiId.value = '';
-        diaChiId.removeAttribute('required'); // ✅ Gỡ required
+    const toggleBtn = document.getElementById('show-new-address');
+
+    // Khai báo biến static để nhớ lựa chọn trước đó
+    if (!window._prevSelectedIndex) window._prevSelectedIndex = 0;
+
+    if (newForm.style.display === 'block') {
+        // ĐÓNG FORM
+
+        // 1. Ẩn form
+        newForm.style.display = 'none';
+
+        // 2. Reset các input trong form
+        newForm.querySelectorAll('input, select, textarea').forEach(el => {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = false;
+            } else {
+                el.value = '';
+            }
+        });
+
+        ['tinh_thanh_id', 'quan_huyen_id', 'phuong_xa_id'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.selectedIndex = 0;
+        });
+
+        const phoneError = document.getElementById('so_dien_thoai_error');
+        if (phoneError) phoneError.textContent = '';
+
+        // 3. Hiện lại dropdown địa chỉ cũ
+        if (diaChiId) {
+            diaChiId.disabled = false;
+            diaChiId.setAttribute('required', 'required');
+
+            // Khôi phục địa chỉ đã chọn trước đó
+            diaChiId.selectedIndex = window._prevSelectedIndex;
+        }
+
+        toggleAddressValidation();
+        toggleBtn.textContent = '+ Thêm địa chỉ mới';
+
+    } else {
+        // MỞ FORM
+
+        // 1. Nhớ lại chỉ số lựa chọn hiện tại trước khi reset
+        if (diaChiId) window._prevSelectedIndex = diaChiId.selectedIndex;
+
+        // 2. Mở form mới
+        newForm.style.display = 'block';
+
+        // 3. Ẩn dropdown địa chỉ cũ
+        if (diaChiId) {
+            diaChiId.value = '';
+            diaChiId.removeAttribute('required');
+            diaChiId.disabled = true;
+        }
+
+        toggleAddressValidation();
+        toggleBtn.textContent = 'Đóng';
     }
-
-    // Reset dropdown
-    ['tinh_thanh_id', 'quan_huyen_id', 'phuong_xa_id'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.selectedIndex = 0;
-    });
-
-    // Bật required cho các field địa chỉ mới
-    toggleAddressValidation();
 });
 
 
+function toggleAddressValidation() {
+    const isNewAddress = document.getElementById('new-address-form')?.style.display === 'block';
+    const requiredFields = ['tinh_thanh_id', 'quan_huyen_id', 'phuong_xa_id', 'dia_chi_cu_the', 'so_dien_thoai'];
 
-    function toggleAddressValidation() {
-        const isNewAddress = document.getElementById('new-address-form')?.style.display === 'block';
-        const requiredFields = ['tinh_thanh_id', 'quan_huyen_id', 'phuong_xa_id', 'dia_chi_cu_the'];
-
-        requiredFields.forEach(field => {
-            const el = document.getElementById(field);
-            if (el) {
-                if (isNewAddress) {
-                    el.setAttribute('required', 'required');
-                } else {
-                    el.removeAttribute('required');
-                }
+    requiredFields.forEach(field => {
+        const el = document.getElementById(field);
+        if (el) {
+            if (isNewAddress) {
+                el.setAttribute('required', 'required');
+            } else {
+                el.removeAttribute('required');
             }
-        });
-    }
+        }
+    });
+}
 
     function validateForm(event) {
         event.preventDefault();
@@ -487,16 +528,13 @@
 
         const form = document.getElementById('checkoutForm');
 
-        if (paymentMethod === 'vnpay') {
-            form.action = "{{ route('vnpay.payment') }}";
-        } else {
-            form.action = "{{ route('checkout.store') }}";
-        }
+        form.action = "{{ route('checkout.store') }}";
 if (newAddressFormVisible) {
     document.getElementById('new-address-form').style.display = 'block'; // đảm bảo form được hiển thị trước khi submit
 }
         form.submit();
     }
+
 </script>
 
 @endsection

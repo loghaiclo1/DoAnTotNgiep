@@ -7,7 +7,9 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: import.meta.env.VITE_PUSHER_APP_KEY,
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-    forceTLS: true
+    forceTLS: true,
+    encrypted: true,
+    authEndpoint: '/broadcasting/auth',
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -17,7 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.Echo.private(`orders.${orderId}`)
             .listen('.order.status.updated', (e) => {
-                el.textContent = e.status;
+                const status = e.status;
+
+       
                 const classMap = {
                     'Đang chờ': 'processing',
                     'Đã xác nhận': 'confirmed',
@@ -26,7 +30,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     'Hoàn tất': 'completed',
                     'Hủy đơn': 'cancelled',
                 };
-                el.className = 'status ' + (classMap[e.status] || 'processing');
+
+                el.textContent = status;
+                el.className = 'status ' + (classMap[status] || 'processing');
+
+                const trackingContainer = document.querySelector(`#tracking${orderId} .tracking-timeline`);
+                if (trackingContainer) {
+                    fetch(`/orders/${orderId}/tracking-html`)
+                        .then((res) => {
+                            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                            return res.text();
+                        })
+                        .then((html) => {
+                            trackingContainer.innerHTML = html;
+                        })
+                        .catch((err) => {
+                            console.error(`❌ Không thể cập nhật timeline đơn hàng #${orderId}:`, err);
+                        });
+                }
             });
     });
 });

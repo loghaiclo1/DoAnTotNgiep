@@ -117,6 +117,7 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
+        Log::info('Checkout request data:', $request->all());
         try {
             $userId = Auth::id();
             $sessionId = Session::getId();
@@ -148,7 +149,7 @@ class CheckoutController extends Controller
                 // Nếu nhập địa chỉ mới thì validate đầy đủ
                 $validated = $request->validate([
                     'ten_nguoi_nhan' => 'required|string|max:255',
-                    'so_dien_thoai' => 'required|string|regex:/^[0-9]{10}$/',
+                    'so_dien_thoai' => 'required|string|regex:/^0[0-9]{9}$/',
                     'dia_chi_cu_the' => 'required|string|max:255',
                     'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
                     'quan_huyen_id' => 'required|exists:quan_huyens,id',
@@ -219,8 +220,12 @@ class CheckoutController extends Controller
                     'user_id' => $userId,
                     'expectedTotal' => $expectedTotal
                 ]);
-
-                return redirect()->route('vnpay.payment');
+                return response()->make('
+                <form id="vnpayForm" method="POST" action="' . route('vnpay.payment') . '">
+                    <input type="hidden" name="_token" value="' . csrf_token() . '">
+                </form>
+                <script>document.getElementById("vnpayForm").submit();</script>
+            ');
             }
             // Nếu chọn COD, tiến hành lưu hóa đơn như bình thường
             $methodMap = ['cod' => 1, 'vnpay' => 2];

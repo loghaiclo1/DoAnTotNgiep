@@ -51,6 +51,7 @@ Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('produc
 // Liên hệ
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::get('/orders/{id}/tracking-html', [OrderController::class, 'trackingHtml']);
 
 // Giỏ hàng
 Route::prefix('cart')->name('cart.')->group(function () {
@@ -90,8 +91,9 @@ Route::get('/search-suggestions', [BookController::class, 'searchSuggestions']);
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-// VNPay
-Route::get('/vnpay/create-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
+
+Route::post('/vnpay/create-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
+
 Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])->name('vnpay.return');
 
 // Mã giảm giá

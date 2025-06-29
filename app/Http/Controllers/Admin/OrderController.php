@@ -99,4 +99,48 @@ class OrderController extends Controller
         \Log::info('Gửi broadcast cho đơn hàng: ' . $donhang->MaHoaDon);
         return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
     }
+    public function trackingHtml($id)
+    {
+        $order = HoaDon::with('chitiethoadon.sach')->findOrFail($id);
+
+        // Xử lý tương tự như trong account.blade.php
+        $isCancelled = $order->TrangThai === 'Hủy đơn';
+        $trackingSteps = $isCancelled
+            ? [
+                ['status' => 'Hủy đơn', 'label' => 'Đơn Hàng Đã Hủy', 'desc' => 'Đơn hàng này đã bị hủy và không được xử lý', 'completed' => true]
+            ] : [
+                ['status' => 'Đang chờ', 'label' => 'Đơn Hàng Đã Đặt', 'desc' => 'Đơn hàng đang chờ xác nhận', 'completed' => true],
+                ['status' => 'Đã xác nhận', 'label' => 'Đã Xác Nhận', 'desc' => 'Đơn hàng đã được xác nhận', 'completed' => in_array($order->TrangThai, ['Đã xác nhận', 'Đang giao hàng', 'Hoàn thành', 'Hoàn tất'])],
+                ['status' => 'Đang giao hàng', 'label' => 'Đang Giao Hàng', 'desc' => 'Đơn hàng đang được vận chuyển', 'completed' => in_array($order->TrangThai, ['Đang giao hàng', 'Hoàn thành', 'Hoàn tất'])],
+                ['status' => 'Hoàn thành', 'label' => 'Đã Giao Hàng', 'desc' => 'Đơn hàng đã được giao thành công', 'completed' => in_array($order->TrangThai, ['Hoàn thành', 'Hoàn tất'])],
+            ];
+
+        // Tạo HTML thô ngay trong controller
+        $html = '';
+        foreach ($trackingSteps as $step) {
+            $icon = match(true) {
+                $step['status'] === 'Hủy đơn' => 'bi-x-circle-fill',
+                $step['completed'] => 'bi-check-circle-fill',
+                $step['status'] === 'Đang giao hàng' => 'bi-truck',
+                default => 'bi-house-door',
+            };
+
+            $statusClass = $step['completed'] ? 'completed' : ($order->TrangThai === $step['status'] ? 'active' : '');
+
+            $html .= '<div class="timeline-item ' . $statusClass . '">';
+            $html .= '  <div class="timeline-icon"><i class="bi ' . $icon . '"></i></div>';
+            $html .= '  <div class="timeline-content">';
+            $html .= '    <h5>' . e($step['label']) . '</h5>';
+            $html .= '    <p>' . e($step['desc']) . '</p>';
+
+            if ($step['completed'] || $order->TrangThai === $step['status']) {
+                $html .= '<span class="timeline-date">' . $order->NgayLap->format('M d, Y - h:i A') . '</span>';
+            }
+
+            $html .= '  </div>';
+            $html .= '</div>';
+        }
+
+        return response($html);
+    }
 }
