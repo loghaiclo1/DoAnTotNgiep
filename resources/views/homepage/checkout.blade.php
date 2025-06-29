@@ -72,56 +72,6 @@
                                         </div>
                                     </div>
 
-                                    {{-- <div class="checkout-section" id="shipping-address">
-                                    <div class="section-header">
-                                        <div class="section-number">2</div>
-                                        <h3>Địa Chỉ Giao Hàng</h3>
-                                    </div>
-                                    <div class="section-content">
-                                        <div class="form-group mb-3">
-                                            <label for="tinh_thanh_id">Tỉnh/Thành Phố <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="tinh_thanh_id" name="tinh_thanh_id" required>
-                                                <option value="">Chọn Tỉnh/Thành Phố</option>
-                                                @foreach ($tinhThanhs as $tinhThanh)
-                                                    <option value="{{ $tinhThanh->id }}" {{ old('tinh_thanh_id') == $tinhThanh->id ? 'selected' : '' }}>{{ $tinhThanh->ten }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('tinh_thanh_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="quan_huyen_id">Quận/Huyện <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="quan_huyen_id" name="quan_huyen_id" required>
-                                                <option value="">Chọn Quận/Huyện</option>
-                                            </select>
-                                            @error('quan_huyen_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="phuong_xa_id">Phường/Xã <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="phuong_xa_id" name="phuong_xa_id" required>
-                                                <option value="">Chọn Phường/Xã</option>
-                                            </select>
-                                            @error('phuong_xa_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="dia_chi_cu_the">Địa Chỉ Cụ Thể <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="dia_chi_cu_the" id="dia_chi_cu_the" placeholder="Số nhà, tên đường" value="{{ old('dia_chi_cu_the') }}" required>
-                                            @error('dia_chi_cu_the')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" id="save-address" name="save-address">
-                                            <label class="form-check-label" for="save-address">Lưu địa chỉ này cho các đơn hàng sau</label>
-                                        </div>
-                                    </div>
-                                </div> --}}
-
                                     <div class="checkout-section" id="shipping-address">
                                         <div class="section-header">
                                             <div class="section-number">2</div>
@@ -528,7 +478,11 @@ function toggleAddressValidation() {
 
         const form = document.getElementById('checkoutForm');
 
-        form.action = "{{ route('checkout.store') }}";
+        if (paymentMethod === 'vnpay') {
+            form.action = "{{ route('vnpay.payment') }}";
+        } else {
+            form.action = "{{ route('checkout.store') }}";
+        }
 if (newAddressFormVisible) {
     document.getElementById('new-address-form').style.display = 'block'; // đảm bảo form được hiển thị trước khi submit
 }

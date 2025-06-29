@@ -7,11 +7,11 @@
         <!-- Page Title -->
         <div class="page-title light-background">
             <div class="container d-lg-flex justify-content-between align-items-center">
-                <h1 class="mb-2 mb-lg-0">Login</h1>
+                <h1 class="mb-2 mb-lg-0">Đăng nhập</h1>
                 <nav class="breadcrumbs">
                     <ol>
-                        <li><a href=" {{ url('/') }}">Home</a></li>
-                        <li class="current">Login</li>
+                        <li><a href=" {{ url('/') }}">Trang chủ</a></li>
+                        <li class="current">Đăng nhập</li>
                     </ol>
                 </nav>
             </div>
@@ -42,15 +42,15 @@
                                             </div>
                                         @endif
                                         <div class="mb-4">
-                                            <label for="email" class="form-label">Email address</label>
-                                            <input type="email" class="form-control" id="email" name="email"
+                                            <label for="email" class="form-label">Địa chỉ email</label>
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="Nhập địa chỉ email"
                                                 required>
                                         </div>
 
                                         <div class="mb-4">
-                                            <label for="password" class="form-label">Password</label>
+                                            <label for="password" class="form-label">Mật khẩu</label>
                                             <div class="input-group">
-                                                <input type="password" class="form-control" id="password" name="password"
+                                                <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu"
                                                     required>
                                                 <button class="btn btn-outline-secondary" type="button"
                                                     onclick="togglePassword('password', this)">
@@ -63,25 +63,25 @@
                                             <div class="form-check">
                                                 <input type="checkbox" class="form-check-input" id="remember"
                                                     name="remember">
-                                                <label class="form-check-label" for="remember">Remember me</label>
+                                                <label class="form-check-label" for="remember">Lưu tài khoản</label>
                                             </div>
-                                            <a href="#" class="forgot-password">Forgot Password?</a>
+                                            <a href="{{ route('password.request') }}" class="forgot-password">Quên mật khẩu</a>
                                         </div>
 
                                         <div class="d-grid">
-                                            <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                                            <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
                                         </div>
                                     </form>
 
                                 </div>
 
-                                {{-- <div class="col-12">
-                                    <a href="{{ route('login') }}" class="btn btn-outline-danger btn-lg">
-                                        <i class="bi bi-google me-2"></i>Đăng nhập bằng Google
+                                <div class="col-12 mt-3 d-grid">
+                                    <a href="{{ route('auth.google') }}" class="btn btn-outline-danger btn-lg" style="font-size: 1.05rem">
+                                        <i class="bi bi-google"></i> Đăng nhập bằng Google
                                     </a>
-                                </div> --}}
+                                </div>
                             </div>
-                            <div class="col-12 text-center">
+                            <div class="col-12 text-center" style="margin-top: 1rem">
                                 <small>Nếu chưa có tài khoản, <a href="{{ route('register') }}">đăng kí ở đây</a></small>
                             </div>
                         </div>

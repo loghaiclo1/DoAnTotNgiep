@@ -22,6 +22,8 @@ class RegisterController extends Controller
         $khachhang->Ho = $request->ho;
         $khachhang->Ten = $request->ten;
         $khachhang->Email = $request->email;
+        $khachhang->role = 'user'; // Hoặc 'customer' tùy theo hệ thống của bạn
+        $khachhang->avatar = 'avatar.png'; // Đặt ảnh đại diện mặc
         $khachhang->MatKhau = Hash::make($request->matkhau);
         $khachhang->TrangThai = 1;
         $khachhang->created_at = now();

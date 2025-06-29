@@ -18,6 +18,11 @@ use App\Http\Controllers\Home\{
     PromoController,
     AddressController
 };
+use App\Http\Controllers\Auth\{
+    ForgotPasswordController,
+    ResetPasswordController,
+    SocialController
+};
 
 use App\Http\Controllers\Admin\{
     DashboardController,
@@ -28,7 +33,7 @@ use App\Http\Controllers\Admin\{
 };
 
 // Trang chủ
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // About
 Route::prefix('about')->name('about.')->group(function () {
@@ -81,6 +86,17 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::get('/register', [RegisterController::class, 'show'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Quên mật khẩu
+Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+// Đăng nhập bằng Google
+Route::get('/auth/google', [SocialController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialController::class, 'handleGoogleCallback']);
 
 // Tìm kiếm
 Route::get('/search', [BookController::class, 'search']);

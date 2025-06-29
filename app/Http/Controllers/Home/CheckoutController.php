@@ -220,12 +220,14 @@ class CheckoutController extends Controller
                     'user_id' => $userId,
                     'expectedTotal' => $expectedTotal
                 ]);
+
                 return response()->make('
                 <form id="vnpayForm" method="POST" action="' . route('vnpay.payment') . '">
                     <input type="hidden" name="_token" value="' . csrf_token() . '">
                 </form>
                 <script>document.getElementById("vnpayForm").submit();</script>
             ');
+
             }
             // Nếu chọn COD, tiến hành lưu hóa đơn như bình thường
             $methodMap = ['cod' => 1, 'vnpay' => 2];
