@@ -33,6 +33,8 @@ class SocialController extends Controller
             [
                 'Ho' => $lastName,
                 'Ten' => $firstName,
+                'avatar' => 'avatar.png', 
+                'role' => 'user', // Hoặc 'customer' tùy theo hệ thống của bạn
                 'email' => $googleUser->getEmail(),
                 'email_verified_at' => now(),
                 'TrangThai' => 1,

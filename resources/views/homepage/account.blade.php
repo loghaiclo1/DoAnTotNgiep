@@ -36,6 +36,7 @@
                         <!-- User Info -->
                         <div class="user-info" data-aos="fade-right">
                             <div class="user-avatar">
+                                <img src="{{ asset('image/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle" width="40">
                                 <span class="status-badge">
                                     <i class="bi bi-shield-check"></i>
                                 </span>
