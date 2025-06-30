@@ -132,3 +132,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
 });
+Route::get('/account/order-status/{id}', [AccountController::class, 'getOrderStatus'])->name('account.order-status');
