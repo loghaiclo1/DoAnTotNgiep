@@ -60,7 +60,7 @@
                                         </div>
 
                                         <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <div class="form-check">
+                                            <div class="form-check" style="margin: 0">
                                                 <input type="checkbox" class="form-check-input" id="remember"
                                                     name="remember">
                                                 <label class="form-check-label" for="remember">Lưu tài khoản</label>
@@ -81,7 +81,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-12 text-center" style="margin-top: 1rem">
+                            <div class="col-12 text-center" style="margin-top: 1.05rem">
                                 <small>Nếu chưa có tài khoản, <a href="{{ route('register') }}">đăng kí ở đây</a></small>
                             </div>
                         </div>

@@ -478,14 +478,9 @@ function toggleAddressValidation() {
 
         const form = document.getElementById('checkoutForm');
 
-        if (paymentMethod === 'vnpay') {
-            form.action = "{{ route('vnpay.payment') }}";
-        } else {
-            form.action = "{{ route('checkout.store') }}";
+        if (newAddressFormVisible) {
+            document.getElementById('new-address-form').style.display = 'block'; // đảm bảo form được hiển thị trước khi submit
         }
-if (newAddressFormVisible) {
-    document.getElementById('new-address-form').style.display = 'block'; // đảm bảo form được hiển thị trước khi submit
-}
         form.submit();
     }
 

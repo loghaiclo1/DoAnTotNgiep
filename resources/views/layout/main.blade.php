@@ -250,7 +250,6 @@
               </li><!-- End Products Mega Menu 2 -->
 
               <li><a href=" {{ url('/contact') }} ">Liên hệ</a></li>
-
             </ul>
           </nav>
         </div>
