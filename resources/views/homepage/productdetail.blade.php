@@ -97,7 +97,7 @@
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
-                                            type="button" role="tab" aria-controls="reviews" aria-selected="false">Đánh giá (42)</button>
+                                            type="button" role="tab" aria-controls="reviews" aria-selected="false">Đánh giá ({{$reviewCount }})</button>
                                     </li>
                                 </ul>
                                 <div class="tab-content" id="productTabsContent">
@@ -106,7 +106,7 @@
                                         aria-labelledby="description-tab">
                                         <div class="product-description">
                                             <h4>Tổng quan sản phẩm</h4>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+<p>{!! nl2br(e($book->MoTa)) !!}</p>
                                             <h4>Tính năng chính</h4>
                                             <ul>
                                                 <li>Lorem ipsum dolor sit amet</li>
@@ -121,19 +121,99 @@
                                             <div class="specs-group">
                                                 <h4>Thông số kỹ thuật</h4>
                                                 <div class="specs-table">
-                                                    <div class="specs-row">
-                                                        <div class="specs-label">Kết nối</div>
-                                                        <div class="specs-value">Bluetooth 5.0</div>
-                                                    </div>
-                                                </div>
+    <div class="specs-row">
+        <div class="specs-label">Tên sách</div>
+        <div class="specs-value">{{ $book->TenSach }}</div>
+    </div>
+    <div class="specs-row">
+        <div class="specs-label">Danh mục</div>
+        <div class="specs-value">{{ $book->category->name ?? 'Chưa có danh mục' }}</div>
+    </div>
+    <div class="specs-row">
+        <div class="specs-label">Năm xuất bản</div>
+        <div class="specs-value">{{ $book->NamXuatBan ?? 'Đang cập nhật' }}</div>
+    </div>
+    <div class="specs-row">
+        <div class="specs-label">Giá bán</div>
+        <div class="specs-value">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</div>
+    </div>
+    <div class="specs-row">
+        <div class="specs-label">Số lượng trong kho</div>
+        <div class="specs-value">{{ $book->SoLuong > 0 ? $book->SoLuong . ' cuốn' : 'Hết hàng' }}</div>
+    </div>
+</div>
+
                                             </div>
                                         </div>
                                     </div>
                                     <!-- Reviews Tab -->
                                     <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                                         <div class="product-reviews">
-                                            <!-- Giữ nguyên nội dung đánh giá -->
-                                        </div>
+    <h4>Đánh giá sản phẩm</h4>
+    @forelse($book->reviews as $review)
+        <div class="review border rounded p-3 mb-2">
+<strong>{{ ($review->user->Ho ?? '') . ' ' . ($review->user->Ten ?? '') ?: 'Khách' }}</strong>
+            <span class="text-warning">
+                @for($i = 1; $i <= 5; $i++)
+                    @if($i <= $review->SoSao)
+                        ★
+                    @else
+                        ☆
+                    @endif
+                @endfor
+            </span>
+            <p>{{ $review->NoiDung }}</p>
+            <small class="text-muted">{{ \Carbon\Carbon::parse($review->NgayDanhGia)->format('d/m/Y H:i') }}</small>
+        </div>
+    @empty
+        <p>Chưa có đánh giá cho sản phẩm này.</p>
+    @endforelse
+    @if(auth()->check())
+    <hr>
+    <h5>Viết đánh giá của bạn</h5>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('review.store') }}" method="POST">
+        @csrf
+        <input type="hidden" name="MaSach" value="{{ $book->MaSach }}">
+
+        <div class="mb-3">
+            <label for="SoSao" class="form-label">Số sao:</label>
+            <select name="SoSao" id="SoSao" class="form-select" required>
+                <option value="">Chọn số sao</option>
+                @for($i = 5; $i >= 1; $i--)
+                    <option value="{{ $i }}">{{ $i }} sao</option>
+                @endfor
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="NoiDung" class="form-label">Nội dung đánh giá:</label>
+            <textarea name="NoiDung" id="NoiDung" rows="3" class="form-control" placeholder="Hãy chia sẻ trải nghiệm của bạn..." required>{{ old('NoiDung') }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+    </form>
+@else
+    <hr>
+    <p>Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để gửi đánh giá.</p>
+@endif
+
+</div>
+
                                     </div>
                                 </div>
                             </div>

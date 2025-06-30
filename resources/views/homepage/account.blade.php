@@ -64,6 +64,12 @@
                                         <span>Địa chỉ</span>
                                     </a>
                                 </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews" tabindex="-1" role="tab" aria-selected="false">
+                                        <i class="bi bi-star"></i>
+                                        <span>Đánh giá</span>
+                                    </a>
+                                </li>
                                 <!-- Các tab khác -->
                                 <li class="nav-item" role="presentation">
                                     <a class="nav-link" id="settings-tab" data-bs-toggle="tab" href="#settings" role="tab" aria-selected="false">
@@ -86,7 +92,6 @@
                         </nav>
                     </div>
                 </div>
-
 
                 <!-- Content Area -->
                 <div class="col-lg-9">
@@ -423,71 +428,142 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="section-header aos-init aos-animate" data-aos="fade-up">
+                                    <h2>My Reviews</h2>
+                                    <div class="header-actions">
+                                    <div class="dropdown">
+                                        <button class="filter-btn" data-bs-toggle="dropdown">
+                                        <i class="bi bi-funnel"></i>
+                                        <span>Sort by: Recent</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Recent</a></li>
+                                        <li><a class="dropdown-item" href="#">Highest Rating</a></li>
+                                        <li><a class="dropdown-item" href="#">Lowest Rating</a></li>
+                                        </ul>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <div class="reviews-grid">
+                                    <!-- Review Card 1 -->
+                                    <div class="review-card aos-init aos-animate" data-aos="fade-up" data-aos-delay="100">
+                                    <div class="review-header">
+                                        <img src="assets/img/product/product-1.webp" alt="Product" class="product-image" loading="lazy">
+                                        <div class="review-meta">
+                                        <h4>Lorem ipsum dolor sit amet</h4>
+                                        <div class="rating">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <span>(5.0)</span>
+                                        </div>
+                                        <div class="review-date">Reviewed on Feb 15, 2025</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                    </div>
+                                    <div class="review-footer">
+                                        <button type="button" class="btn-edit">Edit Review</button>
+                                        <button type="button" class="btn-delete">Delete</button>
+                                    </div>
+                                    </div>
+
+                                    <!-- Review Card 2 -->
+                                    <div class="review-card aos-init aos-animate" data-aos="fade-up" data-aos-delay="200">
+                                    <div class="review-header">
+                                        <img src="assets/img/product/product-2.webp" alt="Product" class="product-image" loading="lazy">
+                                        <div class="review-meta">
+                                        <h4>Consectetur adipiscing elit</h4>
+                                        <div class="rating">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i>
+                                            <span>(4.0)</span>
+                                        </div>
+                                        <div class="review-date">Reviewed on Feb 10, 2025</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                    </div>
+                                    <div class="review-footer">
+                                        <button type="button" class="btn-edit">Edit Review</button>
+                                        <button type="button" class="btn-delete">Delete</button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <form action="{{ route('user.addresses.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="addAddressLabel">Thêm địa chỉ mới</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form action="{{ route('user.addresses.store') }}" method="POST">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="addAddressLabel">Thêm địa chỉ mới</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="ten_nguoi_nhan" class="form-label">Tên người nhận</label>
+                                    <input type="text" name="ten_nguoi_nhan" id="ten_nguoi_nhan" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="so_dien_thoai" class="form-label">Số điện thoại</label>
+                                    <input type="text" name="so_dien_thoai" id="so_dien_thoai" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="tinh_thanh_id" class="form-label">Tỉnh / Thành phố</label>
+                                    <select name="tinh_thanh_id" id="tinh_thanh_id" class="form-select" required>
+                                        <option value="">-- Chọn Tỉnh / Thành --</option>
+                                        @foreach($tinhThanhs as $tinh)
+                                            <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="quan_huyen_id" class="form-label">Quận / Huyện</label>
+                                    <select name="quan_huyen_id" id="quan_huyen_id" class="form-select" required>
+                                        <option value="">-- Chọn Quận / Huyện --</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="phuong_xa_id" class="form-label">Phường / Xã</label>
+                                    <select name="phuong_xa_id" id="phuong_xa_id" class="form-select" required>
+                                        <option value="">-- Chọn Phường / Xã --</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="dia_chi_cu_the" class="form-label">Địa chỉ cụ thể</label>
+                                    <input type="text" name="dia_chi_cu_the" id="dia_chi_cu_the" class="form-control" required placeholder="Số nhà, tên đường...">
+                                </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
+                            </div>
+
                         </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="ten_nguoi_nhan" class="form-label">Tên người nhận</label>
-                                <input type="text" name="ten_nguoi_nhan" id="ten_nguoi_nhan" class="form-control" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="so_dien_thoai" class="form-label">Số điện thoại</label>
-                                <input type="text" name="so_dien_thoai" id="so_dien_thoai" class="form-control" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="tinh_thanh_id" class="form-label">Tỉnh / Thành phố</label>
-                                <select name="tinh_thanh_id" id="tinh_thanh_id" class="form-select" required>
-                                    <option value="">-- Chọn Tỉnh / Thành --</option>
-                                    @foreach($tinhThanhs as $tinh)
-                                        <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="quan_huyen_id" class="form-label">Quận / Huyện</label>
-                                <select name="quan_huyen_id" id="quan_huyen_id" class="form-select" required>
-                                    <option value="">-- Chọn Quận / Huyện --</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="phuong_xa_id" class="form-label">Phường / Xã</label>
-                                <select name="phuong_xa_id" id="phuong_xa_id" class="form-select" required>
-                                    <option value="">-- Chọn Phường / Xã --</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="dia_chi_cu_the" class="form-label">Địa chỉ cụ thể</label>
-                                <input type="text" name="dia_chi_cu_the" id="dia_chi_cu_the" class="form-control" required placeholder="Số nhà, tên đường...">
-                            </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
-                        </div>
-
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
-
-
 
     </section><!-- /Account Section -->
     <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
@@ -521,7 +597,7 @@
             </div>
           </form>
         </div>
-      </div>
+    </div>
 </main>
 <script>
     // Hàm load Quận/Huyện theo ID tỉnh

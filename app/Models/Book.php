@@ -47,4 +47,10 @@ class Book extends Model
         }
         return false;
     }
+    public function reviews()
+    {
+        return $this->hasMany(DanhGiaSanPham::class, 'MaSach', 'MaSach')
+            ->where('TrangThai', 1)
+            ->orderBy('NgayDanhGia', 'desc');
+    }
 }
