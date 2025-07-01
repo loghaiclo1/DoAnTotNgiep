@@ -84,6 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
     Route::put('/my-reviews/{id}', [ReviewController::class, 'update'])->name('review.update');
     Route::delete('/my-reviews/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
+    Route::get('/my-reviews/create', [ReviewController::class, 'create'])->name('review.create');
+    Route::post('/my-reviews', [ReviewController::class, 'store'])->name('review.store');
+
 });
 
 // Auth
@@ -138,3 +141,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
 });
+Route::get('/account/order-status/{id}', [AccountController::class, 'getOrderStatus'])->name('account.order-status');

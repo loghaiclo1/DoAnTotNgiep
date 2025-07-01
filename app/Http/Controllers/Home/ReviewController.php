@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DanhGiaSanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Book;
 
 class ReviewController extends Controller
 {
@@ -37,5 +38,14 @@ class ReviewController extends Controller
         ]);
 
         return back()->with('success', 'Đánh giá đã được gửi thành công.');
+    }
+    public function create(Request $request)
+    {
+        $maSach = $request->query('MaSach');
+
+        // Lấy thông tin sách để hiển thị form
+        $book = Book::findOrFail($maSach);
+
+        return view('homepage.reviews.create', compact('book'));
     }
 }

@@ -49,8 +49,6 @@ class Book extends Model
     }
     public function reviews()
     {
-        return $this->hasMany(DanhGiaSanPham::class, 'MaSach', 'MaSach')
-            ->where('TrangThai', 1)
-            ->orderBy('NgayDanhGia', 'desc');
+        return $this->hasMany(DanhGiaSanPham::class, 'MaSach', 'MaSach');
     }
 }

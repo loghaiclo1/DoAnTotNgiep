@@ -5,7 +5,6 @@
 @section('content')
 <main class="main">
     <!-- Page Title -->
-
     <div class="page-title light-background">
         <div class="container d-lg-flex justify-content-between align-items-center">
             <h1 class="mb-2 mb-lg-0">Tài khoản</h1>
@@ -59,7 +58,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="settings-tab" data-bs-toggle="tab" href="#addresses" role="tab" aria-selected="false">
+                                    <a class="nav-link" id="addresses-tab" data-bs-toggle="tab" href="#addresses" role="tab" aria-selected="false">
                                         <i class="bi bi-geo-alt"></i>
                                         <span>Địa chỉ</span>
                                     </a>
@@ -98,300 +97,110 @@
                     <div class="content-area">
                         <div class="tab-content">
                             <!-- Orders Tab -->
-                            <div class="tab-pane fade show active" id="orders" role="tabpanel">
+                            <div class="tab-pane fade show active" id="orders" role ="tabpanel">
                                 <div class="section-header" data-aos="fade-up">
                                     <div class="header-actions">
-                                        <div class="search-box">
-                                            <i class="bi bi-search"></i>
-                                            <input type="text" placeholder="Tìm kiếm đơn hàng...">
-                                        </div>
-                                        <div class="dropdown">
-                                            <button class="filter-btn" data-bs-toggle="dropdown">
-                                                <i class="bi bi-funnel"></i>
-                                                <span>Lọc</span>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="#">Tất Cả Đơn Hàng</a></li>
-                                                <li><a class="dropdown-item" href="#">Đang Xử Lý</a></li>
-                                                <li><a class="dropdown-item" href="#">Đang Giao Hàng</a></li>
-                                                <li><a class="dropdown-item" href="#">Hoàn Thành</a></li>
-                                                <li><a class="dropdown-item" href="#">Hủy Đơn</a></li>
-                                            </ul>
-                                        </div>
+                                        <form id="orderFilterForm" method="GET">
+                                            <div class="search-box">
+                                                <i class="bi bi-search"></i>
+                                                <input type="text" name="order_search" id="orderSearchInput" placeholder="Tìm kiếm đơn hàng..." class="form-control" value="{{ request('order_search') }}">
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="filter-btn" type="button" data-bs-toggle="dropdown" id="filterButton">
+                                                    <i class="bi bi-funnel"></i>
+                                                    <span id="filterText">{{ request('status', 'Tất Cả Đơn Hàng') }}</span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" data-status="Tất Cả Đơn Hàng">Tất Cả Đơn Hàng</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-status="Đang chờ">Đang chờ</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-status="Đang giao">Đang giao</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-status="Hoàn tất">Hoàn tất</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-status="Đã hủy">Đã hủy</a></li>
+                                                </ul>
+                                                <input type="hidden" name="status" id="statusFilter" value="{{ request('status', 'Tất Cả Đơn Hàng') }}">
+                                            </div>
+                                            <button type="button" class="btn btn-primary ms-2" id="searchButton">Tìm</button>
+                                            <button type="button" class="btn btn-secondary ms-2" id="resetButton">Xóa bộ lọc</button>
+                                        </form>
                                     </div>
                                 </div>
+                                <div id="filterInfo"></div>
                                 <div class="orders-grid">
-                                    @forelse ($orders as $order)
-                                    <div class="order-card" data-order-id="{{ $order->MaHoaDon }}" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
-                                            <div class="order-header">
-                                                <div class="order-id">
-                                                    <span class="label">Mã Đơn Hàng:</span>
-                                                    <span class="value">#ORD-{{ $order->NgayLap->format('Y') }}-{{ $order->MaHoaDon }}</span>
-                                                </div>
-                                                <div class="order-date">{{ $order->NgayLap->format('M d, Y') }}</div>
-                                            </div>
-                                            <div class="order-content">
-                                                <div class="product-grid">
-                                                    @foreach ($order->chitiethoadon->take(3) as $item)
-                                                        <img src="{{ asset('image/book/' . ltrim($item->sach->HinhAnh, '/')) }}" alt="{{ $item->sach->TenSach }}" loading="lazy">
-                                                    @endforeach
-                                                    @if ($order->chitiethoadon->count() > 3)
-                                                        <span class="more-items">+{{ $order->chitiethoadon->count() - 3 }}</span>
-                                                    @endif
-                                                </div>
-                                                <div class="order-info">
-                                                    <div class="info-row">
-                                                        <span>Trạng Thái</span>
-                                                        @php
-                                                            $statusMap = [
-                                                                'Đang chờ' => 'processing',
-                                                                'Đã xác nhận' => 'confirmed',
-                                                                'Đang giao hàng' => 'shipped',
-                                                                'Hoàn thành' => 'completed',
-                                                                'Hoàn tất' => 'completed',
-                                                                'Hủy đơn' => 'cancelled',
-                                                            ];
-                                                            $statusClass = $statusMap[$order->TrangThai] ?? 'processing';
-                                                        @endphp
-                                                <span class="status {{ $statusClass }}" id="status-order-{{ $order->MaHoaDon }}" data-status-for="{{ $order->MaHoaDon }}">
-                                                    {{ $order->TrangThai }}
-                                                </span>
-
-                                                    </div>
-                                                    <div class="info-row">
-                                                        <span>Sản Phẩm</span>
-                                                        <span>{{ $order->chitiethoadon->sum('SoLuong') }} sản phẩm</span>
-                                                    </div>
-                                                    <div class="info-row">
-                                                        <span>Tổng Tiền</span>
-                                                        <span class="price">{{ number_format($order->TongTien, 0, ',', '.') }} ₫</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="order-footer">
-                                                <button type="button" class="btn-track" data-bs-toggle="collapse" data-bs-target="#tracking{{ $order->MaHoaDon }}" aria-expanded="false">Theo Dõi Đơn Hàng</button>
-                                                <button type="button" class="btn-details" data-bs-toggle="collapse" data-bs-target="#details{{ $order->MaHoaDon }}" aria-expanded="false">Xem Chi Tiết</button>
-                                            </div>
-
-                                            <!-- Order Tracking -->
-                                            <div class="collapse tracking-info" id="tracking{{ $order->MaHoaDon }}">
-                                                <div class="tracking-timeline {{ $order->TrangThai === 'Hủy đơn' ? 'cancelled-timeline' : '' }}">
-                                                    @php
-                                                        $isCancelled = $order->TrangThai === 'Hủy đơn';
-
-                                                        $trackingSteps = $isCancelled
-                                                        ? [
-                                                            ['status' => 'Hủy đơn', 'label' => 'Đơn Hàng Đã Hủy', 'desc' => 'Đơn hàng này đã bị hủy và không được xử lý', 'completed' => true]
-                                                        ] : [
-                                                            ['status' => 'Đang chờ', 'label' => 'Đơn Hàng Đã Đặt', 'desc' => 'Đơn hàng đang chờ xác nhận', 'completed' => true],
-                                                            ['status' => 'Đã xác nhận', 'label' => 'Đã Xác Nhận', 'desc' => 'Đơn hàng đã được xác nhận', 'completed' => in_array($order->TrangThai, ['Đã xác nhận', 'Đang giao hàng', 'Hoàn thành', 'Hoàn tất'])],
-                                                            ['status' => 'Đang giao hàng', 'label' => 'Đang Giao Hàng', 'desc' => 'Đơn hàng đang được vận chuyển', 'completed' => in_array($order->TrangThai, ['Đang giao hàng', 'Hoàn thành', 'Hoàn tất'])],
-                                                            ['status' => 'Hoàn thành', 'label' => 'Đã Giao Hàng', 'desc' => 'Đơn hàng đã được giao thành công', 'completed' => in_array($order->TrangThai, ['Hoàn thành', 'Hoàn tất'])],
-                                                        ];
-                                                    @endphp
-                                                    @foreach ($trackingSteps as $step)
-                                                        <div class="timeline-item {{ $step['completed'] ? 'completed' : ($order->TrangThai === $step['status'] ? 'active' : '') }}">
-                                                            <div class="timeline-icon">
-                                                                <i class="bi
-                                                                    @if($step['status'] === 'Hủy đơn') bi-x-circle-fill
-                                                                    @elseif($step['completed']) bi-check-circle-fill
-                                                                    @elseif($step['status'] === 'Đang giao hàng') bi-truck
-                                                                    @else bi-house-door
-                                                                    @endif
-                                                                "></i>
-                                                            </div>
-                                                            <div class="timeline-content">
-                                                                <h5>{{ $step['label'] }}</h5>
-                                                                <p>{{ $step['desc'] }}</p>
-                                                                @if ($step['completed'] || $order->TrangThai === $step['status'])
-                                                                <span class="timeline-date" id="timeline-date-{{ $order->MaHoaDon }}-{{ \Illuminate\Support\Str::slug($step['status']) }}">
-                                                                    {{ $order->NgayLap->format('M d, Y - h:i A') }}
-                                                                </span>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-
-                                            <!-- Order Details -->
-                                            <div class="collapse order-details" id="details{{ $order->MaHoaDon }}">
-                                                <div class="details-content">
-                                                    <div class="detail-section">
-                                                        <h5>Thông Tin Đơn Hàng</h5>
-                                                        <div class="info-grid">
-                                                            <div class="info-item">
-                                                                <span class="label">Phương Thức Thanh Toán</span>
-                                                                <span class="value">
-                                                                    @if ($order->PT_ThanhToan == 1)
-                                                                        Thanh toán khi nhận hàng (COD)
-                                                                    @elseif ($order->PT_ThanhToan == 2)
-                                                                        Thanh toán VNPay
-                                                                    @else
-                                                                        Không xác định
-                                                                    @endif
-                                                                </span>
-
-                                                            </div>
-                                                            <div class="info-item">
-                                                                <span class="label">Phương Thức Vận Chuyển</span>
-                                                                <span class="value">Giao Hàng Tiêu Chuẩn</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="detail-section">
-                                                        <h5>Sản Phẩm ({{ $order->chitiethoadon->sum('SoLuong') }})</h5>
-                                                        <div class="order-items">
-                                                            @php
-                                                                $groupedItems = $order->chitiethoadon->groupBy('MaSach');
-                                                            @endphp
-
-                                                            @foreach ($groupedItems as $maSach => $items)
-                                                                @php
-                                                                    $first = $items->first();
-                                                                    $soLuong = $items->sum('SoLuong');
-                                                                    $donGia = $first->DonGia ?? 0;
-                                                                    $tongTien = $donGia * $soLuong;
-                                                                    $tenSach = $first->sach->TenSach ?? 'Không tìm thấy sách';
-                                                                    $hinhAnh = $first->sach->HinhAnh ?? 'no-image.png';
-                                                                @endphp
-
-                                                                <div class="item d-flex align-items-center mb-3">
-                                                                    <img src="{{ asset('image/book/' . ltrim($hinhAnh, '/')) }}"
-                                                                         alt="{{ $tenSach }}"
-                                                                         loading="lazy"
-                                                                         width="80"
-                                                                         class="me-3 rounded shadow-sm border">
-
-                                                                    <div class="item-info flex-grow-1">
-                                                                        <h6 class="mb-1">{{ $tenSach }}</h6>
-                                                                        <div class="item-meta text-muted small">
-                                                                            <span class="d-block">Mã Sách: {{ $maSach }}</span>
-                                                                            <span class="d-block">Số lượng: {{ $soLuong }}</span>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="item-price text-end fw-bold">
-                                                                        {{ number_format($tongTien, 0, ',', '.') }} ₫
-                                                                    </div>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="detail-section">
-                                                        <h5>Chi Tiết Giá</h5>
-                                                        <div class="price-breakdown">
-                                                            <div class="price-row">
-                                                                <span>Tạm tính</span>
-                                                                <span>{{ number_format($order->TongTien - session('shipping', 0), 0, ',', '.') }} ₫</span>
-                                                            </div>
-                                                            <div class="price-row">
-                                                                <span>Phí vận chuyển</span>
-                                                                <span>{{ number_format(session('shipping', 0), 0, ',', '.') }} ₫</span>
-                                                            </div>
-                                                            <div class="price-row total">
-                                                                <span>Tổng cộng</span>
-                                                                <span>{{ number_format($order->TongTien, 0, ',', '.') }} ₫</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="detail-section">
-                                                        <h5>Địa Chỉ Giao Hàng</h5>
-                                                        <div class="address-info">
-                                                            <p>{{ $order->DiaChi }}</p>
-                                                            <p class="contact">{{ $order->SoDienThoai }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <p>Chưa có đơn hàng nào.</p>
-                                    @endforelse
+                                    @include('homepage.partials.order_list')
                                 </div>
-
                             </div>
 
+                            <!-- Addresses Tab -->
                             <div class="tab-pane fade" id="addresses" role="tabpanel">
                                 <div class="section-header" data-aos="fade-up">
                                     <h2>Địa Chỉ Giao Hàng</h2>
                                 </div>
-
                                 <div class="mb-3">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
                                         Thêm Địa Chỉ Mới
                                     </button>
                                 </div>
-
                                 @if ($addresses->isEmpty())
-                                <p>Bạn chưa thêm địa chỉ giao hàng nào.</p>
-                                  @else
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover" data-aos="fade-up">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Người nhận</th>
-                                                <th>Địa chỉ</th>
-                                                <th>SĐT</th>
-                                                <th>Mặc định</th>
-                                                <th>Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($addresses as $address)
+                                    <p>Bạn chưa thêm địa chỉ giao hàng nào.</p>
+                                @else
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover" data-aos="fade-up">
+                                            <thead class="table-light">
                                                 <tr>
-                                                    <td>{{ $address->ten_nguoi_nhan }}</td>
-                                                    <td>
-                                                        {{ $address->dia_chi_cu_the }},
-                                                        {{ optional($address->phuongXa)->ten }},
-                                                        {{ optional($address->quanHuyen)->ten }},
-                                                        {{ optional($address->tinhThanh)->ten }}
-                                                    </td>
-                                                    <td>{{ $address->so_dien_thoai }}</td>
-                                                    <td>
-                                                        @if ($address->mac_dinh)
-                                                            <span class="badge bg-success">Mặc định</span>
-                                                        @else
-                                                            <form action="{{ route('address.setDefault', $address->id) }}" method="POST" style="display:inline;">
-                                                                @csrf
-                                                                @method('PUT')
-                                                                <button type="submit" class="btn btn-sm btn-outline-primary">Chọn</button>
-                                                            </form>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <button type="button"
-                                                        class="btn btn-sm btn-warning edit-address-btn"
-                                                        data-id="{{ $address->id }}"
-                                                        data-ten="{{ $address->ten_nguoi_nhan }}"
-                                                        data-sdt="{{ $address->so_dien_thoai }}"
-                                                        data-diachi="{{ $address->dia_chi_cu_the }}"
-                                                        data-tinh="{{ $address->tinh_thanh_id }}"
-                                                        data-quan="{{ $address->quan_huyen_id }}"
-                                                        data-phuong="{{ $address->phuong_xa_id }}">
-                                                        Sửa
-                                                    </button>
-
-
-
-                                                        <!-- Nút xóa -->
-                                                        <form action="{{ route('user.addresses.destroy', $address->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này không?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                                                        </form>
-                                                    </td>
+                                                    <th>Người nhận</th>
+                                                    <th>Địa chỉ</th>
+                                                    <th>SĐT</th>
+                                                    <th>Mặc định</th>
+                                                    <th>Hành động</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @endif
-
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($addresses as $address)
+                                                    <tr>
+                                                        <td>{{ $address->ten_nguoi_nhan }}</td>
+                                                        <td>
+                                                            {{ $address->dia_chi_cu_the }},
+                                                            {{ optional($address->phuongXa)->ten }},
+                                                            {{ optional($address->quanHuyen)->ten }},
+                                                            {{ optional($address->tinhThanh)->ten }}
+                                                        </td>
+                                                        <td>{{ $address->so_dien_thoai }}</td>
+                                                        <td>
+                                                            @if ($address->mac_dinh)
+                                                                <span class="badge bg-success">Mặc định</span>
+                                                            @else
+                                                                <form action="{{ route('address.setDefault', $address->id) }}" method="POST" style="display:inline;">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <button type="submit" class="btn btn-sm btn-outline-primary">Chọn</button>
+                                                                </form>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-warning edit-address-btn"
+                                                                    data-id="{{ $address->id }}"
+                                                                    data-ten="{{ $address->ten_nguoi_nhan }}"
+                                                                    data-sdt="{{ $address->so_dien_thoai }}"
+                                                                    data-diachi="{{ $address->dia_chi_cu_the }}"
+                                                                    data-tinh="{{ $address->tinh_thanh_id }}"
+                                                                    data-quan="{{ $address->quan_huyen_id }}"
+                                                                    data-phuong="{{ $address->phuong_xa_id }}">
+                                                                Sửa
+                                                            </button>
+                                                            <form action="{{ route('user.addresses.destroy', $address->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này không?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
 
                             <!-- Settings Tab -->
                             <div class="tab-pane fade" id="settings" role="tabpanel">
@@ -428,78 +237,120 @@
                                     </div>
                                 </div>
                             </div>
-                            </div>
-                            
+
+                            <!-- Reviews Tab -->
                             <div class="tab-pane fade" id="reviews" role="tabpanel">
-                                <div class="section-header aos-init aos-animate" data-aos="fade-up">
-                                    <h2>My Reviews</h2>
+                                <div class="section-header" data-aos="fade-up">
+                                    <h2>Đánh giá của tôi</h2>
                                     <div class="header-actions">
-                                    <div class="dropdown">
-                                        <button class="filter-btn" data-bs-toggle="dropdown">
-                                        <i class="bi bi-funnel"></i>
-                                        <span>Sort by: Recent</span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Recent</a></li>
-                                        <li><a class="dropdown-item" href="#">Highest Rating</a></li>
-                                        <li><a class="dropdown-item" href="#">Lowest Rating</a></li>
-                                        </ul>
-                                    </div>
+                                        <div class="dropdown">
+                                            <button class="filter-btn" data-bs-toggle="dropdown">
+                                                <i class="bi bi-funnel"></i>
+                                                <span>
+                                                    Sắp xếp:
+                                                    @if(request('sort') === 'high') Sao cao
+                                                    @elseif(request('sort') === 'low') Sao thấp
+                                                    @else Gần đây
+                                                    @endif
+                                                </span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'recent']) }}">Gần đây</a></li>
+                                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'high']) }}">Sao cao</a></li>
+                                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'low']) }}">Sao thấp</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="reviews-grid">
-                                    <!-- Review Card 1 -->
-                                    <div class="review-card aos-init aos-animate" data-aos="fade-up" data-aos-delay="100">
-                                    <div class="review-header">
-                                        <img src="assets/img/product/product-1.webp" alt="Product" class="product-image" loading="lazy">
-                                        <div class="review-meta">
-                                        <h4>Lorem ipsum dolor sit amet</h4>
-                                        <div class="rating">
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <span>(5.0)</span>
-                                        </div>
-                                        <div class="review-date">Reviewed on Feb 15, 2025</div>
-                                        </div>
-                                    </div>
-                                    <div class="review-content">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                                    </div>
-                                    <div class="review-footer">
-                                        <button type="button" class="btn-edit">Edit Review</button>
-                                        <button type="button" class="btn-delete">Delete</button>
-                                    </div>
-                                    </div>
+                                @if(session('success'))
+                                    <div class="alert alert-success">{{ session('success') }}</div>
+                                @endif
 
-                                    <!-- Review Card 2 -->
-                                    <div class="review-card aos-init aos-animate" data-aos="fade-up" data-aos-delay="200">
-                                    <div class="review-header">
-                                        <img src="assets/img/product/product-2.webp" alt="Product" class="product-image" loading="lazy">
-                                        <div class="review-meta">
-                                        <h4>Consectetur adipiscing elit</h4>
-                                        <div class="rating">
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star"></i>
-                                            <span>(4.0)</span>
+                                <div class="reviews-grid">
+                                    @forelse($reviews as $review)
+                                        <div class="review-card" data-aos="fade-up">
+                                            <div class="review-header">
+                                                <img src="{{ asset('image/book/' . ltrim($review->book->HinhAnh ?? 'no-image.png', '/')) }}"
+                                                    alt="{{ $review->book->TenSach ?? 'Sách' }}"
+                                                    class="product-image"
+                                                    loading="lazy">
+                                                <div class="review-meta">
+    <h4>
+<a href="{{ route('product.detail', $review->book->slug) }}" class="text-decoration-none">
+            {{ $review->book->TenSach ?? 'Sách không tồn tại' }}
+        </a>
+    </h4>
+    <div class="rating">
+        @for($i = 1; $i <= 5; $i++)
+            @if($i <= $review->SoSao)
+                <i class="bi bi-star-fill text-warning"></i>
+            @else
+                <i class="bi bi-star"></i>
+            @endif
+        @endfor
+        <span>({{ number_format($review->SoSao, 1) }})</span>
+    </div>
+    <div class="review-date">
+        {{ \Carbon\Carbon::parse($review->NgayDanhGia)->format('d/m/Y H:i') }}
+    </div>
+</div>
+
+                                            </div>
+                                            <div class="review-content">
+                                                <p>{{ $review->NoiDung }}</p>
+                                            </div>
+                                            <div class="review-footer">
+                                                <form method="POST" action="{{ route('review.destroy', $review->MaDanhGia) }}" onsubmit="return confirm('Xác nhận xoá đánh giá?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn-edit" onclick="window.location='{{ route('review.edit', $review->MaDanhGia) }}'">Sửa</button>
+                                                    <button type="submit" class="btn-delete">Xoá</button>
+                                                </form>
+                                            </div>
                                         </div>
-                                        <div class="review-date">Reviewed on Feb 10, 2025</div>
+                                    @empty
+                                        <p>Bạn chưa có đánh giá nào.</p>
+                                    @endforelse
+                                </div>
+
+                                <hr class="my-4">
+
+                                <div class="section-header mt-5" data-aos="fade-up">
+                                    <h2>Sách đã mua chưa đánh giá</h2>
+                                </div>
+
+                               <div class="reviews-grid">
+                                    @forelse($unreviewedBooks as $book)
+                                        @php
+                                            $bookModel = $book['book'];
+                                        @endphp
+                                        <div class="review-card" data-aos="fade-up">
+                                            <div class="review-header">
+                                                <img src="{{ asset('image/book/' . ltrim($bookModel->HinhAnh ?? 'no-image.png', '/')) }}"
+                                                    alt="{{ $bookModel->TenSach ?? 'Sách' }}"
+                                                    class="product-image"
+                                                    loading="lazy">
+                                                <div class="review-meta">
+    <h4>
+        <a href="{{ route('product.detail', $bookModel->slug) }}" class="text-decoration-none">
+            {{ $bookModel->TenSach ?? 'Sách không tồn tại' }}
+        </a>
+    </h4>
+    <div class="review-date">
+        Đã mua: {{ \Carbon\Carbon::parse($book['order_date'])->format('d/m/Y') }}
+    </div>
+</div>
+
+                                            </div>
+                                            <div class="review-footer">
+                                                <a href="{{ route('review.create', ['MaSach' => $bookModel->MaSach]) }}" class="btn btn-primary">Viết đánh giá</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="review-content">
-                                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                                    </div>
-                                    <div class="review-footer">
-                                        <button type="button" class="btn-edit">Edit Review</button>
-                                        <button type="button" class="btn-delete">Delete</button>
-                                    </div>
-                                    </div>
+                                    @empty
+                                        <p>Bạn đã đánh giá hết các sách đã mua.</p>
+                                    @endforelse
+                                    {{ $unreviewedBooks->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -565,42 +416,128 @@
                 </div>
             </div>
 
-    </section><!-- /Account Section -->
-    <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <form method="POST" action="" id="editAddressForm">
-            @csrf
-            @method('PUT')
-            <div class="modal-content">
-              <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editAddressModalLabel">Sửa địa chỉ</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                <input type="text" name="ten_nguoi_nhan" id="edit_ten_nguoi_nhan" class="form-control mb-2" placeholder="Tên người nhận" required>
-                <input type="text" name="so_dien_thoai" id="edit_so_dien_thoai" class="form-control mb-2" placeholder="SĐT" required>
-                <input type="text" name="dia_chi_cu_the" id="edit_dia_chi_cu_the" class="form-control mb-2" placeholder="Địa chỉ cụ thể" required>
-
-                <select name="tinh_thanh_id" id="edit_tinh_thanh_id" class="form-select mb-2" required>
-                  <option value="">-- Chọn Tỉnh / Thành --</option>
-                  @foreach ($tinhThanhs as $tinh)
-                    <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
-                  @endforeach
-                </select>
-
-                <select name="quan_huyen_id" id="edit_quan_huyen_id" class="form-select mb-2" required></select>
-                <select name="phuong_xa_id" id="edit_phuong_xa_id" class="form-select mb-2" required></select>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Lưu thay đổi</button>
-              </div>
+        <!-- Edit Address Modal -->
+        <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="POST" action="" id="editAddressForm">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="editAddressModalLabel">Sửa địa chỉ</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" name="ten_nguoi_nhan" id="edit_ten_nguoi_nhan" class="form-control mb-2" placeholder="Tên người nhận" required>
+                            <input type="text" name="so_dien_thoai" id="edit_so_dien_thoai" class="form-control mb-2" placeholder="SĐT" required>
+                            <input type="text" name="dia_chi_cu_the" id="edit_dia_chi_cu_the" class="form-control mb-2" placeholder="Địa chỉ cụ thể" required>
+                            <select name="tinh_thanh_id" id="edit_tinh_thanh_id" class="form-select mb-2" required>
+                                <option value="">-- Chọn Tỉnh / Thành --</option>
+                                @foreach ($tinhThanhs as $tinh)
+                                    <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
+                                @endforeach
+                            </select>
+                            <select name="quan_huyen_id" id="edit_quan_huyen_id" class="form-select mb-2" required></select>
+                            <select name="phuong_xa_id" id="edit_phuong_xa_id" class="form-select mb-2" required></select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-          </form>
         </div>
-    </div>
+    </section><!-- /Account Section -->
 </main>
+
+<!-- Toastify CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<!-- Toastify JS -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 <script>
-    // Hàm load Quận/Huyện theo ID tỉnh
+  document.addEventListener('DOMContentLoaded', function () {
+    const ordersGrid = document.querySelector('.orders-grid');
+    const filterText = document.getElementById('filterText');
+    const statusFilter = document.getElementById('statusFilter');
+    const orderSearchInput = document.getElementById('orderSearchInput');
+    const searchButton = document.getElementById('searchButton');
+    const resetButton = document.getElementById('resetButton');
+
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+            const status = this.getAttribute('data-status');
+            statusFilter.value = status;
+            filterText.textContent = status;
+            fetchOrders();
+        });
+    });
+
+    searchButton.addEventListener('click', fetchOrders);
+
+    resetButton.addEventListener('click', function () {
+        orderSearchInput.value = '';
+        statusFilter.value = 'Tất Cả Đơn Hàng';
+        filterText.textContent = 'Tất Cả Đơn Hàng';
+        fetchOrders();
+    });
+
+    orderSearchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            fetchOrders();
+        }
+    });
+
+    function fetchOrders() {
+        const search = orderSearchInput.value.trim();
+        const status = statusFilter.value;
+
+        const params = new URLSearchParams({
+            order_search: search,
+            status: status
+        });
+
+        const url = '{{ route('account') }}?' + params.toString();
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Phản hồi mạng không thành công');
+            return response.json();
+        })
+        .then(data => {
+            ordersGrid.innerHTML = data;
+            AOS.init();
+
+            // Cập nhật filter info
+            document.getElementById('filterInfo').innerHTML =
+                `<div class="alert alert-light mt-3"><strong>Đang lọc:</strong> ` +
+                (status !== 'Tất Cả Đơn Hàng' ? `Trạng thái: <em>${status}</em> ` : '') +
+                (search ? `| Từ khóa: <em>${search}</em>` : '') +
+                `</div>`;
+
+            // Ẩn query khỏi URL
+            window.history.replaceState({}, '', '{{ route('account') }}');
+        })
+        .catch(error => {
+            console.error('Lỗi khi lấy đơn hàng:', error);
+            ordersGrid.innerHTML = '<p>Đã có lỗi xảy ra. Vui lòng thử lại.</p>';
+            Toastify({
+                text: "Đã có lỗi khi tải đơn hàng. Vui lòng thử lại!",
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#dc3545",
+            }).showToast();
+        });
+    }
+
+    // Các hàm load địa chỉ (Giữ nguyên không thay đổi)
     function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
         fetch(`/api/quan-huyen/${provinceId}`)
             .then(response => response.json())
@@ -616,10 +553,18 @@
                     if (wardSelect) wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
                 }
             })
-            .catch(err => console.error('Lỗi tải Quận/Huyện:', err));
+            .catch(err => {
+                console.error('Lỗi tải Quận/Huyện:', err);
+                Toastify({
+                    text: "Lỗi khi tải Quận/Huyện. Vui lòng thử lại!",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                }).showToast();
+            });
     }
 
-    // Hàm load Phường/Xã theo ID quận
     function loadWards(districtId, wardSelectId, selectedId = null) {
         fetch(`/api/phuong-xa/${districtId}`)
             .then(response => response.json())
@@ -630,51 +575,57 @@
                     wardSelect.innerHTML += `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
                 });
             })
-            .catch(err => console.error('Lỗi tải Phường/Xã:', err));
+            .catch(err => {
+                console.error('Lỗi tải Phường/Xã:', err);
+                Toastify({
+                    text: "Lỗi khi tải Phường/Xã. Vui lòng thử lại!",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                }).showToast();
+            });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- Trang checkout chính ---
-        document.getElementById('tinh_thanh_id')?.addEventListener('change', function () {
-            loadDistricts(this.value, 'quan_huyen_id');
-        });
+    // Modal địa chỉ (Không thay đổi)
+    const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+    const form = document.getElementById('editAddressForm');
 
-        document.getElementById('quan_huyen_id')?.addEventListener('change', function () {
-            loadWards(this.value, 'phuong_xa_id');
-        });
+    document.querySelectorAll('.edit-address-btn').forEach(button => {
+        button.addEventListener('click', async function () {
+            const { id, ten, sdt, diachi, tinh, quan, phuong } = this.dataset;
 
-        // --- Modal Sửa địa chỉ ---
-        const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
-        const form = document.getElementById('editAddressForm');
+            form.action = `/user/addresses/${id}`;
+            document.getElementById('edit_ten_nguoi_nhan').value = ten;
+            document.getElementById('edit_so_dien_thoai').value = sdt;
+            document.getElementById('edit_dia_chi_cu_the').value = diachi;
+            document.getElementById('edit_tinh_thanh_id').value = tinh;
 
-        document.querySelectorAll('.edit-address-btn').forEach(button => {
-            button.addEventListener('click', async function () {
-                const { id, ten, sdt, diachi, tinh, quan, phuong } = this.dataset;
-
-                form.action = `/user/addresses/${id}`;
-                document.getElementById('edit_ten_nguoi_nhan').value = ten;
-                document.getElementById('edit_so_dien_thoai').value = sdt;
-                document.getElementById('edit_dia_chi_cu_the').value = diachi;
-                document.getElementById('edit_tinh_thanh_id').value = tinh;
-
-                try {
-                    await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
-                    await loadWards(quan, 'edit_phuong_xa_id', phuong);
-                    editModal.show();
-                } catch (err) {image.png
-                    console.error('Lỗi khi tải địa chỉ:', err);
-                    alert('Không thể tải dữ liệu địa chỉ. Vui lòng thử lại.');
-                }
-            });
-        });
-
-        document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function () {
-            loadDistricts(this.value, 'edit_quan_huyen_id');
-        });
-
-        document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function () {
-            loadWards(this.value, 'edit_phuong_xa_id');
+            try {
+                await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
+                await loadWards(quan, 'edit_phuong_xa_id', phuong);
+                editModal.show();
+            } catch (err) {
+                console.error('Lỗi khi tải địa chỉ:', err);
+                Toastify({
+                    text: "Không thể tải dữ liệu địa chỉ. Vui lòng thử lại!",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                }).showToast();
+            }
         });
     });
+
+    document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function () {
+        loadDistricts(this.value, 'edit_quan_huyen_id');
+    });
+
+    document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function () {
+        loadWards(this.value, 'edit_phuong_xa_id');
+    });
+});
+
 </script>
 @endsection
