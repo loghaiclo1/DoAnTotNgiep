@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
@@ -7,12 +8,70 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+
 class BookController extends Controller
 {
-    public function productdetail($slug)
+    public function productdetail(Request $request, $slug)
     {
-        $book = Book::where('slug', $slug)->where('TrangThai', 1)->firstOrFail();
-        return view('homepage.productdetail', compact('book'));
+
+        $book = Book::where('slug', $slug)
+            ->where('TrangThai', 1)
+            ->firstOrFail();
+
+        $reviewCount = $book->reviews()->count();
+        $averageRating = $book->reviews()->avg('SoSao');
+        $ratingDistribution = $book->reviews()
+            ->selectRaw('SoSao, count(*) as count')
+            ->groupBy('SoSao')
+            ->pluck('count', 'SoSao')
+            ->toArray();
+
+        // Lọc & sắp xếp review
+        $query = $book->reviews()
+            ->where('TrangThai', 1)
+            ->with('user');
+
+        // Lọc theo số sao
+        if ($request->filled('star')) {
+            $query->where('SoSao', $request->star);
+        }
+
+        // XÓA ORDER CŨ TRƯỚC KHI ÁP DỤNG SẮP XẾP MỚI
+        $query->getQuery()->orders = null;
+
+        // Sắp xếp
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'oldest':
+                    $query->orderBy('NgayDanhGia', 'asc');
+                    break;
+                case 'high_rating':
+                    $query->orderBy('SoSao', 'desc');
+                    break;
+                case 'low_rating':
+                    $query->orderBy('SoSao', 'asc');
+                    break;
+                default:
+                    $query->orderBy('NgayDanhGia', 'desc');
+            }
+        } else {
+            $query->orderBy('NgayDanhGia', 'desc');
+        }
+\Log::info($query->toSql());
+\Log::info($query->getBindings());
+        $reviews = $query->paginate(5)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('components.reviews-list', compact('reviews'))->render();
+        }
+
+        return view('homepage.productdetail', compact(
+            'book',
+            'reviewCount',
+            'averageRating',
+            'ratingDistribution',
+            'reviews'
+        ));
     }
 
     public function searchResults(Request $request)
@@ -32,8 +91,16 @@ class BookController extends Controller
             if (!empty($searchTerms)) {
                 $queryBuilder = Book::query()
                     ->select([
-                        'MaSach', 'TenSach', 'MoTa', 'NamXuatBan', 'GiaBan', 'GiaNhap',
-                        'SoLuong', 'LuotMua', 'HinhAnh', 'slug'
+                        'MaSach',
+                        'TenSach',
+                        'MoTa',
+                        'NamXuatBan',
+                        'GiaBan',
+                        'GiaNhap',
+                        'SoLuong',
+                        'LuotMua',
+                        'HinhAnh',
+                        'slug'
                     ])
                     ->where('TrangThai', 1)
                     ->where(function ($q) use ($searchTerms, $nonAccentQuery) {
@@ -41,19 +108,19 @@ class BookController extends Controller
                             $q2->where('TenSach', 'LIKE', "%{$searchTerms}%")
                                 ->orWhere('MoTa', 'LIKE', "%{$searchTerms}%");
                         })
-                        ->orWhere(function ($q3) use ($nonAccentQuery) {
-                            $q3->whereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"])
-                                ->orWhereRaw("LOWER(REPLACE(MoTa, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
-                        });
+                            ->orWhere(function ($q3) use ($nonAccentQuery) {
+                                $q3->whereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"])
+                                    ->orWhereRaw("LOWER(REPLACE(MoTa, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
+                            });
                     })
                     ->orWhere(function ($q) use ($searchTerms) {
                         $q->where('NamXuatBan', '=', $searchTerms);
                     });
-                    if ($sort === 'high-to-low') {
-                        $queryBuilder->orderBy('GiaBan', 'desc')->orderBy('TenSach', 'asc');
-                    } elseif ($sort === 'low-to-high') {
-                        $queryBuilder->orderBy('GiaBan', 'asc')->orderBy('TenSach', 'asc');
-                    }
+                if ($sort === 'high-to-low') {
+                    $queryBuilder->orderBy('GiaBan', 'desc')->orderBy('TenSach', 'asc');
+                } elseif ($sort === 'low-to-high') {
+                    $queryBuilder->orderBy('GiaBan', 'asc')->orderBy('TenSach', 'asc');
+                }
                 $results = $queryBuilder->paginate($perPage, ['*'], 'page', $page);
             } else {
                 $results = new LengthAwarePaginator([], 0, $perPage, $page, [
@@ -96,7 +163,7 @@ class BookController extends Controller
             $suggestions = Book::where('TrangThai', 1)
                 ->where(function ($q) use ($cleanQuery, $nonAccentQuery) {
                     $q->where('TenSach', 'LIKE', $cleanQuery . '%')
-                      ->orWhereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", [strtolower($nonAccentQuery) . '%']);
+                        ->orWhereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", [strtolower($nonAccentQuery) . '%']);
                 })
                 ->select('TenSach', 'GiaBan', 'HinhAnh', 'slug')
                 ->limit(5)
@@ -116,5 +183,4 @@ class BookController extends Controller
 
         return response()->json($suggestions);
     }
-
 }

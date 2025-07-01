@@ -47,4 +47,8 @@ class Book extends Model
         }
         return false;
     }
+    public function reviews()
+    {
+        return $this->hasMany(DanhGiaSanPham::class, 'MaSach', 'MaSach');
+    }
 }

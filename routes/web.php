@@ -17,7 +17,8 @@ use App\Http\Controllers\Home\{
     APIController,
     VNPayController,
     PromoController,
-    AddressController
+    AddressController,
+    ReviewController
 };
 use App\Http\Controllers\Auth\{
     ForgotPasswordController,
@@ -53,6 +54,7 @@ Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('categ
 
 // Chi tiết sản phẩm
 Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
+Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
 
 // Liên hệ
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
@@ -79,6 +81,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/user/addresses/{id}', [AddressController::class, 'destroy'])->name('user.addresses.destroy');
     Route::put('/user/addresses/{id}', [AddressController::class, 'update'])->name('user.addresses.update');
     Route::put('/account/address/{id}/mac-dinh', [AddressController::class, 'setDefault'])->name('address.setDefault');
+    Route::get('/my-reviews', [ReviewController::class, 'index'])->name('review.index');
+    Route::get('/my-reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
+    Route::put('/my-reviews/{id}', [ReviewController::class, 'update'])->name('review.update');
+    Route::delete('/my-reviews/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
+    Route::get('/my-reviews/create', [ReviewController::class, 'create'])->name('review.create');
+    Route::post('/my-reviews', [ReviewController::class, 'store'])->name('review.store');
+
 });
 
 // Auth

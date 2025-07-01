@@ -158,10 +158,10 @@
         <div class="position-relative">
           <nav id="navmenu" class="navmenu">
             <ul>
-              <li><a href=" {{ url('/') }} " class="active">Trang chủ</a></li>
+              <li><a href=" {{ url('/') }} " class=" {{ request()->is('/') ? 'active' : '' }} ">Trang chủ</a></li>
               {{-- <li><a href=" {{ url('/about') }} ">Giới thiệu</a></li> --}}
-              <li><a href=" {{ url('/category') }} ">Danh mục</a></li>
-              <li><a href=" {{ url('/cart') }} ">Giỏ hàng</a></li>
+              <li><a href=" {{ url('/category') }} " class=" {{ request()->is('category*') ? 'active' : '' }} ">Danh mục</a></li>
+              <li><a href=" {{ url('/cart') }} " class=" {{ request()->is('cart') ? 'active' : '' }} ">Giỏ hàng</a></li>
               {{-- <li><a href=" {{ url('/checkout') }} ">Thanh toán</a></li> --}}
 
               <!-- Products Mega Menu 2 -->
@@ -252,7 +252,8 @@
                 </div><!-- End Products Mega Menu 2 Desktop View -->
               </li><!-- End Products Mega Menu 2 -->
 
-              <li><a href=" {{ url('/contact') }} ">Liên hệ</a></li>
+              <li><a href=" {{ url('/contact') }} " class=" {{ request()->is('contact') ? 'active' : '' }} ">Liên hệ</a></li>
+
             </ul>
           </nav>
         </div>
@@ -631,6 +632,5 @@
             });
     @endif
 </script>
-<script>window.authUserId = {{ Auth::id() ?? 'null' }};</script>
 
 </body></html>

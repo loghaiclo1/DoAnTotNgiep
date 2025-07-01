@@ -57,47 +57,104 @@
                             @php
                             $currentQty = session('cart.' . $book->MaSach . '.quantity', 0);
                             // Không cần tính $availableQty ở đây, để server xử lý
-                        @endphp
+                            @endphp
 
-                        @if ($book->SoLuong > 0)
-                            <form class="add-to-cart-form" action="{{ route('cart.add') }}" method="POST" data-book-id="{{ $book->MaSach }}">
-                                @csrf
-                                <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
-                                <div class="product-quantity mb-4">
-                                    <h6 class="option-title">Số lượng:</h6>
-                                    <div class="quantity-selector" data-book-id="{{ $book->MaSach }}">
-                                        <button type="button" class="quantity-btn decrease"><i class="bi bi-dash"></i></button>
-                                        <input type="number" class="quantity-input" name="quantity" value="1" min="1" required>
-                                        <button type="button" class="quantity-btn increase"><i class="bi bi-plus"></i></button>
+                            @if ($book->SoLuong > 0)
+                                <form class="add-to-cart-form" action="{{ route('cart.add') }}" method="POST" data-book-id="{{ $book->MaSach }}">
+                                    @csrf
+                                    <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                    <div class="product-quantity mb-4">
+                                        <h6 class="option-title">Số lượng:</h6>
+                                        <div class="quantity-selector" data-book-id="{{ $book->MaSach }}">
+                                            <button type="button" class="quantity-btn decrease"><i class="bi bi-dash"></i></button>
+                                            <input type="number" class="quantity-input" name="quantity" value="1" min="1" required>
+                                            <button type="button" class="quantity-btn increase"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                        <div class="error-message text-danger mt-2"></div>
                                     </div>
-                                    <div class="error-message text-danger mt-2"></div>
+                                    <button type="submit" class="btn btn-primary add-to-cart-btn">Thêm vào giỏ hàng</button>
+                                </form>
+                            @else
+                                <p class="text-danger">Hết hàng!</p>
+                            @endif
+                            @php
+                                $average = number_format($averageRating, 1);
+                                $percentAverage = $averageRating > 0 ? ($averageRating / 5) * 100 : 0;
+                            @endphp
+
+                            <div class="d-flex align-items-center bg-white p-4 ps-0 rounded mb-4">
+                                {{-- Cột trái: Điểm trung bình --}}
+                                <div class="text-center" style="flex: 0 0 30%;">
+                                    <div class="display-4 fw-bold">                                        
+                                        {{ $average }}<span class="fs-5 text-muted">/5</span>
+                                    </div>
+                                    {{-- Hiển thị sao thay progress --}}
+                                    <div class="my-2">
+                                        @php
+                                            $fullStars = floor($average);
+                                            $halfStar = ($average - $fullStars) >= 0.5;
+                                            $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+                                        @endphp
+
+                                        {{-- Sao đầy --}}
+                                        @for ($i = 0; $i < $fullStars; $i++)
+                                            <i class="bi bi-star-fill text-warning fs-5"></i>
+                                        @endfor
+
+                                        {{-- Nửa sao nếu cần --}}
+                                        @if ($halfStar)
+                                            <i class="bi bi-star-half text-warning fs-5"></i>
+                                        @endif
+
+                                        {{-- Sao rỗng --}}
+                                        @for ($i = 0; $i < $emptyStars; $i++)
+                                            <i class="bi bi-star text-warning fs-5"></i>
+                                        @endfor
+                                    </div>
+
+                                    <div class="text-muted small">({{ $reviewCount }} đánh giá)</div>
                                 </div>
-                                <button type="submit" class="btn btn-primary add-to-cart-btn">Thêm vào giỏ hàng</button>
-                            </form>
-                        @else
-                            <p class="text-danger">Hết hàng!</p>
-                        @endif
+
+                                {{-- Cột phải: Rating breakdown --}}
+                                <div class="ms-4 flex-grow-1">
+                                    @foreach ([5,4,3,2,1] as $star)
+                                        @php
+                                            $count = $ratingDistribution[$star] ?? 0;
+                                            $percent = $reviewCount > 0 ? ($count / $reviewCount) * 100 : 0;
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <span style="width: 70px;">{{ $star }} sao <span class="text-muted small">({{ $count }})</span> </span>
+                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                                <div class="progress-bar bg-warning" role="progressbar"
+                                                    style="width: {{ $percent }}%;" aria-valuenow="{{ $percent }}" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            <span style="width: 40px; text-align: right;">{{ number_format($percent, 0) }}%</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Product Details Tabs -->
                     <div class="row mt-5" data-aos="fade-up">
-                        <div class="col-12">
+                        <div class="col-12" style="margin-top: -50px">
                             <div class="product-details-tabs">
-                                <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                                <ul class="nav nav-tabs" id="productTabs" role="tablist" style="margin-bottom: -10px">
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
                                             data-bs-target="#description" type="button" role="tab"
-                                            aria-controls="description" aria-selected="true">Mô tả</button>
+                                            aria-controls="description" aria-selected="true">Giới thiệu sách</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="specifications-tab" data-bs-toggle="tab"
                                             data-bs-target="#specifications" type="button" role="tab"
-                                            aria-controls="specifications" aria-selected="false">Thông số</button>
+                                            aria-controls="specifications" aria-selected="false">Thông tin tác phẩm</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
-                                            type="button" role="tab" aria-controls="reviews" aria-selected="false">Đánh giá (42)</button>
+                                            type="button" role="tab" aria-controls="reviews" aria-selected="false">Đánh giá ({{$reviewCount }})</button>
                                     </li>
                                 </ul>
                                 <div class="tab-content" id="productTabsContent">
@@ -105,8 +162,7 @@
                                     <div class="tab-pane fade show active" id="description" role="tabpanel"
                                         aria-labelledby="description-tab">
                                         <div class="product-description">
-                                            <h4>Tổng quan sản phẩm</h4>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                            <p style="margin-top: 20px">{!! nl2br(e($book->MoTa)) !!}</p>
                                             <h4>Tính năng chính</h4>
                                             <ul>
                                                 <li>Lorem ipsum dolor sit amet</li>
@@ -119,11 +175,26 @@
                                         aria-labelledby="specifications-tab">
                                         <div class="product-specifications">
                                             <div class="specs-group">
-                                                <h4>Thông số kỹ thuật</h4>
                                                 <div class="specs-table">
                                                     <div class="specs-row">
-                                                        <div class="specs-label">Kết nối</div>
-                                                        <div class="specs-value">Bluetooth 5.0</div>
+                                                        <div class="specs-label">Tên sách</div>
+                                                        <div class="specs-value">{{ $book->TenSach }}</div>
+                                                    </div>
+                                                    <div class="specs-row">
+                                                        <div class="specs-label">Danh mục</div>
+                                                        <div class="specs-value">{{ $book->category->name ?? 'Chưa có danh mục' }}</div>
+                                                    </div>
+                                                    <div class="specs-row">
+                                                        <div class="specs-label">Năm xuất bản</div>
+                                                        <div class="specs-value">{{ $book->NamXuatBan ?? 'Đang cập nhật' }}</div>
+                                                    </div>
+                                                    <div class="specs-row">
+                                                        <div class="specs-label">Giá bán</div>
+                                                        <div class="specs-value">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</div>
+                                                    </div>
+                                                    <div class="specs-row">
+                                                        <div class="specs-label">Số lượng trong kho</div>
+                                                        <div class="specs-value">{{ $book->SoLuong > 0 ? $book->SoLuong . ' cuốn' : 'Hết hàng' }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -131,8 +202,9 @@
                                     </div>
                                     <!-- Reviews Tab -->
                                     <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                                        <div class="product-reviews">
-                                            <!-- Giữ nguyên nội dung đánh giá -->
+                                        {{-- Bộ lọc --}}
+                                        <div id="reviews-block">
+                                            @include('components.reviews-block', ['reviews' => $reviews])
                                         </div>
                                     </div>
                                 </div>
@@ -146,5 +218,41 @@
 @endsection
 
 @section('scripts')
-    </script>
+
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+$(document).ready(function(){
+    function loadReviews(url) {
+        $.get(url, function(data){
+            $('#reviews-list-container').html(data);
+            window.history.pushState({}, '', url);
+        });
+    }
+
+    // Filter star buttons
+    $(document).on('click', '.review-filter-btn', function(e){
+        e.preventDefault();
+        let url = $(this).attr('href');
+        loadReviews(url);
+    });
+
+    // Sort select change
+    $(document).on('change', '.sort-select', function(){
+        let url = new URL(window.location.href);
+        url.searchParams.set('sort', $(this).val());
+        loadReviews(url.toString());
+    });
+
+    // Pagination links
+    $(document).on('click', '.pagination a', function(e){
+        e.preventDefault();
+        let url = $(this).attr('href');
+        loadReviews(url);
+    });
+});
+</script>
+@endpush
+
+
 @endsection

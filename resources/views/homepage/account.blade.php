@@ -64,6 +64,13 @@
                                     </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews" tabindex="-1" role="tab" aria-selected="false">
+                                        <i class="bi bi-star"></i>
+                                        <span>Đánh giá</span>
+                                    </a>
+                                </li>
+                                <!-- Các tab khác -->
+                                <li class="nav-item" role="presentation">
                                     <a class="nav-link" id="settings-tab" data-bs-toggle="tab" href="#settings" role="tab" aria-selected="false">
                                         <i class="bi bi-gear"></i>
                                         <span>Tùy chọn tài khoản</span>
@@ -230,65 +237,184 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Reviews Tab -->
+                            <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="section-header" data-aos="fade-up">
+                                    <h2>Đánh giá của tôi</h2>
+                                    <div class="header-actions">
+                                        <div class="dropdown">
+                                            <button class="filter-btn" data-bs-toggle="dropdown">
+                                                <i class="bi bi-funnel"></i>
+                                                <span>
+                                                    Sắp xếp:
+                                                    @if(request('sort') === 'high') Sao cao
+                                                    @elseif(request('sort') === 'low') Sao thấp
+                                                    @else Gần đây
+                                                    @endif
+                                                </span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'recent']) }}">Gần đây</a></li>
+                                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'high']) }}">Sao cao</a></li>
+                                                <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['sort' => 'low']) }}">Sao thấp</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if(session('success'))
+                                    <div class="alert alert-success">{{ session('success') }}</div>
+                                @endif
+
+                                <div class="reviews-grid">
+                                    @forelse($reviews as $review)
+                                        <div class="review-card" data-aos="fade-up">
+                                            <div class="review-header">
+                                                <img src="{{ asset('image/book/' . ltrim($review->book->HinhAnh ?? 'no-image.png', '/')) }}"
+                                                    alt="{{ $review->book->TenSach ?? 'Sách' }}"
+                                                    class="product-image"
+                                                    loading="lazy">
+                                                <div class="review-meta">
+    <h4>
+<a href="{{ route('product.detail', $review->book->slug) }}" class="text-decoration-none">
+            {{ $review->book->TenSach ?? 'Sách không tồn tại' }}
+        </a>
+    </h4>
+    <div class="rating">
+        @for($i = 1; $i <= 5; $i++)
+            @if($i <= $review->SoSao)
+                <i class="bi bi-star-fill text-warning"></i>
+            @else
+                <i class="bi bi-star"></i>
+            @endif
+        @endfor
+        <span>({{ number_format($review->SoSao, 1) }})</span>
+    </div>
+    <div class="review-date">
+        {{ \Carbon\Carbon::parse($review->NgayDanhGia)->format('d/m/Y H:i') }}
+    </div>
+</div>
+
+                                            </div>
+                                            <div class="review-content">
+                                                <p>{{ $review->NoiDung }}</p>
+                                            </div>
+                                            <div class="review-footer">
+                                                <form method="POST" action="{{ route('review.destroy', $review->MaDanhGia) }}" onsubmit="return confirm('Xác nhận xoá đánh giá?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn-edit" onclick="window.location='{{ route('review.edit', $review->MaDanhGia) }}'">Sửa</button>
+                                                    <button type="submit" class="btn-delete">Xoá</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <p>Bạn chưa có đánh giá nào.</p>
+                                    @endforelse
+                                </div>
+
+                                <hr class="my-4">
+
+                                <div class="section-header mt-5" data-aos="fade-up">
+                                    <h2>Sách đã mua chưa đánh giá</h2>
+                                </div>
+
+                               <div class="reviews-grid">
+                                    @forelse($unreviewedBooks as $book)
+                                        @php
+                                            $bookModel = $book['book'];
+                                        @endphp
+                                        <div class="review-card" data-aos="fade-up">
+                                            <div class="review-header">
+                                                <img src="{{ asset('image/book/' . ltrim($bookModel->HinhAnh ?? 'no-image.png', '/')) }}"
+                                                    alt="{{ $bookModel->TenSach ?? 'Sách' }}"
+                                                    class="product-image"
+                                                    loading="lazy">
+                                                <div class="review-meta">
+    <h4>
+        <a href="{{ route('product.detail', $bookModel->slug) }}" class="text-decoration-none">
+            {{ $bookModel->TenSach ?? 'Sách không tồn tại' }}
+        </a>
+    </h4>
+    <div class="review-date">
+        Đã mua: {{ \Carbon\Carbon::parse($book['order_date'])->format('d/m/Y') }}
+    </div>
+</div>
+
+                                            </div>
+                                            <div class="review-footer">
+                                                <a href="{{ route('review.create', ['MaSach' => $bookModel->MaSach]) }}" class="btn btn-primary">Viết đánh giá</a>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <p>Bạn đã đánh giá hết các sách đã mua.</p>
+                                    @endforelse
+                                    {{ $unreviewedBooks->links('pagination::bootstrap-5') }}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form action="{{ route('user.addresses.store') }}" method="POST">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="addAddressLabel">Thêm địa chỉ mới</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="ten_nguoi_nhan" class="form-label">Tên người nhận</label>
+                                    <input type="text" name="ten_nguoi_nhan" id="ten_nguoi_nhan" class="form-control" required>
+                                </div>
 
-        <!-- Add Address Modal -->
-        <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <form action="{{ route('user.addresses.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="addAddressLabel">Thêm địa chỉ mới</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                <div class="mb-3">
+                                    <label for="so_dien_thoai" class="form-label">Số điện thoại</label>
+                                    <input type="text" name="so_dien_thoai" id="so_dien_thoai" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="tinh_thanh_id" class="form-label">Tỉnh / Thành phố</label>
+                                    <select name="tinh_thanh_id" id="tinh_thanh_id" class="form-select" required>
+                                        <option value="">-- Chọn Tỉnh / Thành --</option>
+                                        @foreach($tinhThanhs as $tinh)
+                                            <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="quan_huyen_id" class="form-label">Quận / Huyện</label>
+                                    <select name="quan_huyen_id" id="quan_huyen_id" class="form-select" required>
+                                        <option value="">-- Chọn Quận / Huyện --</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="phuong_xa_id" class="form-label">Phường / Xã</label>
+                                    <select name="phuong_xa_id" id="phuong_xa_id" class="form-select" required>
+                                        <option value="">-- Chọn Phường / Xã --</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="dia_chi_cu_the" class="form-label">Địa chỉ cụ thể</label>
+                                    <input type="text" name="dia_chi_cu_the" id="dia_chi_cu_the" class="form-control" required placeholder="Số nhà, tên đường...">
+                                </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
+                            </div>
+
                         </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="ten_nguoi_nhan" class="form-label">Tên người nhận</label>
-                                <input type="text" name="ten_nguoi_nhan" id="ten_nguoi_nhan" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="so_dien_thoai" class="form-label">Số điện thoại</label>
-                                <input type="text" name="so_dien_thoai" id="so_dien_thoai" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="tinh_thanh_id" class="form-label">Tỉnh / Thành phố</label>
-                                <select name="tinh_thanh_id" id="tinh_thanh_id" class="form-select" required>
-                                    <option value="">-- Chọn Tỉnh / Thành --</option>
-                                    @foreach($tinhThanhs as $tinh)
-                                        <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="quan_huyen_id" class="form-label">Quận / Huyện</label>
-                                <select name="quan_huyen_id" id="quan_huyen_id" class="form-select" required>
-                                    <option value="">-- Chọn Quận / Huyện --</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phuong_xa_id" class="form-label">Phường / Xã</label>
-                                <select name="phuong_xa_id" id="phuong_xa_id" class="form-select" required>
-                                    <option value="">-- Chọn Phường / Xã --</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="dia_chi_cu_the" class="form-label">Địa chỉ cụ thể</label>
-                                <input type="text" name="dia_chi_cu_the" id="dia_chi_cu_the" class="form-control" required placeholder="Số nhà, tên đường...">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
 
         <!-- Edit Address Modal -->
         <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
