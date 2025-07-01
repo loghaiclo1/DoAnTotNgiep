@@ -27,7 +27,12 @@ class KhachHang extends Authenticatable implements CanResetPassword
     }
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['admin', 'superadmin']);
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role === 'superadmin';
     }
     public function sendPasswordResetNotification($token)
     {

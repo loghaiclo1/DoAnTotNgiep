@@ -6,12 +6,15 @@
   <title>@yield('title', 'BookShop - Trang chủ')</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
-  @vite(['resources/js/app.js'])
-
 
   <meta name="robots" content="noindex, nofollow">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
+  <script>
+    @if (Auth::check())
+        window.authUserId = {{ Auth::id() }};
+    @endif
+</script>
+@vite(['resources/js/app.js', 'resources/js/account-lock-listener.js'])
   <!-- Favicons -->
   <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/favicon.png" rel="icon">
   <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
@@ -602,19 +605,32 @@
 </style>
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 <script src="https://unpkg.com/laravel-echo/dist/echo.iife.js"></script>
-
 <script>
-    // Khởi tạo Laravel Echo
-    window.Pusher = Pusher;
+    @if (Auth::check())
+        const userId = {{ Auth::id() }};
+        window.Pusher = Pusher;
 
-    window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: '{{ env("PUSHER_APP_KEY") }}',
-        cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
-        forceTLS: true,
-        encrypted: true
-    });
-    
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: '{{ env("PUSHER_APP_KEY") }}',
+            cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
+            forceTLS: true,
+            encrypted: true,
+            authEndpoint: '/broadcasting/auth',
+            auth: {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }
+        });
+
+        window.Echo.private(`user.${userId}`)
+            .listen('.account.locked', (e) => {
+                alert("Tài khoản của bạn đã bị khóa!");
+                window.location.href = '/logout';
+            });
+    @endif
 </script>
+<script>window.authUserId = {{ Auth::id() ?? 'null' }};</script>
 
 </body></html>

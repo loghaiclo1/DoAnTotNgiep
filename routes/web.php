@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Middleware\CheckAccountStatus;
+use App\Events\AccountLocked;
 use App\Http\Controllers\Home\{
     HomeController,
     ContactController,
@@ -118,18 +119,40 @@ Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.appl
 // Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])->names('orders');
-    Route::get('/accounts', fn () => view('admin.accounts'))->name('accounts');
     Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
     Route::resource('books', AdminBookController::class)->except(['show']);
-
     Route::get('contacts', [AdminContactController::class, 'index'])->name('contacts');
     Route::put('contacts/{id}/update-status', [AdminContactController::class, 'updateStatus'])->name('contacts.updateStatus');
-
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
+    Route::get('/accounts', [\App\Http\Controllers\Admin\AccountController::class, 'index'])->name('admin.accounts');
+    Route::get('/accounts/{id}/edit', [\App\Http\Controllers\Admin\AccountController::class, 'edit'])->name('accounts.edit');
+    Route::put('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'update'])->name('accounts.update');
+    Route::delete('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'destroy'])->name('admin.accounts.destroy');
+    Route::put('/accounts/{id}/toggle', [\App\Http\Controllers\Admin\AccountController::class, 'toggle'])->name('admin.accounts.toggle');
+
+
+});
+Route::middleware(['web', 'auth', 'superadmin'])->get('/test-superadmin', function () {
+    return 'Bạn là superadmin!';
 });
 Route::get('/account/order-status/{id}', [AccountController::class, 'getOrderStatus'])->name('account.order-status');
+Route::get('/test-broadcast', function () {
+    if (!Auth::check()) {
+        return 'Chưa đăng nhập!';
+    }
+
+    broadcast(new AccountLocked(auth()->id()));
+
+    return '✅ Đã phát sự kiện AccountLocked cho user ID: ' . auth()->id();
+})->middleware('auth');
+
+Route::get('/check-auth', function () {
+    return response()->json([
+        'auth' => Auth::check(),
+        'user' => Auth::user()
+    ]);
+});

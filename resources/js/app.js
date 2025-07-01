@@ -1,2 +1,3 @@
 import './bootstrap';
-import './order-status'; // <- thêm dòng này
+import './order-status';
+import './account-lock-listener';
