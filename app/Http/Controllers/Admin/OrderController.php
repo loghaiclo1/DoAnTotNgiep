@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Hoadon;
 use App\Events\OrderStatusUpdated;
 use Termwind\Components\Hr;
+use Illuminate\Support\Facades\DB;
+
 
 class OrderController extends Controller
 {
@@ -15,12 +17,22 @@ class OrderController extends Controller
         $query = Hoadon::with('khachhang');
 
         if ($search = $request->input('keyword')) {
-            $query->where('MaHoaDon', 'like', "%{$search}%")
-                ->orWhereHas('khachhang', function ($q) use ($search) {
-                    $q->where('Ho', 'like', "%{$search}%")
-                        ->orWhere('Ten', 'like', "%{$search}%");
-                });
+            if (preg_match('/^#ORD-(\d{4})-(\d+)$/', $search, $matches)) {
+                $year = $matches[1];
+                $id = $matches[2];
+
+                $query->whereYear('NgayLap', $year)
+                    ->where('MaHoaDon', $id);
+            } else {
+                $searchClean = ltrim($search, '#');
+                $query->where('MaHoaDon', 'like', "%{$searchClean}%")
+                    ->orWhereHas('khachhang', function ($q) use ($search) {
+                        $q->whereRaw("LOWER(CONCAT(Ho, ' ', Ten)) LIKE ?", ['%' . strtolower($search) . '%'])
+                            ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%']);
+                    });
+            }
         }
+
 
         if ($status = $request->input('status')) {
             $query->where('TrangThai', $status);
@@ -69,6 +81,9 @@ class OrderController extends Controller
 
         // Nếu admin chọn Hủy đơn, cho phép hủy ở bất kỳ bước nào
         if ($trangThaiMoi === 'Hủy đơn') {
+            if ($trangThaiHienTai === 'Hoàn tất') {
+                return redirect()->back()->with('error', 'Không thể hủy đơn hàng đã hoàn tất.');
+            }
             $donhang->TrangThai = $trangThaiMoi;
             $donhang->save();
             return redirect()->back()->with('success', 'Đơn hàng đã được hủy thành công.');
@@ -83,6 +98,10 @@ class OrderController extends Controller
         $indexCu = array_search($trangThaiHienTai, $thuTuTrangThai);
         $indexMoi = array_search($trangThaiMoi, $thuTuTrangThai);
 
+        if ($indexMoi < $indexCu) {
+            return redirect()->back()->with('error', 'Không thể chuyển về trạng thái trước đó. Vui lòng tiếp tục xử lý.');
+        }
+    
         if ($indexCu === false || $indexMoi === false) {
             return redirect()->back()->with('error', 'Trạng thái không hợp lệ.');
         }
@@ -118,7 +137,7 @@ class OrderController extends Controller
         // Tạo HTML thô ngay trong controller
         $html = '';
         foreach ($trackingSteps as $step) {
-            $icon = match(true) {
+            $icon = match (true) {
                 $step['status'] === 'Hủy đơn' => 'bi-x-circle-fill',
                 $step['completed'] => 'bi-check-circle-fill',
                 $step['status'] === 'Đang giao hàng' => 'bi-truck',

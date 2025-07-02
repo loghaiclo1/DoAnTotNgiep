@@ -9,6 +9,7 @@ use App\Events\AccountLocked;
 use App\Events\AccountDeleted;
 
 use Illuminate\Support\Facades\Log;
+
 class AccountController extends Controller
 {
     public function index(Request $request)
@@ -19,8 +20,8 @@ class AccountController extends Controller
             $keyword = $request->input('q');
             $query->where(function ($q) use ($keyword) {
                 $q->whereRaw('LOWER(Ho) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('LOWER(Ten) LIKE ?', ['%' . strtolower($keyword) . '%'])
-                  ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($keyword) . '%']);
+                    ->orWhereRaw('LOWER(Ten) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                    ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($keyword) . '%']);
             });
         }
 
@@ -36,25 +37,25 @@ class AccountController extends Controller
     }
 
     public function edit($id)
-{
-    $account = KhachHang::findOrFail($id);
-    return view('admin.accounts.edit', compact('account'));
-}
-public function update(Request $request, $id)
-{
-    $validated = $request->validate([
-        'Ho' => 'required|string|max:100',
-        'Ten' => 'required|string|max:100',
-        'email' => 'required|email|max:255',
-        'role' => 'required|in:user,admin,superadmin',
-    ]);
+    {
+        $account = KhachHang::findOrFail($id);
+        return view('admin.accounts.edit', compact('account'));
+    }
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'Ho' => 'required|string|max:100',
+            'Ten' => 'required|string|max:100',
+            'email' => 'required|email|max:255',
+            'role' => 'required|in:user,admin,superadmin',
+        ]);
 
-    $account = KhachHang::findOrFail($id);
-    $account->update($validated);
+        $account = KhachHang::findOrFail($id);
+        $account->update($validated);
 
-    return redirect()->route('admin.admin.accounts')->with('success', 'Cập nhật tài khoản thành công!');
-}
-public function destroy($id)
+        return redirect()->route('admin.accounts.index')->with('success', 'Cập nhật tài khoản thành công!');
+    }
+    public function destroy($id)
     {
         $account = KhachHang::findOrFail($id);
 
@@ -75,22 +76,22 @@ public function destroy($id)
         // Xóa tài khoản
         $account->delete();
 
-        return redirect()->route('admin.admin.accounts')->with('success', 'Xóa tài khoản thành công.');
+        return redirect()->route('admin.accounts.index')->with('success', 'Xóa tài khoản thành công.');
     }
-public function toggle($id)
-{
-    $account = KhachHang::findOrFail($id);
-    \Log::info('Toggling account ID: ' . $id . ', Current TrangThai: ' . $account->TrangThai);
-    $account->TrangThai = !$account->TrangThai;
-    $account->save();
+    public function toggle($id)
+    {
+        $account = KhachHang::findOrFail($id);
+        \Log::info('Toggling account ID: ' . $id . ', Current TrangThai: ' . $account->TrangThai);
+        $account->TrangThai = !$account->TrangThai;
+        $account->save();
 
-    \Log::info('After toggle, TrangThai: ' . $account->TrangThai . ', Account ID: ' . $account->id);
+        \Log::info('After toggle, TrangThai: ' . $account->TrangThai . ', Account ID: ' . $account->id);
 
-    if ($account->TrangThai == 0) {
-        \Log::info('Firing AccountLocked event for user: ' . $account->id);
-        event(new AccountLocked($account->MaKhachHang));
+        if ($account->TrangThai == 0) {
+            \Log::info('Firing AccountLocked event for user: ' . $account->id);
+            event(new AccountLocked($account->MaKhachHang));
+        }
+
+        return redirect()->back()->with('success', 'Cập nhật trạng thái tài khoản thành công.');
     }
-
-    return redirect()->back()->with('success', 'Cập nhật trạng thái tài khoản thành công.');
-}
 }

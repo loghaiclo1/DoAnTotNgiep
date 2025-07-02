@@ -21,22 +21,8 @@
         <strong>Địa chỉ:</strong> {{ $donhang->DiaChi }}<br>
         <strong>SĐT:</strong> {{ $donhang->SoDienThoai }}<br>
         <strong>Ghi chú:</strong> {{ $donhang->GhiChu ?? 'Không có' }}<br>
+        <strong>Trạng thái:</strong> {{ $donhang->TrangThai }}<br>
     </div>
-
-    <form id="updateForm" method="POST" action="{{ route('admin.orders.update', $donhang->MaHoaDon) }}">
-        @csrf
-        @method('PUT')
-        <div class="form-group">
-            <label>Trạng thái:</label>
-            <select name="TrangThai" class="form-control w-25 d-inline">
-                @foreach (['Đang chờ', 'Đã xác nhận', 'Đang giao hàng', 'Hoàn tất', 'Hủy đơn'] as $tt)
-                    <option value="{{ $tt }}" {{ $donhang->TrangThai == $tt ? 'selected' : '' }}>
-                        {{ $tt }}</option>
-                @endforeach
-            </select>
-            <button class="btn btn-primary">Cập nhật</button>
-        </div>
-    </form>
 
     <h4 class="mt-4">Danh sách sản phẩm:</h4>
     <table class="table table-bordered">

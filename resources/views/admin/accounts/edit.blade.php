@@ -47,7 +47,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Cập nhật</button>
-        <a href="{{ route('admin.admin.accounts') }}" class="btn btn-secondary">Hủy</a>
+        <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">Hủy</a>
 
     </form>
 @endsection

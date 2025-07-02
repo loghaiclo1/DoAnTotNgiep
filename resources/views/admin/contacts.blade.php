@@ -7,6 +7,13 @@
 @endsection
 
 @section('content')
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <div class="mb-3">
     <form method="GET" action="{{ route('admin.contacts') }}" class="form-inline">
         <input type="text" name="search" class="form-control mr-2" placeholder="Tìm kiếm..."

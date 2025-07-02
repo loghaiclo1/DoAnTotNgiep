@@ -128,7 +128,9 @@ Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.appl
 
 // Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
+
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])->names('orders');
     Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
     Route::resource('books', AdminBookController::class)->except(['show']);
@@ -138,16 +140,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
-    Route::get('/accounts', [\App\Http\Controllers\Admin\AccountController::class, 'index'])->name('admin.accounts');
-    Route::get('/accounts/{id}/edit', [\App\Http\Controllers\Admin\AccountController::class, 'edit'])->name('accounts.edit');
-    Route::put('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'update'])->name('accounts.update');
-    Route::put('/accounts/{id}/toggle', [\App\Http\Controllers\Admin\AccountController::class, 'toggle'])->name('admin.accounts.toggle');
 
+    // Chỉ superadmin mới được quản lý tài khoản
+    Route::middleware(['is_superadmin'])->group(function () {
+        Route::get('/accounts', [\App\Http\Controllers\Admin\AccountController::class, 'index'])->name('accounts.index');
+        Route::get('/accounts/{id}/edit', [\App\Http\Controllers\Admin\AccountController::class, 'edit'])->name('accounts.edit');
+        Route::put('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'update'])->name('accounts.update');
+        Route::put('/accounts/{id}/toggle', [\App\Http\Controllers\Admin\AccountController::class, 'toggle'])->name('accounts.toggle');
+    });
+});
 
-});
-Route::middleware(['web', 'auth', 'superadmin'])->get('/test-superadmin', function () {
-    return 'Bạn là superadmin!';
-});
 Route::get('/account/order-status/{id}', [AccountController::class, 'getOrderStatus'])->name('account.order-status');
 Route::get('/test-broadcast', function () {
     if (!Auth::check()) {

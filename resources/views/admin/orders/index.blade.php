@@ -10,6 +10,12 @@
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <form method="GET" class="form-filter row align-items-center g-2 mb-3">
         {{-- Tìm kiếm --}}
@@ -68,6 +74,7 @@
                     <th>Khách hàng</th>
                     <th>Ngày đặt</th>
                     <th>Tổng tiền</th>
+                    <th>Phương thức thanh toán</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
@@ -80,10 +87,33 @@
                         </td>
                         <td>{{ $order->NgayLap ? $order->NgayLap->format('d/m/Y H:i') : 'N/A' }}</td>
                         <td>{{ number_format($order->TongTien) }}₫</td>
-                        <td>{{ $order->TrangThai }}</td>
                         <td>
-                            <a href="{{ route('admin.orders.show', $order->MaHoaDon) }}"
-                                class="btn btn-sm btn-info">Xem</a>
+                            @php
+                                echo $order->PT_ThanhToan == 1
+                                    ? 'Thanh toán khi nhận hàng (COD)'
+                                    : ($order->PT_ThanhToan == 2
+                                        ? 'Thanh toán VNPay'
+                                        : 'Không xác định');
+                            @endphp
+                        </td>
+                        <td>
+                            <form method="POST" action="{{ route('admin.orders.update', $order->MaHoaDon) }}"
+                                class="update-status-form">
+                                @csrf
+                                @method('PUT')
+                                <select name="TrangThai" class="form-select form-select-sm">
+                                    @foreach (['Đang chờ', 'Đã xác nhận', 'Đang giao hàng', 'Hoàn tất', 'Hủy đơn'] as $tt)
+                                        <option value="{{ $tt }}"
+                                            {{ $order->TrangThai == $tt ? 'selected' : '' }}>
+                                            {{ $tt }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.orders.show', $order->MaHoaDon) }}" class="btn btn-sm btn-info">Chi
+                                tiết đơn hàng</a>
                         </td>
                     </tr>
                 @empty
@@ -107,6 +137,11 @@
             top: 0;
             background-color: white;
             z-index: 10;
+        }
+
+        .table .thead-dark th {
+            border-top: none;
+            border-bottom: none;
         }
 
         .form-filter .form-control,
@@ -135,4 +170,19 @@
             }
         }
     </style>
+@endpush
+@push('js')
+    <script>
+        document.querySelectorAll('.update-status-form select').forEach(select => {
+            select.addEventListener('change', function() {
+                if (this.value === 'Hủy đơn') {
+                    if (!confirm('Bạn có chắc chắn muốn hủy đơn này không?')) {
+                        this.value = this.dataset.current;
+                        return;
+                    }
+                }
+                this.form.submit();
+            });
+        });
+    </script>
 @endpush

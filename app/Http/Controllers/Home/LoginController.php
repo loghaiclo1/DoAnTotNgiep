@@ -40,7 +40,7 @@ class LoginController extends Controller
 
             $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
 
-            if ($user->role === 'admin') {
+            if (in_array($user->role, ['admin', 'superadmin'])) {
                 return redirect('/admin')->with('success', $message);
             }
 

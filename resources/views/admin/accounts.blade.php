@@ -51,7 +51,7 @@
 
         {{-- Nút Reset --}}
         <div class="col-md-2">
-            <a href="{{ route('admin.admin.accounts') }}" class="btn btn-secondary w-100">
+            <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary w-100">
                 <i class="fas fa-redo-alt"></i> Reset
             </a>
         </div>
@@ -106,7 +106,7 @@
 
 
                             {{-- Nút khóa/mở khóa --}}
-                            <form action="{{ route('admin.admin.accounts.toggle', $account->MaKhachHang) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn {{ $account->TrangThai ? 'khóa' : 'mở khóa' }} tài khoản này không?')">
+                            <form action="{{ route('admin.accounts.toggle', $account->MaKhachHang) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn {{ $account->TrangThai ? 'khóa' : 'mở khóa' }} tài khoản này không?')">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="btn btn-sm btn-outline-{{ $account->TrangThai ? 'warning' : 'success' }}">

@@ -15,6 +15,6 @@ class IsSuperAdmin
             return $next($request);
         }
 
-        return redirect('/')->with('error', 'Chỉ Super Admin mới được phép truy cập!');
+return redirect()->back()->with('error', 'Bạn không có quyền truy cập trang này.');
     }
 }
