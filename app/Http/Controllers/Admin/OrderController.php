@@ -101,7 +101,7 @@ class OrderController extends Controller
         if ($indexMoi < $indexCu) {
             return redirect()->back()->with('error', 'Không thể chuyển về trạng thái trước đó. Vui lòng tiếp tục xử lý.');
         }
-    
+
         if ($indexCu === false || $indexMoi === false) {
             return redirect()->back()->with('error', 'Trạng thái không hợp lệ.');
         }

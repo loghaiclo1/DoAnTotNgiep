@@ -31,7 +31,8 @@ use App\Http\Controllers\Admin\{
     PhieuNhapController,
     BookController as AdminBookController,
     OrderController,
-    ContactController as AdminContactController
+    ContactController as AdminContactController,
+    DanhGiaController
 };
 
 // Trang chủ
@@ -81,7 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/user/addresses/{id}', [AddressController::class, 'destroy'])->name('user.addresses.destroy');
     Route::put('/user/addresses/{id}', [AddressController::class, 'update'])->name('user.addresses.update');
     Route::put('/account/address/{id}/mac-dinh', [AddressController::class, 'setDefault'])->name('address.setDefault');
-    
+
     Route::get('/my-reviews', [ReviewController::class, 'index'])->name('review.index');
     Route::get('/my-reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
     Route::put('/my-reviews/{id}', [ReviewController::class, 'update'])->name('review.update');
@@ -132,7 +133,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])->names('orders');
-    Route::get('/reviews', fn () => view('admin.reviews'))->name('reviews');
+    Route::get('/reviews', [DanhGiaController::class, 'index'])->name('admin.reviews.index');
+    Route::post('/reviews/{id}/approve', [DanhGiaController::class, 'approve'])->name('reviews.approve');
+    Route::post('/reviews/{id}/reject', [DanhGiaController::class, 'reject'])->name('reviews.reject');
+    Route::delete('/reviews/{id}', [DanhGiaController::class, 'destroy'])->name('reviews.destroy');
     Route::resource('books', AdminBookController::class)->except(['show']);
     Route::get('contacts', [AdminContactController::class, 'index'])->name('contacts');
     Route::put('contacts/{id}/update-status', [AdminContactController::class, 'updateStatus'])->name('contacts.updateStatus');

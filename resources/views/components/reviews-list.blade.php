@@ -15,7 +15,13 @@
                     @endif
                 @endfor
             </span>
-            <p class="mb-1">{{ $review->NoiDung }}</p>
+
+            @if ($review->TrangThai == 2)
+                <p class="mb-1 text-muted fst-italic">Nội dung đã bị ẩn bởi quản trị viên.</p>
+            @else
+                <p class="mb-1">{{ $review->NoiDung }}</p>
+            @endif
+
             <small class="text-muted">
                 {{ \Carbon\Carbon::parse($review->NgayDanhGia)->format('d/m/Y H:i') }}
             </small>

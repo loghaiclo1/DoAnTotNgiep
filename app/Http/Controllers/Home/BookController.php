@@ -17,14 +17,16 @@ class BookController extends Controller
         $book = Book::where('slug', $slug)
             ->where('TrangThai', 1)
             ->firstOrFail();
+            $visibleReviewsQuery = $book->reviews()->where('TrangThai', 1);
 
-        $reviewCount = $book->reviews()->count();
-        $averageRating = $book->reviews()->avg('SoSao');
-        $ratingDistribution = $book->reviews()
-            ->selectRaw('SoSao, count(*) as count')
-            ->groupBy('SoSao')
-            ->pluck('count', 'SoSao')
-            ->toArray();
+            // Thống kê chỉ dựa trên đánh giá được duyệt
+            $reviewCount = $visibleReviewsQuery->count();
+            $averageRating = $visibleReviewsQuery->avg('SoSao');
+            $ratingDistribution = $visibleReviewsQuery
+                ->selectRaw('SoSao, count(*) as count')
+                ->groupBy('SoSao')
+                ->pluck('count', 'SoSao')
+                ->toArray();
 
         // Lọc & sắp xếp review
         $query = $book->reviews()
@@ -57,7 +59,7 @@ class BookController extends Controller
         } else {
             $query->orderBy('NgayDanhGia', 'desc');
         }
-        
+
         $reviews = $query->paginate(5)->withQueryString();
 
         if ($request->ajax()) {

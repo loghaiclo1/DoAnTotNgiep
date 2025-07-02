@@ -106,8 +106,8 @@ if (
         if ($request->filled('status') && $request->input('status') !== 'Tất Cả Đơn Hàng') {
             $query->where('TrangThai', $request->input('status'));
         }
+        $orders = $query->orderByDesc('NgayLap')->paginate(5)->appends($request->query());
 
-        $orders = $query->orderByDesc('NgayLap')->get();
         $tinhThanhs = TinhThanh::all();
 
         // Ghi log
@@ -152,7 +152,7 @@ if (
             });
         })->unique('book.MaSach')->values();
 
-       
+
         $unreviewedBooks = new LengthAwarePaginator(
             $unreviewedBooksCollection->forPage($page, $perPage),
             $unreviewedBooksCollection->count(),
@@ -201,10 +201,6 @@ $reviews = $reviewsQuery->paginate(5)->appends(['tab' => 'reviews']);
                     'sort' => $reviewSort
                 ]);
             }
-
-            return response()->json([
-                'html' => view('homepage.partials.order_list', compact('orders'))->render()
-            ]);
         }
 
         return view('homepage.account', compact('user', 'orders', 'addresses', 'tinhThanhs', 'reviews', 'unreviewedBooks', 'activeTab'));
@@ -221,7 +217,7 @@ $reviews = $reviewsQuery->paginate(5)->appends(['tab' => 'reviews']);
         $statusMap = [
             'Đang chờ' => 'processing',
             'Đã xác nhận' => 'confirmed',
-            'Đang giao' => 'shipping',
+            'Đang giao hàng' => 'shipping',
             'Hoàn tất' => 'completed',
             'Đã hủy' => 'cancelled',
         ];

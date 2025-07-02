@@ -32,16 +32,16 @@ class ReviewController extends Controller
         ]);
 
         DanhGiaSanPham::create([
-            'MaHoaDon' => null, // Nếu không cần ràng buộc hóa đơn
+            'MaHoaDon' => null,
             'MaKhachHang' => Auth::user()->MaKhachHang,
             'MaSach' => $request->MaSach,
             'NoiDung' => $request->NoiDung,
             'SoSao' => $request->SoSao,
             'NgayDanhGia' => now(),
-            'TrangThai' => 1, // Tự động duyệt hoặc chờ admin duyệt tùy bạn
+            'TrangThai' => 0, // CHỜ DUYỆT (không hiển thị liền)
         ]);
 
-        return back()->with('success', 'Đánh giá đã được gửi thành công.');
+        return back()->with('success', 'Đánh giá của bạn đã được gửi và đang chờ quản trị viên duyệt.');
     }
     public function create(Request $request)
     {

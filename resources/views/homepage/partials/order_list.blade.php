@@ -24,7 +24,7 @@
                             $statusMap = [
                                 'Đang chờ' => 'processing',
                                 'Đã xác nhận' => 'confirmed',
-                                'Đang giao' => 'shipping',
+                                'Đang giao hàng' => 'shipping',
                                 'Hoàn tất' => 'completed',
                                 'Hủy đơn' => 'cancelled',
                             ];
@@ -59,7 +59,7 @@
                             ] : [
                                 ['status' => 'Đang chờ', 'label' => 'Đơn Hàng Đã Đặt', 'desc' => 'Đơn hàng đang chờ xác nhận', 'completed' => true],
                                 ['status' => 'Đã xác nhận', 'label' => 'Đã Xác Nhận', 'desc' => 'Đơn hàng đã được xác nhận', 'completed' => in_array($order->TrangThai, ['Đã xác nhận', 'Đang giao', 'Hoàn tất'])],
-                                ['status' => 'Đang giao', 'label' => 'Đang Giao Hàng', 'desc' => 'Đơn hàng đang được vận chuyển', 'completed' => in_array($order->TrangThai, ['Đang giao', 'Hoàn tất'])],
+                                ['status' => 'Đang giao hàng', 'label' => 'Đang Giao Hàng', 'desc' => 'Đơn hàng đang được vận chuyển', 'completed' => in_array($order->TrangThai, ['Đang giao', 'Hoàn tất'])],
                                 ['status' => 'Hoàn tất', 'label' => 'Đã Giao Hàng', 'desc' => 'Đơn hàng đã được giao thành công', 'completed' => in_array($order->TrangThai, ['Hoàn tất'])],
                             ];
                     @endphp
@@ -176,4 +176,8 @@
     @empty
         <p>Chưa có đơn hàng nào.</p>
     @endforelse
+    <div class="card-footer">
+        {{ $orders->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    </div>
+
 </div>

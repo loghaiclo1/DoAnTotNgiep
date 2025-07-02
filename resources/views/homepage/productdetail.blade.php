@@ -15,6 +15,7 @@
                 </nav>
             </div>
         </div>
+        <div id="reviews-list-container" data-book-id="{{ $book->MaSach }}">
 
         <section id="product-details" class="product-details section">
             <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -85,7 +86,7 @@
                             <div class="d-flex align-items-center bg-white p-4 ps-0 rounded mb-4">
                                 {{-- Cột trái: Điểm trung bình --}}
                                 <div class="text-center" style="flex: 0 0 30%;">
-                                    <div class="display-4 fw-bold">                                        
+                                    <div class="display-4 fw-bold">
                                         {{ $average }}<span class="fs-5 text-muted">/5</span>
                                     </div>
                                     {{-- Hiển thị sao thay progress --}}
@@ -220,6 +221,10 @@
 @section('scripts')
 
 @push('scripts')
+<script>
+    window.bookId = {{ $book->MaSach }};
+</script>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 $(document).ready(function(){

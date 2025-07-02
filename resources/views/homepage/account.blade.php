@@ -102,7 +102,7 @@
                                 <div class="tab-pane fade show active" id="orders" role ="tabpanel">
                                     <div class="section-header" data-aos="fade-up">
                                         <div class="header-actions">
-                                            <form id="orderFilterForm" method="GET">
+                                            <form id="orderFilterForm" method="GET" action="{{ route('account') }}">
                                                 <div class="search-box">
                                                     <i class="bi bi-search"></i>
                                                     <input type="text" name="order_search" id="orderSearchInput"
@@ -110,31 +110,17 @@
                                                         value="{{ request('order_search') }}">
                                                 </div>
                                                 <div class="dropdown">
-                                                    <button class="filter-btn" type="button" data-bs-toggle="dropdown"
-                                                        id="filterButton">
-                                                        <i class="bi bi-funnel"></i>
-                                                        <span
-                                                            id="filterText">{{ request('status', 'Tất Cả Đơn Hàng') }}</span>
-                                                    </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a class="dropdown-item" href="#"
-                                                                data-status="Tất Cả Đơn Hàng">Tất Cả Đơn Hàng</a></li>
-                                                        <li><a class="dropdown-item" href="#"
-                                                                data-status="Đang chờ">Đang chờ</a></li>
-                                                        <li><a class="dropdown-item" href="#"
-                                                                data-status="Đang giao">Đang giao</a></li>
-                                                        <li><a class="dropdown-item" href="#"
-                                                                data-status="Hoàn tất">Hoàn tất</a></li>
-                                                        <li><a class="dropdown-item" href="#"
-                                                                data-status="Đã hủy">Đã hủy</a></li>
-                                                    </ul>
-                                                    <input type="hidden" name="status" id="statusFilter"
-                                                        value="{{ request('status', 'Tất Cả Đơn Hàng') }}">
+                                                    <select name="status" id="statusFilter" class="form-select">
+                                                        <option value="Tất Cả Đơn Hàng" {{ request('status', 'Tất Cả Đơn Hàng') == 'Tất Cả Đơn Hàng' ? 'selected' : '' }}>Tất Cả Đơn Hàng</option>
+                                                        <option value="Đang chờ" {{ request('status') == 'Đang chờ' ? 'selected' : '' }}>Đang chờ</option>
+                                                        <option value="Đã xác nhận" {{ request('status') == 'Đã xác nhận' ? 'selected' : '' }}>Đã xác nhận</option>
+                                                        <option value="Đang giao hàng" {{ request('status') == 'Đang giao hàng' ? 'selected' : '' }}>Đang giao hàng</option>
+                                                        <option value="Hoàn tất" {{ request('status') == 'Hoàn tất' ? 'selected' : '' }}>Hoàn tất</option>
+                                                        <option value="Đã hủy" {{ request('status') == 'Đã hủy' ? 'selected' : '' }}>Đã hủy</option>
+                                                    </select>
                                                 </div>
-                                                <button type="button" class="btn btn-primary ms-2"
-                                                    id="searchButton">Tìm</button>
-                                                <button type="button" class="btn btn-secondary ms-2"
-                                                    id="resetButton">Xóa bộ lọc</button>
+                                                <button type="submit" class="btn btn-primary ms-2">Tìm</button>
+                                                <a href="{{ route('account') }}" class="btn btn-secondary ms-2">Xóa bộ lọc</a>
                                             </form>
                                         </div>
                                     </div>
@@ -262,6 +248,7 @@
                                             </form>
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <!-- Reviews Tab -->
@@ -491,7 +478,9 @@
                 </div>
                 </div>
             </div>
+
         </section><!-- /Account Section -->
+
     </main>
 
     <!-- Toastify CSS -->
@@ -500,467 +489,113 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ordersGrid = document.querySelector('.orders-grid');
-            const filterText = document.getElementById('filterText');
-            const statusFilter = document.getElementById('statusFilter');
-            const orderSearchInput = document.getElementById('orderSearchInput');
-            const searchButton = document.getElementById('searchButton');
-            const resetButton = document.getElementById('resetButton');
+      document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash === '#reviews') {
+        const reviewsTab = document.querySelector('a[href="#reviews"]');
+        if (reviewsTab) {
+            new bootstrap.Tab(reviewsTab).show();
+        }
+    }
 
-            document.querySelectorAll('.dropdown-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const status = this.getAttribute('data-status');
-                    statusFilter.value = status;
-                    filterText.textContent = status;
-                    fetchOrders();
+    // Các hàm load địa chỉ (Giữ nguyên không thay đổi)
+    function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
+        fetch(`/api/quan-huyen/${provinceId}`)
+            .then(response => response.json())
+            .then(data => {
+                const districtSelect = document.getElementById(districtSelectId);
+                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                data.forEach(item => {
+                    districtSelect.innerHTML +=
+                        `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
                 });
-            });
 
-            searchButton.addEventListener('click', fetchOrders);
-
-            resetButton.addEventListener('click', function() {
-                orderSearchInput.value = '';
-                statusFilter.value = 'Tất Cả Đơn Hàng';
-                filterText.textContent = 'Tất Cả Đơn Hàng';
-                fetchOrders();
-            });
-
-            orderSearchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    fetchOrders();
+                if (resetWard) {
+                    const wardSelect = document.getElementById(districtSelectId.replace('quan_huyen',
+                        'phuong_xa'));
+                    if (wardSelect) wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
                 }
-            });
-
-            function fetchOrders() {
-                const search = orderSearchInput.value.trim();
-                const status = statusFilter.value;
-
-                const params = new URLSearchParams({
-                    order_search: search,
-                    status: status
-                });
-
-                const url = '{{ route('account') }}?' + params.toString();
-
-                fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Phản hồi mạng không thành công');
-                        return response.json();
-                    })
-                    .then(data => {
-                        ordersGrid.innerHTML = data;
-                        AOS.init();
-
-                        // Cập nhật filter info
-                        document.getElementById('filterInfo').innerHTML =
-                            `<div class="alert alert-light mt-3"><strong>Đang lọc:</strong> ` +
-                            (status !== 'Tất Cả Đơn Hàng' ? `Trạng thái: <em>${status}</em> ` : '') +
-                            (search ? `| Từ khóa: <em>${search}</em>` : '') +
-                            `</div>`;
-
-                        // Ẩn query khỏi URL
-                        window.history.replaceState({}, '', '{{ route('account') }}');
-                    })
-                    .catch(error => {
-                        console.error('Lỗi khi lấy đơn hàng:', error);
-                        ordersGrid.innerHTML = '<p>Đã có lỗi xảy ra. Vui lòng thử lại.</p>';
-                        Toastify({
-                            text: "Đã có lỗi khi tải đơn hàng. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    });
-            }
-
-            if (window.location.hash === '#reviews') {
-                const reviewsTab = document.querySelector('a[href="#reviews"]');
-                if (reviewsTab) {
-                    new bootstrap.Tab(reviewsTab).show();
-                }
-            }
-
-            // Các hàm load địa chỉ (Giữ nguyên không thay đổi)
-            function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
-                fetch(`/api/quan-huyen/${provinceId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const districtSelect = document.getElementById(districtSelectId);
-                        districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                        data.forEach(item => {
-                            districtSelect.innerHTML +=
-                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
-                        });
-
-                        if (resetWard) {
-                            const wardSelect = document.getElementById(districtSelectId.replace('quan_huyen',
-                                'phuong_xa'));
-                            if (wardSelect) wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Lỗi tải Quận/Huyện:', err);
-                        Toastify({
-                            text: "Lỗi khi tải Quận/Huyện. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    });
-            }
-
-            function loadWards(districtId, wardSelectId, selectedId = null) {
-                fetch(`/api/phuong-xa/${districtId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const wardSelect = document.getElementById(wardSelectId);
-                        wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                        data.forEach(item => {
-                            wardSelect.innerHTML +=
-                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Lỗi tải Phường/Xã:', err);
-                        Toastify({
-                            text: "Lỗi khi tải Phường/Xã. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    });
-            }
-
-            // Modal địa chỉ (Không thay đổi)
-            const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
-            const form = document.getElementById('editAddressForm');
-
-            document.querySelectorAll('.edit-address-btn').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const {
-                        id,
-                        ten,
-                        sdt,
-                        diachi,
-                        tinh,
-                        quan,
-                        phuong
-                    } = this.dataset;
-
-                    form.action = `/user/addresses/${id}`;
-                    document.getElementById('edit_ten_nguoi_nhan').value = ten;
-                    document.getElementById('edit_so_dien_thoai').value = sdt;
-                    document.getElementById('edit_dia_chi_cu_the').value = diachi;
-                    document.getElementById('edit_tinh_thanh_id').value = tinh;
-
-                    try {
-                        await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
-                        await loadWards(quan, 'edit_phuong_xa_id', phuong);
-                        console.log('Gọi modal');
-                        editModal.show();
-                    } catch (err) {
-                        console.error('Lỗi khi tải địa chỉ:', err);
-                        Toastify({
-                            text: "Không thể tải dữ liệu địa chỉ. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    }
-                });
-            });
-
-            document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function() {
-                loadDistricts(this.value, 'edit_quan_huyen_id');
-            });
-
-            document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function() {
-                loadWards(this.value, 'edit_phuong_xa_id');
-            });
-        });
-    </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    function activateTabFromHash() {
-        const hash = window.location.hash;
-        if (hash) {
-            const tabTrigger = document.querySelector(`a[href="${hash}"]`);
-            if (tabTrigger) {
-                const tabInstance = new bootstrap.Tab(tabTrigger);
-                tabInstance.show();
-            }
-        }
-    }
-
-    // Lần đầu tải
-    activateTabFromHash();
-
-    // Khi hash thay đổi (pushState không kích hoạt hashchange, nên ta cần handle thêm dưới)
-    window.addEventListener('hashchange', activateTabFromHash);
-
-    // Hook sau mỗi lần bạn gọi pushState:
-    function safePushState(url) {
-    history.pushState(null, '', url.split('#')[0]); // update URL không hash
-    window.location.hash = '#reviews'; // thêm hash thủ công
-}
-
-    // Thay trong loadReviews:
-   function loadReviews(url) {
-    if (!url.includes('#reviews')) {
-        url += '#reviews';
-    }
-    safePushState(url); // sẽ thêm hash vào thanh URL
-
-    fetch(url, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('review-list-container').innerHTML = data.html;
-        AOS.init();
-        initReviewPagination();
-    })
-    .catch(async err => {
-    console.error(err);
-
-    let message = "Không thể tải đánh giá. Vui lòng thử lại.";
-
-    // Nếu err là Response, lấy status & body để debug cụ thể
-    if (err instanceof Response) {
-        message = `Lỗi ${err.status}: ${err.statusText}`;
-        try {
-            const errorData = await err.json();
-            if (errorData?.message) {
-                message = `Lỗi ${err.status}: ${errorData.message}`;
-            }
-        } catch (e) {
-            // Nếu không parse được JSON, bỏ qua
-        }
-    }
-
-    Toastify({
-        text: message,
-        duration: 5000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: "#dc3545",
-    }).showToast();
-});
-
-}
-
-    // Popstate (Back/Forward)
-    window.addEventListener('popstate', function () {
-        activateTabFromHash();
-        loadReviews(window.location.href);
-    });
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const editReviewModal = new bootstrap.Modal(document.getElementById('editReviewModal'));
-    const editReviewForm = document.getElementById('editReviewForm');
-
-    // Khi bấm nút Sửa
-    document.querySelectorAll('.edit-review-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const sosao = this.dataset.sosao;
-            const noidung = this.dataset.noidung;
-
-            document.getElementById('editReviewId').value = id;
-            document.getElementById('editSoSao').value = sosao;
-            document.getElementById('editNoiDung').value = noidung;
-
-            // Set action động
-            editReviewForm.action = `/my-reviews/${id}`;
-
-            editReviewModal.show();
-        });
-    });
-
-    // Submit AJAX form
-    editReviewForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const formData = new FormData(editReviewForm);
-        const id = document.getElementById('editReviewId').value;
-        const url = `/my-reviews/${id}`;
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) throw response;
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                editReviewModal.hide();
-                document.getElementById('review-list-container').innerHTML = data.html;
-                AOS.init();
-                initReviewPagination(); // Reinitialize pagination
-
+            })
+            .catch(err => {
+                console.error('Lỗi tải Quận/Huyện:', err);
                 Toastify({
-                    text: data.message,
+                    text: "Lỗi khi tải Quận/Huyện. Vui lòng thử lại!",
                     duration: 3000,
                     gravity: "top",
                     position: "right",
-                    backgroundColor: "#28a745",
+                    backgroundColor: "#dc3545",
                 }).showToast();
-            } else {
-                throw new Error(data.message || "Có lỗi xảy ra");
-            }
-        })
-        .catch(async err => {
-            let message = "Đã có lỗi xảy ra.";
-            if (err.json) {
-                const errorData = await err.json();
-                message = errorData.message || message;
-            }
-            Toastify({
-                text: message,
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#dc3545",
-            }).showToast();
-        });
-    });
-});
-</script>
-
-<script>
-function initReviewPagination() {
-    const reviewListContainer = document.getElementById('review-list-container');
-
-    // Xoá listener cũ trước khi gán mới để tránh trùng
-    const newContainer = reviewListContainer.cloneNode(true);
-    reviewListContainer.parentNode.replaceChild(newContainer, reviewListContainer);
-
-    newContainer.addEventListener('click', function(e) {
-        const target = e.target.closest('a.page-link');
-        if (target) {
-            e.preventDefault();
-            const url = target.href;
-            loadReviews(url);
-        }
-    });
-}
-</script>
-<script>
-document.querySelectorAll('.review-sort').forEach(item => {
-    item.addEventListener('click', async function (e) {
-        e.preventDefault();
-        const sort = this.dataset.sort;
-
-        // Cập nhật text hiển thị
-        const sortTextMap = {
-            'recent': 'Gần đây',
-            'high': 'Từ cao đến thấp',
-            'low': 'Từ thấp đến cao'
-        };
-        document.getElementById('review-sort-text').innerText = sortTextMap[sort] || 'Gần đây';
-
-        // Tạo URL mới để fetch AJAX
-        const url = new URL(window.location.href);
-        url.searchParams.set('tab', 'reviews');
-        url.searchParams.set('sort', sort);
-        url.searchParams.set('reviews_ajax', '1');
-
-        try {
-            const response = await fetch(url.toString(), {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
             });
-
-            if (!response.ok) {
-                let errorMessage = `Lỗi ${response.status}: ${response.statusText}`;
-                try {
-                    const errorData = await response.json();
-                    if (errorData?.message) {
-                        errorMessage = `Lỗi ${response.status}: ${errorData.message}`;
-                    }
-                } catch {
-                    // Không parse được JSON, giữ nguyên message
-                }
-                throw new Error(errorMessage);
-            }
-
-            const data = await response.json();
-            document.getElementById('review-list-container').innerHTML = data.html;
-            AOS.init(); // nếu bạn đang dùng AOS animation
-
-        } catch (err) {
-            console.error(err);
-            Toastify({
-                text: err.message || "Không thể tải đánh giá. Vui lòng thử lại.",
-                duration: 5000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#dc3545",
-            }).showToast();
-        }
-    });
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const starContainer = document.getElementById('editStarContainer');
-    const starIcons = starContainer.querySelectorAll('.star-edit');
-    const editSoSaoInput = document.getElementById('editSoSao');
-
-    function updateStars(count) {
-        starIcons.forEach(star => {
-            const value = parseInt(star.dataset.value);
-            if (value <= count) {
-    star.classList.remove('bi-star');
-    star.classList.add('bi-star-fill', 'text-warning');
-} else {
-    star.classList.remove('bi-star-fill', 'text-warning');
-    star.classList.add('bi-star');
-    star.style.color = '#ccc'; // hoặc bỏ nếu bạn muốn mặc định màu xám
-}
-        });
     }
 
-    starIcons.forEach(star => {
-        star.addEventListener('click', function () {
-            const selected = parseInt(this.dataset.value);
-            editSoSaoInput.value = selected;
-            updateStars(selected);
+    function loadWards(districtId, wardSelectId, selectedId = null) {
+        fetch(`/api/phuong-xa/${districtId}`)
+            .then(response => response.json())
+            .then(data => {
+                const wardSelect = document.getElementById(wardSelectId);
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                data.forEach(item => {
+                    wardSelect.innerHTML +=
+                        `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+                });
+            })
+            .catch(err => {
+                console.error('Lỗi tải Phường/Xã:', err);
+                Toastify({
+                    text: "Lỗi khi tải Phường/Xã. Vui lòng thử lại!",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                }).showToast();
+            });
+    }
+
+    // Modal địa chỉ (Không thay đổi)
+    const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+    const form = document.getElementById('editAddressForm');
+
+    document.querySelectorAll('.edit-address-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const {
+                id,
+                ten,
+                sdt,
+                diachi,
+                tinh,
+                quan,
+                phuong
+            } = this.dataset;
+
+            form.action = `/user/addresses/${id}`;
+            document.getElementById('edit_ten_nguoi_nhan').value = ten;
+            document.getElementById('edit_so_dien_thoai').value = sdt;
+            document.getElementById('edit_dia_chi_cu_the').value = diachi;
+            document.getElementById('edit_tinh_thanh_id').value = tinh;
+
+            try {
+                await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
+                await loadWards(quan, 'edit_phuong_xa_id', phuong);
+                console.log('Gọi modal');
+                editModal.show();
+            } catch (err) {
+                console.error('Lỗi khi tải địa chỉ:', err);
+                Toastify({
+                    text: "Không thể tải dữ liệu địa chỉ. Vui lòng thử lại!",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                }).showToast();
+            }
         });
     });
 
-    const editReviewModal = document.getElementById('editReviewModal');
-    editReviewModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const sosao = button.getAttribute('data-sosao');
-        editSoSaoInput.value = sosao;
-        updateStars(sosao);
+    document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function() {
+        loadDistricts(this.value, 'edit_quan_huyen_id');
+    });
+
+    document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function() {
+        loadWards(this.value, 'edit_phuong_xa_id');
     });
 });
 </script>

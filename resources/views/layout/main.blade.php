@@ -15,6 +15,8 @@
     @endif
 </script>
 @vite(['resources/js/app.js', 'resources/js/account-lock-listener.js'])
+@vite(['resources/js/reviews-listener.js'])
+
   <!-- Favicons -->
   <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/favicon.png" rel="icon">
   <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
