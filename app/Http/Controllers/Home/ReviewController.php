@@ -10,14 +10,18 @@ use App\Models\Book;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reviews = DanhGiaSanPham::with(['book'])
-            ->where('MaKhachHang', Auth::user()->MaKhachHang)
-            ->orderByDesc('NgayDanhGia')
-            ->get();
+        $reviews = $this->getReviews();
 
-        return view('account.my-reviews', compact('reviews'));
+    if ($request->ajax()) {
+    return response()->json([
+        'html' => view('homepage.partials.review_list', compact('reviews'))->render(),
+    ]);
+}
+
+
+    return view('homepage.account', compact('reviews', 'unreviewedBooks', 'addresses'));
     }
     public function store(Request $request)
     {
@@ -48,4 +52,79 @@ class ReviewController extends Controller
 
         return view('homepage.reviews.create', compact('book'));
     }
+    public function edit($id)
+    {
+        $review = DanhGiaSanPham::where('MaKhachHang', Auth::user()->MaKhachHang)
+            ->where('MaDanhGia', $id)
+            ->firstOrFail();
+
+        return view('homepage.reviews.edit', compact('review'));
+    }
+
+public function update(Request $request, $id)
+{
+    try {
+        $request->validate([
+            'SoSao' => 'required|integer|min:1|max:5',
+            'NoiDung' => 'required|string',
+        ]);
+
+        $review = DanhGiaSanPham::where('MaKhachHang', Auth::user()->MaKhachHang)
+            ->where('MaDanhGia', $id)
+            ->firstOrFail();
+
+        $review->update([
+            'SoSao' => $request->SoSao,
+            'NoiDung' => $request->NoiDung,
+            'NgayDanhGia' => now(),
+        ]);
+
+        $page = $request->input('page', 1);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật đánh giá thành công.',
+            'html' => view('homepage.partials.review_list', [
+                'reviews' => $this->getReviews($page)
+            ])->render(),
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Lỗi validate',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
+    public function destroy($id)
+    {
+        $review = DanhGiaSanPham::where('MaKhachHang', Auth::user()->MaKhachHang)
+            ->where('MaDanhGia', $id)
+            ->firstOrFail();
+
+        $review->delete();
+
+        return redirect()->route('account')->with('success', 'Xóa đánh giá thành công.');
+    }
+private function getReviews($page = 1)
+{
+    $reviews = DanhGiaSanPham::where('MaKhachHang', Auth::user()->MaKhachHang)
+        ->with('Book')
+        ->orderByDesc('NgayDanhGia')
+        ->paginate(5, ['*'], 'page', $page);
+
+$reviews->appends(['tab' => 'reviews']);
+
+    return $reviews;
+}
+
+
+
 }

@@ -618,4 +618,5 @@
     
 </script>
 @stack('scripts')
-</body></html>
+</body>
+</html>

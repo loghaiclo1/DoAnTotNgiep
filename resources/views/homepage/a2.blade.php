@@ -1,99 +1,10 @@
-@extends('layout.main')
-
-@section('title', 'BookShop - Tài khoản')
 
 @section('content')
     <main class="main">
-        <!-- Page Title -->
-        <div class="page-title light-background">
-            <div class="container d-lg-flex justify-content-between align-items-center">
-                <h1 class="mb-2 mb-lg-0">Tài khoản</h1>
-                <nav class="breadcrumbs">
-                    <ol>
-                        <li><a href="{{ url('/') }}">Trang chủ</a></li>
-                        <li class="current">Tài khoản</li>
-                    </ol>
-                </nav>
-            </div>
-        </div><!-- End Page Title -->
-
         <!-- Account Section -->
         <section id="account" class="account section">
             <div class="container" data-aos="fade-up" data-aos-delay="100">
-                <!-- Hiển thị thông báo -->
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-                @if (session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
-
                 <div class="row g-4">
-                    <!-- Profile Menu -->
-                    <div class="col-lg-3">
-                        <div class="profile-menu d-lg-block" id="profileMenu">
-                            <!-- User Info -->
-                            <div class="user-info" data-aos="fade-right">
-                                <div class="user-avatar">
-                                    <img src="{{ asset('image/' . Auth::user()->avatar) }}" alt="Avatar"
-                                        class="rounded-circle" width="40">
-                                    <span class="status-badge">
-                                        <i class="bi bi-shield-check"></i>
-                                    </span>
-                                </div>
-                                <h4>{{ $user->Ho . ' ' . $user->Ten }}</h4>
-                                <div class="user-status">
-                                    <i class="bi bi-award"></i>
-                                    <span>{{ $user->membership_status ?? 'Thành viên thường' }}</span>
-                                </div>
-                            </div>
-                            <!-- Navigation Menu -->
-                            <nav class="menu-nav">
-                                <ul class="nav flex-column" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders"
-                                            role="tab" aria-selected="true">
-                                            <i class="bi bi-box-seam"></i>
-                                            <span>Đơn hàng</span>
-                                            <span class="badge">{{ $orders->count() }}</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="addresses-tab" data-bs-toggle="tab" href="#addresses"
-                                            role="tab" aria-selected="false">
-                                            <i class="bi bi-geo-alt"></i>
-                                            <span>Địa chỉ</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews"
-                                            tabindex="-1" role="tab" aria-selected="false">
-                                            <i class="bi bi-star"></i>
-                                            <span>Đánh giá</span>
-                                        </a>
-                                    </li>
-                                    <!-- Các tab khác -->
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="settings-tab" data-bs-toggle="tab" href="#settings"
-                                            role="tab" aria-selected="false">
-                                            <i class="bi bi-gear"></i>
-                                            <span>Tùy chọn tài khoản</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                                <div class="menu-footer">
-                                    <a href="{{ url('/contact') }}" class="help-link">
-                                        <i class="bi bi-question-circle"></i>
-                                        <span>Hỗ trợ khách hàng</span>
-                                    </a>
-                                    <a href="{{ url('/logout') }}" class="logout-link">
-                                        <i class="bi bi-box-arrow-right"></i>
-                                        <span>Đăng xuất</span>
-                                    </a>
-                                </div>
-                            </nav>
-                        </div>
-                    </div>
                     <!-- Content Area -->
                     <div class="col-lg-9">
                         <div class="content-area">
@@ -265,89 +176,87 @@
                                 </div>
 
                                 <!-- Reviews Tab -->
-                               <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                    <div class="section-header" data-aos="fade-up">
+                                        <h2>Đánh giá của tôi</h2>
+                                        <div class="header-actions">
+                                            <div class="dropdown">
+                                                <button class="filter-btn" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-funnel"></i>
+                                                    <span>Sắp xếp: <span id="review-sort-text">
+                                                            @if (request('sort') === 'high')
+                                                                Từ cao đến thấp
+                                                            @elseif(request('sort') === 'low')
+                                                                Từ thấp đến cao
+                                                            @else
+                                                                Gần đây
+                                                            @endif
+                                                        </span></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <a href="#" class="dropdown-item review-sort"
+                                                        data-sort="recent">Gần đây</a>
+                                                    <a href="#" class="dropdown-item review-sort"
+                                                        data-sort="high">Từ cao đến thấp</a>
+                                                    <a href="#" class="dropdown-item review-sort"
+                                                        data-sort="low">Từ thấp đến cao</a>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
 
-    {{-- 1. Chưa đánh giá trước --}}
-    <div class="section-header mt-2" data-aos="fade-up">
-        <h2>Chưa đánh giá</h2>
-    </div>
+                                    @if (session('success'))
+                                        <div class="alert alert-success">{{ session('success') }}</div>
+                                    @endif
 
-    <div class="reviews-grid">
-        @forelse($unreviewedBooks as $book)
-            @php
-                $bookModel = $book['book'];
-            @endphp
-            <div class="review-card" data-aos="fade-up">
-                <div class="review-header">
-                    <img src="{{ asset('image/book/' . ltrim($bookModel->HinhAnh ?? 'no-image.png', '/')) }}"
-                        alt="{{ $bookModel->TenSach ?? 'Sách' }}" class="product-image"
-                        loading="lazy">
-                    <div class="review-meta">
-                        <h4>
-                            <a href="{{ route('product.detail', $bookModel->slug) }}"
-                                class="text-decoration-none">
-                                {{ $bookModel->TenSach ?? 'Sách không tồn tại' }}
-                            </a>
-                        </h4>
-                        <div class="review-date">
-                            Đã mua:
-                            {{ \Carbon\Carbon::parse($book['order_date'])->format('d/m/Y') }}
-                        </div>
-                    </div>
-                </div>
-                <div class="review-footer">
-                    <a href="{{ route('review.create', ['MaSach' => $bookModel->MaSach]) }}"
-                        class="btn btn-primary">Viết đánh giá</a>
-                </div>
-            </div>
-        @empty
-            <p>Bạn đã đánh giá hết các sách đã mua.</p>
-        @endforelse
-        <div class="d-flex justify-content-center">
-            {{ $unreviewedBooks->links('pagination::bootstrap-5') }}
-        </div>
-    </div>
+                                    <div id="reviews-container">
+                                        @include('homepage.partials.review_list', ['reviews' => $reviews])
+                                    </div>
 
-    <hr class="my-4">
+                                    <hr class="my-4">
 
-    {{-- 2. Đánh giá của tôi sau --}}
-    <div class="section-header" data-aos="fade-up">
-        <h2>Đánh giá của tôi</h2>
-        <div class="header-actions">
-            <div class="dropdown">
-                <button class="filter-btn" data-bs-toggle="dropdown">
-                    <i class="bi bi-funnel"></i>
-                    <span>Sắp xếp:
-                        <span id="review-sort-text">
-                            @if (request('sort') === 'high')
-                                Từ cao đến thấp
-                            @elseif(request('sort') === 'low')
-                                Từ thấp đến cao
-                            @else
-                                Gần đây
-                            @endif
-                        </span>
-                    </span>
-                </button>
-                <ul class="dropdown-menu">
-                    <a href="#" class="dropdown-item review-sort" data-sort="recent">Gần đây</a>
-                    <a href="#" class="dropdown-item review-sort" data-sort="high">Từ cao đến thấp</a>
-                    <a href="#" class="dropdown-item review-sort" data-sort="low">Từ thấp đến cao</a>
-                </ul>
-            </div>
-        </div>
-    </div>
+                                    <div class="section-header mt-5" data-aos="fade-up">
+                                        <h2>Chưa đánh giá</h2>
+                                    </div>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+                                    <div class="reviews-grid">
+                                        @forelse($unreviewedBooks as $book)
+                                            @php
+                                                $bookModel = $book['book'];
+                                            @endphp
+                                            <div class="review-card" data-aos="fade-up">
+                                                <div class="review-header">
+                                                    <img src="{{ asset('image/book/' . ltrim($bookModel->HinhAnh ?? 'no-image.png', '/')) }}"
+                                                        alt="{{ $bookModel->TenSach ?? 'Sách' }}" class="product-image"
+                                                        loading="lazy">
+                                                    <div class="review-meta">
+                                                        <h4>
+                                                            <a href="{{ route('product.detail', $bookModel->slug) }}"
+                                                                class="text-decoration-none">
+                                                                {{ $bookModel->TenSach ?? 'Sách không tồn tại' }}
+                                                            </a>
+                                                        </h4>
+                                                        <div class="review-date">
+                                                            Đã mua:
+                                                            {{ \Carbon\Carbon::parse($book['order_date'])->format('d/m/Y') }}
+                                                        </div>
+                                                    </div>
 
-    <div id="review-list-container">
-        @include('homepage.partials.review_list', ['reviews' => $reviews])
-    </div>
+                                                </div>
+                                                <div class="review-footer">
+                                                    <a href="{{ route('review.create', ['MaSach' => $bookModel->MaSach]) }}"
+                                                        class="btn btn-primary">Viết đánh giá</a>
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <p>Bạn đã đánh giá hết các sách đã mua.</p>
+                                        @endforelse
+                                        <div class="d-flex justify-content-center">
+                                            {{ $unreviewedBooks->links('pagination::bootstrap-5') }}
+                                        </div>
 
-</div>
-
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -469,13 +378,12 @@
                         <div class="modal-body">
                         <input type="hidden" id="editReviewId" name="review_id">
                         <div class="mb-3">
-                            <label class="form-label d-block">Số sao</label>
-                            <div id="editStarContainer">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <i class="bi bi-star star-edit" data-value="{{ $i }}" style="font-size: 1.5rem; cursor: pointer; color: #ccc;"></i>
-                                @endfor
-                            </div>
-                            <input type="hidden" id="editSoSao" name="SoSao" required>
+                            <label for="editSoSao" class="form-label">Số sao</label>
+                            <select id="editSoSao" name="SoSao" class="form-select" required>
+                            @for ($i = 1; $i <= 5; $i++)
+                                <option value="{{ $i }}">{{ $i }} sao</option>
+                            @endfor
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="editNoiDung" class="form-label">Nội dung</label>
@@ -493,203 +401,10 @@
             </div>
         </section><!-- /Account Section -->
     </main>
-
     <!-- Toastify CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ordersGrid = document.querySelector('.orders-grid');
-            const filterText = document.getElementById('filterText');
-            const statusFilter = document.getElementById('statusFilter');
-            const orderSearchInput = document.getElementById('orderSearchInput');
-            const searchButton = document.getElementById('searchButton');
-            const resetButton = document.getElementById('resetButton');
-
-            document.querySelectorAll('.dropdown-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const status = this.getAttribute('data-status');
-                    statusFilter.value = status;
-                    filterText.textContent = status;
-                    fetchOrders();
-                });
-            });
-
-            searchButton.addEventListener('click', fetchOrders);
-
-            resetButton.addEventListener('click', function() {
-                orderSearchInput.value = '';
-                statusFilter.value = 'Tất Cả Đơn Hàng';
-                filterText.textContent = 'Tất Cả Đơn Hàng';
-                fetchOrders();
-            });
-
-            orderSearchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    fetchOrders();
-                }
-            });
-
-            function fetchOrders() {
-                const search = orderSearchInput.value.trim();
-                const status = statusFilter.value;
-
-                const params = new URLSearchParams({
-                    order_search: search,
-                    status: status
-                });
-
-                const url = '{{ route('account') }}?' + params.toString();
-
-                fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Phản hồi mạng không thành công');
-                        return response.json();
-                    })
-                    .then(data => {
-                        ordersGrid.innerHTML = data;
-                        AOS.init();
-
-                        // Cập nhật filter info
-                        document.getElementById('filterInfo').innerHTML =
-                            `<div class="alert alert-light mt-3"><strong>Đang lọc:</strong> ` +
-                            (status !== 'Tất Cả Đơn Hàng' ? `Trạng thái: <em>${status}</em> ` : '') +
-                            (search ? `| Từ khóa: <em>${search}</em>` : '') +
-                            `</div>`;
-
-                        // Ẩn query khỏi URL
-                        window.history.replaceState({}, '', '{{ route('account') }}');
-                    })
-                    .catch(error => {
-                        console.error('Lỗi khi lấy đơn hàng:', error);
-                        ordersGrid.innerHTML = '<p>Đã có lỗi xảy ra. Vui lòng thử lại.</p>';
-                        Toastify({
-                            text: "Đã có lỗi khi tải đơn hàng. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    });
-            }
-
-            if (window.location.hash === '#reviews') {
-                const reviewsTab = document.querySelector('a[href="#reviews"]');
-                if (reviewsTab) {
-                    new bootstrap.Tab(reviewsTab).show();
-                }
-            }
-
-            // Các hàm load địa chỉ (Giữ nguyên không thay đổi)
-            function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
-                fetch(`/api/quan-huyen/${provinceId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const districtSelect = document.getElementById(districtSelectId);
-                        districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                        data.forEach(item => {
-                            districtSelect.innerHTML +=
-                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
-                        });
-
-                        if (resetWard) {
-                            const wardSelect = document.getElementById(districtSelectId.replace('quan_huyen',
-                                'phuong_xa'));
-                            if (wardSelect) wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Lỗi tải Quận/Huyện:', err);
-                        Toastify({
-                            text: "Lỗi khi tải Quận/Huyện. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    });
-            }
-
-            function loadWards(districtId, wardSelectId, selectedId = null) {
-                fetch(`/api/phuong-xa/${districtId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const wardSelect = document.getElementById(wardSelectId);
-                        wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                        data.forEach(item => {
-                            wardSelect.innerHTML +=
-                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Lỗi tải Phường/Xã:', err);
-                        Toastify({
-                            text: "Lỗi khi tải Phường/Xã. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    });
-            }
-
-            // Modal địa chỉ (Không thay đổi)
-            const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
-            const form = document.getElementById('editAddressForm');
-
-            document.querySelectorAll('.edit-address-btn').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const {
-                        id,
-                        ten,
-                        sdt,
-                        diachi,
-                        tinh,
-                        quan,
-                        phuong
-                    } = this.dataset;
-
-                    form.action = `/user/addresses/${id}`;
-                    document.getElementById('edit_ten_nguoi_nhan').value = ten;
-                    document.getElementById('edit_so_dien_thoai').value = sdt;
-                    document.getElementById('edit_dia_chi_cu_the').value = diachi;
-                    document.getElementById('edit_tinh_thanh_id').value = tinh;
-
-                    try {
-                        await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
-                        await loadWards(quan, 'edit_phuong_xa_id', phuong);
-                        console.log('Gọi modal');
-                        editModal.show();
-                    } catch (err) {
-                        console.error('Lỗi khi tải địa chỉ:', err);
-                        Toastify({
-                            text: "Không thể tải dữ liệu địa chỉ. Vui lòng thử lại!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    }
-                });
-            });
-
-            document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function() {
-                loadDistricts(this.value, 'edit_quan_huyen_id');
-            });
-
-            document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function() {
-                loadWards(this.value, 'edit_phuong_xa_id');
-            });
-        });
-    </script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -734,33 +449,16 @@ document.addEventListener('DOMContentLoaded', function() {
         AOS.init();
         initReviewPagination();
     })
-    .catch(async err => {
-    console.error(err);
-
-    let message = "Không thể tải đánh giá. Vui lòng thử lại.";
-
-    // Nếu err là Response, lấy status & body để debug cụ thể
-    if (err instanceof Response) {
-        message = `Lỗi ${err.status}: ${err.statusText}`;
-        try {
-            const errorData = await err.json();
-            if (errorData?.message) {
-                message = `Lỗi ${err.status}: ${errorData.message}`;
-            }
-        } catch (e) {
-            // Nếu không parse được JSON, bỏ qua
-        }
-    }
-
-    Toastify({
-        text: message,
-        duration: 5000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: "#dc3545",
-    }).showToast();
-});
-
+    .catch(err => {
+        console.error(err);
+        Toastify({
+            text: "Không thể tải đánh giá. Vui lòng thử lại.",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#dc3545",
+        }).showToast();
+    });
 }
 
     // Popstate (Back/Forward)
@@ -868,103 +566,4 @@ function initReviewPagination() {
     });
 }
 </script>
-<script>
-document.querySelectorAll('.review-sort').forEach(item => {
-    item.addEventListener('click', async function (e) {
-        e.preventDefault();
-        const sort = this.dataset.sort;
-
-        // Cập nhật text hiển thị
-        const sortTextMap = {
-            'recent': 'Gần đây',
-            'high': 'Từ cao đến thấp',
-            'low': 'Từ thấp đến cao'
-        };
-        document.getElementById('review-sort-text').innerText = sortTextMap[sort] || 'Gần đây';
-
-        // Tạo URL mới để fetch AJAX
-        const url = new URL(window.location.href);
-        url.searchParams.set('tab', 'reviews');
-        url.searchParams.set('sort', sort);
-        url.searchParams.set('reviews_ajax', '1');
-
-        try {
-            const response = await fetch(url.toString(), {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            });
-
-            if (!response.ok) {
-                let errorMessage = `Lỗi ${response.status}: ${response.statusText}`;
-                try {
-                    const errorData = await response.json();
-                    if (errorData?.message) {
-                        errorMessage = `Lỗi ${response.status}: ${errorData.message}`;
-                    }
-                } catch {
-                    // Không parse được JSON, giữ nguyên message
-                }
-                throw new Error(errorMessage);
-            }
-
-            const data = await response.json();
-            document.getElementById('review-list-container').innerHTML = data.html;
-            AOS.init(); // nếu bạn đang dùng AOS animation
-
-        } catch (err) {
-            console.error(err);
-            Toastify({
-                text: err.message || "Không thể tải đánh giá. Vui lòng thử lại.",
-                duration: 5000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#dc3545",
-            }).showToast();
-        }
-    });
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const starContainer = document.getElementById('editStarContainer');
-    const starIcons = starContainer.querySelectorAll('.star-edit');
-    const editSoSaoInput = document.getElementById('editSoSao');
-
-    function updateStars(count) {
-        starIcons.forEach(star => {
-            const value = parseInt(star.dataset.value);
-            if (value <= count) {
-    star.classList.remove('bi-star');
-    star.classList.add('bi-star-fill', 'text-warning');
-} else {
-    star.classList.remove('bi-star-fill', 'text-warning');
-    star.classList.add('bi-star');
-    star.style.color = '#ccc'; // hoặc bỏ nếu bạn muốn mặc định màu xám
-}
-        });
-    }
-
-    starIcons.forEach(star => {
-        star.addEventListener('click', function () {
-            const selected = parseInt(this.dataset.value);
-            editSoSaoInput.value = selected;
-            updateStars(selected);
-        });
-    });
-
-    const editReviewModal = document.getElementById('editReviewModal');
-    editReviewModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const sosao = button.getAttribute('data-sosao');
-        editSoSaoInput.value = sosao;
-        updateStars(sosao);
-    });
-});
-</script>
-
-
 @endsection
-

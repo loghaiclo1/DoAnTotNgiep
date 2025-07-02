@@ -57,8 +57,7 @@ class BookController extends Controller
         } else {
             $query->orderBy('NgayDanhGia', 'desc');
         }
-\Log::info($query->toSql());
-\Log::info($query->getBindings());
+        
         $reviews = $query->paginate(5)->withQueryString();
 
         if ($request->ajax()) {

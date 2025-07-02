@@ -48,6 +48,20 @@ class AccountController extends Controller
         $query = Hoadon::with(['chitiethoadon.sach', 'phuongthucthanhtoan', 'khachhang'])
             ->where('MaKhachHang', $user->MaKhachHang);
 
+           $activeTab = 'orders';
+
+if (
+    $request->query('tab') === 'reviews' ||
+    $request->has('reviews_ajax') ||
+    $request->has('sort')
+) {
+    $activeTab = 'reviews';
+} elseif ($request->query('tab') === 'addresses') {
+    $activeTab = 'addresses';
+} elseif ($request->query('tab') === 'settings') {
+    $activeTab = 'settings';
+}
+
         // Xử lý tìm kiếm
         if ($request->filled('order_search')) {
             $rawKeyword = trim($request->input('order_search'));
@@ -114,10 +128,6 @@ class AccountController extends Controller
             ]);
         }
 
-        if ($request->ajax()) {
-            return response()->json(view('homepage.partials.order_list', compact('orders'))->render());
-        }
-
         // Lấy sách đã đánh giá
         $reviewedBookIds = DanhGiaSanPham::where('MaKhachHang', $user->MaKhachHang)->pluck('MaSach');
 
@@ -150,7 +160,7 @@ class AccountController extends Controller
             $page,
             ['path' => request()->url(), 'query' => request()->query()]
         );
-            
+
         foreach ($completedOrders as $order) {
             foreach ($order->chitiethoadon as $item) {
                 if (!$reviewedBookIds->contains($item->MaSach)) {
@@ -164,12 +174,40 @@ class AccountController extends Controller
             }
         }
 
-        $reviews = DanhGiaSanPham::with('book')
-            ->where('MaKhachHang', $user->MaKhachHang)
-            ->orderByDesc('NgayDanhGia')
-            ->paginate(10);
+        $reviewSort = $request->input('sort');
 
-        return view('homepage.account', compact('user', 'orders', 'addresses', 'tinhThanhs', 'reviews', 'unreviewedBooks'));
+        $reviewsQuery = DanhGiaSanPham::with('book')
+            ->where('MaKhachHang', $user->MaKhachHang);
+
+        // Xử lý sắp xếp theo dropdown
+        switch ($reviewSort) {
+            case 'high':
+                $reviewsQuery->orderBy('SoSao', 'desc');
+                break;
+            case 'low':
+                $reviewsQuery->orderBy('SoSao', 'asc');
+                break;
+            default: // 'recent' hoặc không có sort
+                $reviewsQuery->orderBy('NgayDanhGia', 'desc');
+                break;
+        }
+
+$reviews = $reviewsQuery->paginate(5)->appends(['tab' => 'reviews']);
+
+        if ($request->ajax()) {
+            if ($request->has('reviews_ajax')) {
+                return response()->json([
+                    'html' => view('homepage.partials.review_list', compact('reviews'))->render(),
+                    'sort' => $reviewSort
+                ]);
+            }
+
+            return response()->json([
+                'html' => view('homepage.partials.order_list', compact('orders'))->render()
+            ]);
+        }
+
+        return view('homepage.account', compact('user', 'orders', 'addresses', 'tinhThanhs', 'reviews', 'unreviewedBooks', 'activeTab'));
     }
 
     public function getOrderStatus($id)

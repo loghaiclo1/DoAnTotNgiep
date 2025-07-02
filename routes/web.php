@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/user/addresses/{id}', [AddressController::class, 'destroy'])->name('user.addresses.destroy');
     Route::put('/user/addresses/{id}', [AddressController::class, 'update'])->name('user.addresses.update');
     Route::put('/account/address/{id}/mac-dinh', [AddressController::class, 'setDefault'])->name('address.setDefault');
+    
     Route::get('/my-reviews', [ReviewController::class, 'index'])->name('review.index');
     Route::get('/my-reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
     Route::put('/my-reviews/{id}', [ReviewController::class, 'update'])->name('review.update');
