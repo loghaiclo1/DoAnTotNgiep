@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .listen('.order.status.updated', (e) => {
                 const status = e.status;
 
-       
+
                 const classMap = {
                     'Đang chờ': 'processing',
                     'Đã xác nhận': 'confirmed',

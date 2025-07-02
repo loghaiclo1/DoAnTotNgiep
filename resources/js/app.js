@@ -1,2 +1,2 @@
 import './bootstrap';
-import './order-status'; // <- thêm dòng này
+import './order-status';

@@ -152,7 +152,7 @@ if (
             });
         })->unique('book.MaSach')->values();
 
-        // ✅ Bọc vào paginator
+       
         $unreviewedBooks = new LengthAwarePaginator(
             $unreviewedBooksCollection->forPage($page, $perPage),
             $unreviewedBooksCollection->count(),

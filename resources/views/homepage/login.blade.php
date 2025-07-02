@@ -16,7 +16,11 @@
                 </nav>
             </div>
         </div><!-- End Page Title -->
-
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 
         <section id="login-register" class="login-register section">
 

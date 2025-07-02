@@ -17,20 +17,33 @@ class LoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
+        // Tìm user theo email
+        $user = \App\Models\KhachHang::where('email', $credentials['email'])->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email không tồn tại.'])->withInput();
+        }
+
+        // Duy nhất 1 lần attempt
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
+
+            if ($user->TrangThai == 0) {
+                Auth::logout();
+                return redirect()->route('login')->with('error', 'Tài khoản của bạn đã bị khóa.');
+            }
+    
+            $user->update(['last_login_at' => now()]);
+
+            // Gộp giỏ hàng
+            (new \App\Http\Controllers\Home\CartController())->mergeCart();
+
             $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
 
-            // Gộp giỏ hàng (nếu có)
-            $cartController = new \App\Http\Controllers\Home\CartController();
-            $cartController->mergeCart();
-
-            // ✅ Check role: nếu là admin thì redirect /admin
             if ($user->role === 'admin') {
                 return redirect('/admin')->with('success', $message);
             }
 
-            // ✅ Người dùng thường: về trang trước hoặc / nếu không có
             $returnUrl = $request->input('returnUrl', '/');
             if (!in_array($returnUrl, ['/cart', '/'])) {
                 $returnUrl = '/';
@@ -39,11 +52,11 @@ class LoginController extends Controller
             return redirect($returnUrl)->with('success', $message);
         }
 
-        // Nếu đăng nhập sai
         return back()->withErrors([
             'email' => 'Email hoặc mật khẩu không đúng.',
         ])->withInput();
     }
+
 
     public function logout(Request $request)
     {
@@ -51,6 +64,10 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Đăng xuất thành công.');
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Đã logout']);
+        }
+
+        return redirect('/login');
     }
 }

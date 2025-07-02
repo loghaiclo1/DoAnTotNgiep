@@ -7,15 +7,10 @@ use Illuminate\Support\Facades\Broadcast;
 
 class BroadcastServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        // Đăng ký route cho broadcasting
-        Broadcast::routes();
+        Broadcast::routes(['middleware' => ['web', 'auth']]);
 
-        // Nạp các channel được định nghĩa
         require base_path('routes/channels.php');
     }
 }
