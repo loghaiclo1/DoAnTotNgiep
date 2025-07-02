@@ -140,7 +140,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::get('/accounts', [\App\Http\Controllers\Admin\AccountController::class, 'index'])->name('admin.accounts');
     Route::get('/accounts/{id}/edit', [\App\Http\Controllers\Admin\AccountController::class, 'edit'])->name('accounts.edit');
     Route::put('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'update'])->name('accounts.update');
-    Route::delete('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'destroy'])->name('admin.accounts.destroy');
     Route::put('/accounts/{id}/toggle', [\App\Http\Controllers\Admin\AccountController::class, 'toggle'])->name('admin.accounts.toggle');
 
 

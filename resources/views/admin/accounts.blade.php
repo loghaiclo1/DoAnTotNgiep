@@ -13,31 +13,47 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-{{-- Form tìm kiếm --}}
-<form method="GET" class="mb-3">
-    <input type="hidden" name="role" value="{{ request('role') }}">
+
+
+{{-- Form lọc chung --}}
+<form method="GET" class="mb-4">
     <div class="row g-2 align-items-center">
-        <div class="col-md-6">
+        {{-- Tìm theo tên hoặc email --}}
+        <div class="col-md-3">
             <input type="text" name="q" value="{{ request('q') }}" class="form-control" placeholder="Tìm theo tên hoặc email">
         </div>
+
+        {{-- Lọc theo vai trò --}}
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
-        </div>
-    </div>
-</form>
-
-
-{{-- Form lọc vai trò --}}
-<form method="GET" class="mb-4">
-    <input type="hidden" name="q" value="{{ request('q') }}">
-    <div class="row g-2 align-items-center">
-        <div class="col-md-4">
-            <select name="role" class="form-select" onchange="this.form.submit()">
-                <option value="">-- Lọc theo vai trò --</option>
+            <select name="role" class="form-select">
+                <option value="">-- Vai trò --</option>
                 <option value="user" {{ request('role') === 'user' ? 'selected' : '' }}>User</option>
                 <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="superadmin" {{ request('role') === 'superadmin' ? 'selected' : '' }}>Super Admin</option>
             </select>
+        </div>
+
+        {{-- Lọc theo trạng thái --}}
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">-- Trạng thái --</option>
+                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Hoạt động</option>
+                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Bị khóa</option>
+            </select>
+        </div>
+
+        {{-- Nút Lọc --}}
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-filter"></i> Lọc
+            </button>
+        </div>
+
+        {{-- Nút Reset --}}
+        <div class="col-md-2">
+            <a href="{{ route('admin.admin.accounts') }}" class="btn btn-secondary w-100">
+                <i class="fas fa-redo-alt"></i> Reset
+            </a>
         </div>
     </div>
 </form>
@@ -72,6 +88,7 @@
                                 {{ ucfirst($account->role) }}
                             </span>
                         </td>
+
                         <td>
                             <span class="badge bg-{{ $account->TrangThai ? 'success' : 'secondary' }}">
                                 {{ $account->TrangThai ? 'Hoạt động' : 'Bị khóa' }}
@@ -86,11 +103,7 @@
                         <td>
                             <a href="{{ route('admin.accounts.edit', $account->MaKhachHang) }}" class="btn btn-sm btn-outline-primary">Sửa</a>
 
-                            <form action="{{ route('admin.admin.accounts.destroy', $account->MaKhachHang) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xoá tài khoản này không?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Xoá</button>
-                            </form>
+
 
                             {{-- Nút khóa/mở khóa --}}
                             <form action="{{ route('admin.admin.accounts.toggle', $account->MaKhachHang) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn {{ $account->TrangThai ? 'khóa' : 'mở khóa' }} tài khoản này không?')">

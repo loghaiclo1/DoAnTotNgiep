@@ -20,26 +20,25 @@ class LoginController extends Controller
         // Tìm user theo email
         $user = \App\Models\KhachHang::where('email', $credentials['email'])->first();
 
-        // Nếu không tồn tại
         if (!$user) {
             return back()->withErrors(['email' => 'Email không tồn tại.'])->withInput();
         }
 
-        // Nếu tài khoản bị khóa
-        if ($user->TrangThai == 0) {
-            return back()->withErrors(['email' => 'Tài khoản đã bị khóa.'])->withInput();
-        }
-
-        // Tiếp tục đăng nhập nếu mọi thứ hợp lệ
+        // Duy nhất 1 lần attempt
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
-            $user->update(['last_login_at' => now()]); // Cập nhật thời gian đăng nhập cuối
 
-            $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
+            if ($user->TrangThai == 0) {
+                Auth::logout();
+                return redirect()->route('login')->with('error', 'Tài khoản của bạn đã bị khóa.');
+            }
+    
+            $user->update(['last_login_at' => now()]);
 
             // Gộp giỏ hàng
-            $cartController = new \App\Http\Controllers\Home\CartController();
-            $cartController->mergeCart();
+            (new \App\Http\Controllers\Home\CartController())->mergeCart();
+
+            $message = 'Đăng nhập thành công.<br>Chào mừng ' . $user->Ho . ' ' . $user->Ten . ' đến với trang web.';
 
             if ($user->role === 'admin') {
                 return redirect('/admin')->with('success', $message);
@@ -57,6 +56,7 @@ class LoginController extends Controller
             'email' => 'Email hoặc mật khẩu không đúng.',
         ])->withInput();
     }
+
 
     public function logout(Request $request)
     {

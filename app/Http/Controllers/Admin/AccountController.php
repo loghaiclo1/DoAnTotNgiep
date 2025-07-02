@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\KhachHang;
 use Illuminate\Http\Request;
 use App\Events\AccountLocked;
+use App\Events\AccountDeleted;
+
+use Illuminate\Support\Facades\Log;
 class AccountController extends Controller
 {
     public function index(Request $request)
@@ -24,9 +27,11 @@ class AccountController extends Controller
         if ($request->filled('role')) {
             $query->where('role', $request->input('role'));
         }
-
+        if ($request->filled('status')) {
+            $query->where('TrangThai', $request->status);
+        }
         $accounts = $query->paginate(10)->appends($request->query());
-
+        $query->orderByDesc('last_login_at');
         return view('admin.accounts', compact('accounts'));
     }
 
@@ -50,25 +55,40 @@ public function update(Request $request, $id)
     return redirect()->route('admin.admin.accounts')->with('success', 'Cập nhật tài khoản thành công!');
 }
 public function destroy($id)
-{
-    $account = \App\Models\KhachHang::findOrFail($id);
+    {
+        $account = KhachHang::findOrFail($id);
 
-    if ($account->role === 'superadmin') {
-        return redirect()->back()->with('error', 'Không thể xoá superadmin.');
+
+        if ($account->role === 'superadmin') {
+            Log::warning('Attempt to delete superadmin account: MaKhachHang=' . $account->MaKhachHang);
+            return redirect()->back()->with('error', 'Không thể xóa tài khoản superadmin.');
+        }
+
+        Log::info('Deleting account: MaKhachHang=' . $account->MaKhachHang);
+
+
+        $account->addresses()->delete(); // Xóa địa chỉ liên quan
+
+        // Phát sự kiện AccountDeleted trước khi xóa
+        event(new AccountDeleted($account->MaKhachHang));
+
+        // Xóa tài khoản
+        $account->delete();
+
+        return redirect()->route('admin.admin.accounts')->with('success', 'Xóa tài khoản thành công.');
     }
-
-    $account->delete();
-
-    return redirect()->route('admin.admin.accounts')->with('success', 'Xoá tài khoản thành công.');
-}
 public function toggle($id)
 {
     $account = KhachHang::findOrFail($id);
+    \Log::info('Toggling account ID: ' . $id . ', Current TrangThai: ' . $account->TrangThai);
     $account->TrangThai = !$account->TrangThai;
     $account->save();
 
+    \Log::info('After toggle, TrangThai: ' . $account->TrangThai . ', Account ID: ' . $account->id);
+
     if ($account->TrangThai == 0) {
-        event(new AccountLocked($account->id));
+        \Log::info('Firing AccountLocked event for user: ' . $account->id);
+        event(new AccountLocked($account->MaKhachHang));
     }
 
     return redirect()->back()->with('success', 'Cập nhật trạng thái tài khoản thành công.');

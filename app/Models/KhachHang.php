@@ -14,7 +14,7 @@ class KhachHang extends Authenticatable implements CanResetPassword
     protected $table = 'khachhang';
     protected $primaryKey = 'MaKhachHang';
 
-    protected $fillable = ['MaKhachHang', 'Ho', 'Ten', 'email', 'TrangThai', 'MatKhau', 'role', 'avatar', 'remember_token'];
+    protected $fillable = ['MaKhachHang', 'Ho', 'Ten', 'email', 'TrangThai', 'MatKhau', 'role', 'avatar', 'remember_token','last_login_at'];
     protected $hidden = ['MatKhau', 'remember_token'];
     public $timestamps = false;
     public function getAuthPassword()
