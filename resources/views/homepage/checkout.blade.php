@@ -358,16 +358,10 @@
     const diaChiId = document.getElementById('dia_chi_id');
     const toggleBtn = document.getElementById('show-new-address');
 
-    // Khai báo biến static để nhớ lựa chọn trước đó
     if (!window._prevSelectedIndex) window._prevSelectedIndex = 0;
 
     if (newForm.style.display === 'block') {
-        // ĐÓNG FORM
-
-        // 1. Ẩn form
         newForm.style.display = 'none';
-
-        // 2. Reset các input trong form
         newForm.querySelectorAll('input, select, textarea').forEach(el => {
             if (el.type === 'checkbox' || el.type === 'radio') {
                 el.checked = false;
@@ -375,48 +369,34 @@
                 el.value = '';
             }
         });
-
         ['tinh_thanh_id', 'quan_huyen_id', 'phuong_xa_id'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.selectedIndex = 0;
         });
-
         const phoneError = document.getElementById('so_dien_thoai_error');
         if (phoneError) phoneError.textContent = '';
 
-        // 3. Hiện lại dropdown địa chỉ cũ
         if (diaChiId) {
             diaChiId.disabled = false;
             diaChiId.setAttribute('required', 'required');
-
-            // Khôi phục địa chỉ đã chọn trước đó
-            diaChiId.selectedIndex = window._prevSelectedIndex;
+            diaChiId.selectedIndex = window._prevSelectedIndex; // Khôi phục lựa chọn trước đó
         }
 
         toggleAddressValidation();
         toggleBtn.textContent = '+ Thêm địa chỉ mới';
-
     } else {
-        // MỞ FORM
-
-        // 1. Nhớ lại chỉ số lựa chọn hiện tại trước khi reset
-        if (diaChiId) window._prevSelectedIndex = diaChiId.selectedIndex;
-
-        // 2. Mở form mới
-        newForm.style.display = 'block';
-
-        // 3. Ẩn dropdown địa chỉ cũ
         if (diaChiId) {
+            window._prevSelectedIndex = diaChiId.selectedIndex;
             diaChiId.value = '';
             diaChiId.removeAttribute('required');
             diaChiId.disabled = true;
         }
 
+        newForm.style.display = 'block';
         toggleAddressValidation();
         toggleBtn.textContent = 'Đóng';
     }
 });
-
 
 function toggleAddressValidation() {
     const isNewAddress = document.getElementById('new-address-form')?.style.display === 'block';
@@ -433,56 +413,81 @@ function toggleAddressValidation() {
         }
     });
 }
+function validateForm(event) {
+    event.preventDefault();
+    let errorMessages = [];
 
-    function validateForm(event) {
-        event.preventDefault();
-        let errorMessages = [];
+    const newAddressFormVisible = document.getElementById('new-address-form')?.style.display === 'block';
+    const paymentMethod = document.querySelector('input[name="phuong_thuc_thanh_toan"]:checked')?.value;
+    const diaChiIdSelect = document.getElementById('dia_chi_id');
+    const form = document.getElementById('checkoutForm');
+    const showNewAddressBtn = document.getElementById('show-new-address');
 
-        const newAddressFormVisible = document.getElementById('new-address-form')?.style.display === 'block';
-        const paymentMethod = document.querySelector('input[name="phuong_thuc_thanh_toan"]:checked')?.value;
+    console.log('Validating form...');
+    console.log('newAddressFormVisible:', newAddressFormVisible);
+    console.log('diaChiId value:', diaChiIdSelect ? diaChiIdSelect.value : 'null');
+    console.log('paymentMethod:', paymentMethod);
 
-        if (newAddressFormVisible) {
-            const tenNguoiNhan = document.getElementById('ten_nguoi_nhan').value;
-            const phone = document.getElementById('so_dien_thoai').value;
-            const tinhThanhId = document.getElementById('tinh_thanh_id').value;
-            const quanHuyenId = document.getElementById('quan_huyen_id').value;
-            const phuongXaId = document.getElementById('phuong_xa_id').value;
-            const diaChiCuThe = document.getElementById('dia_chi_cu_the').value;
+    if (newAddressFormVisible) {
+        const tenNguoiNhan = document.getElementById('ten_nguoi_nhan').value;
+        const phone = document.getElementById('so_dien_thoai').value;
+        const tinhThanhId = document.getElementById('tinh_thanh_id').value;
+        const quanHuyenId = document.getElementById('quan_huyen_id').value;
+        const phuongXaId = document.getElementById('phuong_xa_id').value;
+        const diaChiCuThe = document.getElementById('dia_chi_cu_the').value;
 
-            if (!tenNguoiNhan) errorMessages.push('Vui lòng nhập Họ và Tên.');
-            if (!validatePhone(phone)) errorMessages.push('Số điện thoại phải là 10 chữ số.');
-            if (!tinhThanhId) errorMessages.push('Vui lòng chọn Tỉnh/Thành Phố.');
-            if (!quanHuyenId) errorMessages.push('Vui lòng chọn Quận/Huyện.');
-            if (!phuongXaId) errorMessages.push('Vui lòng chọn Phường/Xã.');
-            if (!diaChiCuThe) errorMessages.push('Vui lòng nhập Địa Chỉ Cụ Thể.');
-        } else {
-            const diaChiId = document.getElementById('dia_chi_id')?.value;
-            if (!diaChiId) {
-                errorMessages.push('Vui lòng chọn địa chỉ giao hàng.');
-            }
-        }
-
-        if (!paymentMethod) {
-            errorMessages.push('Vui lòng chọn Phương Thức Thanh Toán.');
-        }
-
-        if (errorMessages.length > 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                html: errorMessages.join('<br>'),
-                confirmButtonText: 'OK'
-            });
-            return false;
-        }
-
-        const form = document.getElementById('checkoutForm');
-
-        if (newAddressFormVisible) {
-            document.getElementById('new-address-form').style.display = 'block'; // đảm bảo form được hiển thị trước khi submit
-        }
-        form.submit();
+        if (!tenNguoiNhan) errorMessages.push('Vui lòng nhập Họ và Tên.');
+        if (!validatePhone(phone)) errorMessages.push('Số điện thoại phải là 10 chữ số.');
+        if (!tinhThanhId) errorMessages.push('Vui lòng chọn Tỉnh/Thành Phố.');
+        if (!quanHuyenId) errorMessages.push('Vui lòng chọn Quận/Huyện.');
+        if (!phuongXaId) errorMessages.push('Vui lòng chọn Phường/Xã.');
+        if (!diaChiCuThe) errorMessages.push('Vui lòng nhập Địa Chỉ Cụ Thể.');
+    } else if (diaChiIdSelect && !diaChiIdSelect.value) {
+        errorMessages.push('Vui lòng chọn địa chỉ giao hàng từ danh sách hoặc thêm địa chỉ mới bằng cách nhấn vào nút "+ Thêm địa chỉ mới".');
     }
+
+    if (!paymentMethod) {
+        errorMessages.push('Vui lòng chọn Phương Thức Thanh Toán.');
+    }
+
+    if (errorMessages.length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi khi đặt hàng',
+            html: errorMessages.join('<br>'),
+            confirmButtonText: 'OK',
+            didOpen: () => {
+                // Thêm nút "Thêm địa chỉ" trong popup
+                const addAddressBtn = document.createElement('button');
+                addAddressBtn.id = 'add-address-btn';
+                addAddressBtn.className = 'btn btn-primary mt-2';
+                addAddressBtn.textContent = 'Thêm địa chỉ mới';
+                addAddressBtn.addEventListener('click', () => {
+                    showNewAddressBtn.click();
+                    Swal.close();
+                });
+                Swal.getHtmlContainer().appendChild(addAddressBtn);
+            }
+        }).then(() => {
+            console.log('Popup closed, restoring UI...');
+            if (newAddressFormVisible) {
+                document.getElementById('new-address-form').style.display = 'block';
+            } else if (diaChiIdSelect) {
+                diaChiIdSelect.disabled = false;
+                if (showNewAddressBtn && showNewAddressBtn.textContent === 'Đóng') {
+                    showNewAddressBtn.click();
+                }
+                if (diaChiIdSelect.options.length > 0) {
+                    diaChiIdSelect.selectedIndex = window._prevSelectedIndex || 0;
+                }
+            }
+            toggleAddressValidation();
+        });
+        return false;
+    }
+
+    form.submit();
+}
 
 </script>
 

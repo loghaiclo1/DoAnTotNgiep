@@ -428,7 +428,7 @@
   <script src="{{ asset('js/glightbox.min.js') }}"></script>
   <script src="{{ asset('js/Drift.min.js') }}"></script>
   <script src="{{ asset('js/purecounter_vanilla.js') }}"></script>
-  <script src="{{ asset('js/main.js') }}"></script>register
+  <script src="{{ asset('js/main.js') }}"></script>
   <script src="{{ asset('js/register.js') }}"></script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
