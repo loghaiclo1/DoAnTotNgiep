@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use App\Models\HoaDon;
 use App\Models\ChiTietHoaDon;
@@ -21,6 +20,7 @@ class CheckoutController extends Controller
 {
     public function index()
     {
+        // (Giữ nguyên logic index như hiện tại)
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để thanh toán.');
         }
@@ -32,7 +32,7 @@ class CheckoutController extends Controller
         $shipping = 0;
         $addresses = Auth::user()->addresses ?? collect();
 
-        // Gộp các bản ghi trùng lặp trong cart_hold
+        // (Giữ nguyên logic gộp cart, dọn dẹp, tính toán subtotal, total, v.v.)
         $duplicateHolds = CartHold::where('user_id', $userId)
             ->where('session_id', $sessionId)
             ->groupBy(['user_id', 'session_id', 'book_id'])
@@ -45,9 +45,7 @@ class CheckoutController extends Controller
                 ->where('session_id', $sessionId)
                 ->where('book_id', $duplicate->book_id)
                 ->min('id');
-
             CartHold::where('id', $firstId)->update(['quantity' => $duplicate->total_quantity]);
-
             CartHold::where('user_id', $userId)
                 ->where('session_id', $sessionId)
                 ->where('book_id', $duplicate->book_id)
@@ -55,7 +53,6 @@ class CheckoutController extends Controller
                 ->delete();
         }
 
-        // Dọn sạch cart cũ
         CartHold::where('user_id', $userId)
             ->where(function ($q) use ($sessionId) {
                 $q->where('session_id', '!=', $sessionId)
@@ -127,40 +124,61 @@ class CheckoutController extends Controller
                 'request_data' => $request->all()
             ]);
 
+            // Xác định địa chỉ
+            $addressData = [];
             if ($request->filled('dia_chi_id')) {
                 // Nếu chọn địa chỉ có sẵn
                 $address = DiaChiNhanHang::where('id', $request->dia_chi_id)
                     ->where('khachhang_id', $userId)
                     ->firstOrFail();
 
-                $validated = [
-                    'ten_nguoi_nhan'   => $address->ten_nguoi_nhan,
-                    'so_dien_thoai'    => $address->so_dien_thoai,
-                    'dia_chi_cu_the'   => $address->dia_chi_cu_the,
-                    'tinh_thanh_id'    => $address->tinh_thanh_id,
-                    'quan_huyen_id'    => $address->quan_huyen_id,
-                    'phuong_xa_id'     => $address->phuong_xa_id,
-                    'total'            => $request->input('total'),
-                    'phuong_thuc_thanh_toan' => $request->input('phuong_thuc_thanh_toan'),
-                    'ghi_chu'          => $request->input('ghi_chu'),
+                $addressData = [
+                    'ten_nguoi_nhan' => $address->ten_nguoi_nhan,
+                    'so_dien_thoai' => $address->so_dien_thoai,
+                    'dia_chi_cu_the' => $address->dia_chi_cu_the,
+                    'tinh_thanh_id' => $address->tinh_thanh_id,
+                    'quan_huyen_id' => $address->quan_huyen_id,
+                    'phuong_xa_id' => $address->phuong_xa_id,
                 ];
             } else {
-                // Nếu nhập địa chỉ mới thì validate đầy đủ
-                $validated = $request->validate([
+                // Nếu nhập địa chỉ mới
+                $addressData = $request->validate([
                     'ten_nguoi_nhan' => 'required|string|max:255',
                     'so_dien_thoai' => 'required|string|regex:/^0[0-9]{9}$/',
                     'dia_chi_cu_the' => 'required|string|max:255',
                     'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
                     'quan_huyen_id' => 'required|exists:quan_huyens,id',
                     'phuong_xa_id' => 'required|exists:phuong_xas,id',
-                    'total' => 'required|numeric|min:0',
-                    'phuong_thuc_thanh_toan' => 'required|in:cod,vnpay',
-                    'ghi_chu' => 'nullable|string|max:1000',
+                ], [
+                    'ten_nguoi_nhan.required' => 'Vui lòng nhập Họ và Tên người nhận.',
+                    'so_dien_thoai.required' => 'Vui lòng nhập Số điện thoại.',
+                    'so_dien_thoai.regex' => 'Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số.',
+                    'dia_chi_cu_the.required' => 'Vui lòng nhập Địa chỉ cụ thể.',
+                    'tinh_thanh_id.required' => 'Vui lòng chọn Tỉnh/Thành phố.',
+                    'tinh_thanh_id.exists' => 'Tỉnh/Thành phố không hợp lệ.',
+                    'quan_huyen_id.required' => 'Vui lòng chọn Quận/Huyện.',
+                    'quan_huyen_id.exists' => 'Quận/Huyện không hợp lệ.',
+                    'phuong_xa_id.required' => 'Vui lòng chọn Phường/Xã.',
+                    'phuong_xa_id.exists' => 'Phường/Xã không hợp lệ.',
                 ]);
             }
 
-            $validated['khachhang_id'] = $userId;
+            // Validate các trường chung
+            $validated = $request->validate([
+                'total' => 'required|numeric|min:0',
+                'phuong_thuc_thanh_toan' => 'required|in:cod,vnpay',
+                'ghi_chu' => 'nullable|string|max:1000',
+            ], [
+                'total.required' => 'Tổng tiền không được để trống.',
+                'total.numeric' => 'Tổng tiền phải là số.',
+                'total.min' => 'Tổng tiền không hợp lệ.',
+                'phuong_thuc_thanh_toan.required' => 'Vui lòng chọn Phương thức thanh toán.',
+                'phuong_thuc_thanh_toan.in' => 'Phương thức thanh toán không hợp lệ.',
+            ]);
+
+            $validated = array_merge($validated, $addressData, ['khachhang_id' => $userId]);
             $groupedCartItems = session('groupedCartItems', []);
+
             if (empty($groupedCartItems)) {
                 Log::warning('Giỏ hàng rỗng trong session', ['user_id' => $userId]);
                 return redirect()->route('cart.index')->with('error', 'Giỏ hàng rỗng.');
@@ -168,13 +186,11 @@ class CheckoutController extends Controller
 
             $cartTotal = collect($groupedCartItems)->sum(fn($item) => $item['quantity'] * $item['book']['GiaBan']);
             $promo = session('promo');
-
             $discountAmount = $promo ? (
                 $promo['Kieu'] === 'percent'
                 ? ($cartTotal * $promo['GiaTri']) / 100
                 : $promo['GiaTri']
             ) : 0;
-
             $shipping = 0;
             $expectedTotal = max(0, $cartTotal + $shipping - $discountAmount);
 
@@ -191,14 +207,13 @@ class CheckoutController extends Controller
                     'expected' => $expectedTotal,
                     'submitted' => $validated['total']
                 ]);
-                return redirect()->route('cart.index')->with('error', 'Tổng tiền không khớp.');
+                return redirect()->back()->with('error', 'Tổng tiền không khớp với giỏ hàng. Vui lòng kiểm tra lại.');
             }
 
             if ($request->input('phuong_thuc_thanh_toan') === 'vnpay') {
-                $validated['khachhang_id'] = $userId;
                 $diaChi = [
-                    'ten' => $validated['ten_nguoi_nhan'],
-                    'sdt' => $validated['so_dien_thoai'],
+                    'ten_nguoi_nhan' => $validated['ten_nguoi_nhan'],
+                    'so_dien_thoai' => $validated['so_dien_thoai'],
                     'dia_chi_cu_the' => $validated['dia_chi_cu_the'],
                     'tinh_thanh_id' => $validated['tinh_thanh_id'],
                     'quan_huyen_id' => $validated['quan_huyen_id'],
@@ -206,7 +221,7 @@ class CheckoutController extends Controller
                 ];
 
                 session()->put('vnpay_order', [
-                    'validated' => $validated, // đã bao gồm 'khachhang_id'
+                    'validated' => $validated,
                     'groupedCartItems' => $groupedCartItems,
                     'cartTotal' => $cartTotal,
                     'discountAmount' => $discountAmount,
@@ -221,34 +236,31 @@ class CheckoutController extends Controller
                 ]);
 
                 return response()->make('
-                <form id="vnpayForm" method="POST" action="' . route('vnpay.payment') . '">
-                    <input type="hidden" name="_token" value="' . csrf_token() . '">
-                </form>
-                <script>document.getElementById("vnpayForm").submit();</script>
-            ');
-
+                    <form id="vnpayForm" method="POST" action="' . route('vnpay.payment') . '">
+                        <input type="hidden" name="_token" value="' . csrf_token() . '">
+                    </form>
+                    <script>document.getElementById("vnpayForm").submit();</script>
+                ');
             }
-            // Nếu chọn COD, tiến hành lưu hóa đơn như bình thường
+
+            // Xử lý COD
             $methodMap = ['cod' => 1, 'vnpay' => 2];
             $methodId = $methodMap[$request->input('phuong_thuc_thanh_toan')] ?? null;
-            $tinhThanh = TinhThanh::find($validated['tinh_thanh_id'])?->ten;
-            $quanHuyen  = QuanHuyen::find($validated['quan_huyen_id'])?->ten;
-            $phuongXa   = PhuongXa::find($validated['phuong_xa_id'])?->ten;
-
-            // Gộp thành chuỗi đầy đủ
-            $diaChiDayDu = $validated['dia_chi_cu_the'] . ', ' . $phuongXa . ', ' . $quanHuyen . ', ' . $tinhThanh;
+            $tinhThanh = TinhThanh::find($validated['tinh_thanh_id']) ?->ten;
+            $quanHuyen = QuanHuyen::find($validated['quan_huyen_id']) ?->ten;
+            $phuongXa = PhuongXa::find($validated['phuong_xa_id']) ?->ten;
 
             $diaChiDayDu = "{$validated['dia_chi_cu_the']}, {$phuongXa}, {$quanHuyen}, {$tinhThanh}";
             Log::debug('Tạo hóa đơn mới', ['method_id' => $methodId]);
 
             $hoadon = HoaDon::create([
-                'MaKhachHang'  => $userId,
-                'NgayLap'      => now(),
-                'TongTien'     => $cartTotal,
-                'DiaChi'       => $diaChiDayDu,
+                'MaKhachHang' => $userId,
+                'NgayLap' => now(),
+                'TongTien' => $cartTotal,
+                'DiaChi' => $diaChiDayDu,
                 'TenNguoiNhan' => $validated['ten_nguoi_nhan'],
-                'SoDienThoai'  => $validated['so_dien_thoai'],
-                'TrangThai'    => 'Đang chờ',
+                'SoDienThoai' => $validated['so_dien_thoai'],
+                'TrangThai' => 'Đang chờ',
                 'PT_ThanhToan' => $methodId,
             ]);
 
@@ -263,17 +275,16 @@ class CheckoutController extends Controller
 
             if ($request->has('save-address')) {
                 $isFirstAddress = DiaChiNhanHang::where('khachhang_id', $userId)->count() === 0;
-
-                // Kiểm tra địa chỉ đã tồn tại chưa
                 $existing = DiaChiNhanHang::where([
-                    'khachhang_id'      => $userId,
-                    'ten_nguoi_nhan'    => $validated['ten_nguoi_nhan'],
-                    'so_dien_thoai'     => $validated['so_dien_thoai'],
-                    'dia_chi_cu_the'    => $validated['dia_chi_cu_the'],
-                    'tinh_thanh_id'     => $validated['tinh_thanh_id'],
-                    'quan_huyen_id'     => $validated['quan_huyen_id'],
-                    'phuong_xa_id'      => $validated['phuong_xa_id'],
+                    'khachhang_id' => $userId,
+                    'ten_nguoi_nhan' => $validated['ten_nguoi_nhan'],
+                    'so_dien_thoai' => $validated['so_dien_thoai'],
+                    'dia_chi_cu_the' => $validated['dia_chi_cu_the'],
+                    'tinh_thanh_id' => $validated['tinh_thanh_id'],
+                    'quan_huyen_id' => $validated['quan_huyen_id'],
+                    'phuong_xa_id' => $validated['phuong_xa_id'],
                 ])->first();
+
                 if (!$existing) {
                     DiaChiNhanHang::create([
                         'khachhang_id' => $userId,
@@ -283,7 +294,7 @@ class CheckoutController extends Controller
                         'tinh_thanh_id' => $validated['tinh_thanh_id'],
                         'quan_huyen_id' => $validated['quan_huyen_id'],
                         'phuong_xa_id' => $validated['phuong_xa_id'],
-                        'MacDinh' => $isFirstAddress, // Đặt địa chỉ đầu tiên là mặc định
+                        'MacDinh' => $isFirstAddress,
                     ]);
                 }
             }
@@ -292,16 +303,23 @@ class CheckoutController extends Controller
             CartHold::where('user_id', $userId)->where('session_id', $sessionId)->delete();
 
             Log::info('Đặt hàng thành công', ['user_id' => $userId]);
-
             return redirect()->route('account')->with('success', 'Đặt hàng thành công!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Lỗi validation khi đặt hàng: ' . $e->getMessage(), [
+                'errors' => $e->errors(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+            return redirect()->back()->withErrors($e->errors())->withInput();
+
         } catch (\Throwable $e) {
-            Log::error('Lỗi khi đặt hàng: ' . $e->getMessage(), [
+            Log::error('Lỗi không xác định khi đặt hàng: ' . $e->getMessage(), [
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
                 'trace' => $e->getTraceAsString(),
             ]);
-
-            return redirect()->back()->with('error', 'Có lỗi xảy ra khi đặt hàng.')->withInput();
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại hoặc liên hệ hỗ trợ.')->withInput();
         }
     }
 }
