@@ -272,7 +272,7 @@ class CheckoutController extends Controller
                     'DonGia' => $item['book']['GiaBan'],
                 ]);
             }
-
+            app(\App\Http\Controllers\Home\InventoryController::class)->reserveStock($hoadon->MaHoaDon);
             if ($request->has('save-address')) {
                 $isFirstAddress = DiaChiNhanHang::where('khachhang_id', $userId)->count() === 0;
                 $existing = DiaChiNhanHang::where([

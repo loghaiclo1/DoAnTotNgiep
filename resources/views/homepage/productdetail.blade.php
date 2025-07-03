@@ -47,13 +47,13 @@
                                 @endif
                             </div>
 
-                            <div class="product-availability mb-4">
+                            {{-- <div class="product-availability mb-4">
                                 @if ($book->SoLuong > 0)
                                     <i class="bi bi-check-circle-fill text-success"></i> <span>Còn hàng</span>
                                 @else
                                     <i class="bi bi-x-circle-fill text-danger"></i> <span>Hết hàng</span>
                                 @endif
-                            </div>
+                            </div> --}}
 
                             @php
                             $currentQty = session('cart.' . $book->MaSach . '.quantity', 0);
