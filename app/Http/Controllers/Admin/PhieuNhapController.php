@@ -25,6 +25,7 @@ class PhieuNhapController extends Controller
             'books.*.MaSach' => 'required|exists:sach,MaSach',
             'books.*.SoLuong' => 'required|integer|min:1',
             'books.*.DonGia' => 'required|numeric|min:1000',
+            'books.*.GiaBan' => 'required|numeric|min:1000',
         ]);
 
         DB::beginTransaction();
@@ -43,8 +44,12 @@ class PhieuNhapController extends Controller
                     'DonGia' => $item['DonGia'],
                 ]);
 
-                // Cộng thêm số lượng vào sách hiện có
-                Book::where('MaSach', $item['MaSach'])->increment('SoLuong', $item['SoLuong']);
+                // Cập nhật tồn kho và giá trong bảng sách
+                $book = Book::find($item['MaSach']);
+                $book->SoLuong += $item['SoLuong'];
+                $book->GiaNhap = $item['DonGia'];
+                $book->GiaBan = $item['GiaBan'];
+                $book->save();
             }
 
             DB::commit();
@@ -54,6 +59,7 @@ class PhieuNhapController extends Controller
             return back()->withErrors(['error' => 'Lỗi: ' . $e->getMessage()]);
         }
     }
+
     public function index()
 {
     $phieuNhaps = PhieuNhap::with('nguoi_nhap')->orderByDesc('NgayNhap')->get();

@@ -300,7 +300,11 @@ return [
 
     'menu' => [
         ['header' => 'QUẢN LÝ WEBSITE'],
-
+        [
+            'text' => 'Thống kê',
+            'url'  => 'admin',
+            'icon' => 'fas fa-chart-line',
+        ],
         [
             'text' => 'Đơn hàng',
             'url'  => 'admin/orders',

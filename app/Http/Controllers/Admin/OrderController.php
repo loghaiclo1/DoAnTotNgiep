@@ -86,6 +86,9 @@ class OrderController extends Controller
             }
             $donhang->TrangThai = $trangThaiMoi;
             $donhang->save();
+            app(\App\Http\Controllers\Home\InventoryController::class)->restoreStock($donhang->MaHoaDon);
+            event(new OrderStatusUpdated($donhang->MaHoaDon, $donhang->TrangThai));
+
             return redirect()->back()->with('success', 'Đơn hàng đã được hủy thành công.');
         }
 
@@ -114,7 +117,12 @@ class OrderController extends Controller
         // Nếu hợp lệ thì cập nhật
         $donhang->TrangThai = $trangThaiMoi;
         $donhang->save();
+
+
         event(new OrderStatusUpdated($donhang->MaHoaDon, $donhang->TrangThai));
+        if ($trangThaiMoi === 'Hoàn tất') {
+            app(\App\Http\Controllers\Home\InventoryController::class)->finalizeStock($donhang->MaHoaDon);
+        }
         \Log::info('Gửi broadcast cho đơn hàng: ' . $donhang->MaHoaDon);
         return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
     }
