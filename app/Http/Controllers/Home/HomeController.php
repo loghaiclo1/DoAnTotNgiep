@@ -20,6 +20,16 @@ class HomeController extends Controller
         $dmCap2 = $this->getDmCap2();
         $dmWithTop3 = $this->getDmWithTop3($dmCap2);
 
+        $quotes = [
+        'Mỗi cuốn sách là một người thầy im lặng.',
+        'Đọc sách là cách trò chuyện với những bộ óc vĩ đại nhất.',
+        'Sách mở rộng thế giới, ngay cả khi bạn đang ngồi yên.',
+        'Tri thức là chìa khóa mở mọi cánh cửa thành công.',
+        'Một ngày không đọc là một ngày lãng phí.'
+    ];
+
+    $randomQuote = $quotes[array_rand($quotes)];
+
         return view('homepage.home', compact(
             'demDMcha',
             'books',
@@ -27,7 +37,8 @@ class HomeController extends Controller
             'featuredBooks',
             'sachbanchay',
             'dmCap2',
-            'dmWithTop3'
+            'dmWithTop3',
+            'randomQuote'
         ));
     }
     private function getFeaturedBooks()

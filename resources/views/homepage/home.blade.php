@@ -9,27 +9,9 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6 content-col aos-init aos-animate" data-aos="fade-right" data-aos-delay="100">
                         <div class="content">
-                            <span class="promo-badge">Bộ sưu tập mới 2025</span>
-                            <h1>Khám phá những <span>cuốn sách hay</span> cho mọi lứa tuổi</h1>
-                            <p>Chúng tôi mang đến hàng ngàn đầu sách phong phú về văn học, kỹ năng sống, giáo dục và hơn thế
-                                nữa. Cùng bạn nâng tầm tri thức mỗi ngày.</p>
-                            <div class="hero-cta">
-                                <a href="#shop" class="btn btn-shop">Mua ngay <i class="bi bi-arrow-right"></i></a>
-                            </div>
-                            <div class="hero-features">
-                                <div class="feature-item">
-                                    <i class="bi bi-truck"></i>
-                                    <span>Giao hàng miễn phí</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="bi bi-shield-check"></i>
-                                    <span>Thanh toán an toàn</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="bi bi-arrow-repeat"></i>
-                                    <span>Đổi trả dễ dàng</span>
-                                </div>
-                            </div>
+                            <h1>Khơi nguồn tri thức – Mỗi ngày một cuốn sách hay</h1>
+                            <h5 style="margin-bottom: 1.5rem;">"{{ $randomQuote }}"</h5>
+
                         </div>
                     </div>
 
@@ -40,28 +22,33 @@
                                 $book2 = $featuredBooks[1] ?? null;
                                 $book3 = $featuredBooks[2] ?? null;
                             @endphp
-                            <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="{{$book3->TenSach}}" class="main-product"
-                                loading="lazy" style="height: 500px">
-
+                            <a href="{{ route('product.detail', ['slug' => $book3->slug]) }}">
+                                <img src="{{ asset('image/book/' . $book3->HinhAnh) }}" alt="{{$book3->TenSach}}" class="main-product"
+                                loading="lazy" style="max-height: 350px">
+                            </a>
                             @if ($book1)
                                 <div class="floating-product product-1 aos-init aos-animate" data-aos="fade-up"
                                     data-aos-delay="300">
-                                    <img src="{{ asset('image/book/' . $book1->HinhAnh) }}" alt="{{ $book1->TenSach }}">
-                                    <div class="product-info">
-                                        <h4>{{ $book1->TenSach }}</h4>
-                                        <span class="price">{{ number_format($book1->GiaBan, 0, ',', '.') }}₫</span>
-                                    </div>
+                                    <a href="{{ route('product.detail', ['slug' => $book1->slug]) }}" class="d-flex flex-column align-items-center">
+                                        <img src="{{ asset('image/book/' . $book1->HinhAnh) }}" alt="{{ $book1->TenSach }}">
+                                        <div class="product-info d-flex flex-column align-items-center">
+                                            <h4>{{ $book1->TenSach }}</h4>
+                                            <span class="price">{{ number_format($book1->GiaBan, 0, ',', '.') }}₫</span>
+                                        </div>
+                                    </a>
                                 </div>
                             @endif
 
                             @if ($book2)
                                 <div class="floating-product product-2 aos-init aos-animate" data-aos="fade-up"
                                     data-aos-delay="400">
-                                    <img src="{{ asset('image/book/' . $book2->HinhAnh) }}" alt="{{ $book2->TenSach }}">
-                                    <div class="product-info">
-                                        <h4>{{ $book2->TenSach }}</h4>
-                                        <span class="price">{{ number_format($book2->GiaBan, 0, ',', '.') }}₫</span>
-                                    </div>
+                                    <a href="{{ route('product.detail', ['slug' => $book2->slug]) }}" class="d-flex flex-column align-items-center">
+                                        <img src="{{ asset('image/book/' . $book2->HinhAnh) }}" alt="{{ $book2->TenSach }}">
+                                        <div class="product-info d-flex flex-column align-items-center" >
+                                            <h4>{{ $book2->TenSach }}</h4>
+                                            <span class="price">{{ number_format($book2->GiaBan, 0, ',', '.') }}₫</span>
+                                        </div>
+                                    </a>
                                 </div>
                             @endif
                         </div>
@@ -72,7 +59,7 @@
         <!-- /Hero Section -->
 
         <!-- Info Cards Section -->
-        <section id="info-cards" class="info-cards section light-background">
+        {{-- <section id="info-cards" class="info-cards section light-background">
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
                 <div class="row g-4 justify-content-center">
                     <!-- Info Card 1 -->
@@ -120,11 +107,11 @@
                     </div><!-- End Info Card 4 -->
                 </div>
             </div>
-        </section>
+        </section> --}}
         <!-- /Info Cards Section -->
 
         <!-- Category Cards Section -->
-        <section id="category-cards" class="category-cards section">
+        <section id="category-cards" class="category-cards section" style="background-color: #f8f9fa;">
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
                 <div class="category-slider swiper init-swiper swiper-initialized swiper-horizontal swiper-backface-hidden">
                     <script type="application/json" class="swiper-config">
@@ -223,12 +210,12 @@
                                     <div class="product-price">
                                         <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
                                     </div>
-                                    {{-- <div class="product-rating">
+                                    <div class="product-rating">
                                         @for ($i = 1; $i <= 5; $i++)
                                             <i class="bi {{ $i <= 5 - $index ? 'bi-star-fill' : 'bi-star' }}"></i>
                                         @endfor
                                         <span class="rating-count">({{ 10 + $index * 5 }} đánh giá)</span>
-                                    </div> --}}
+                                    </div>
                                     @if ($book->SoLuong == 0)
                                         <button class="btn btn-add-to-cart btn-disabled" disabled>
                                             <i class="bi bi-bag-plus me-2"></i>Hết hàng
@@ -307,7 +294,7 @@
 
     <!-- Nút xem tất cả -->
     <div class="text-center mt-5 aos-init" data-aos="fade-up">
-        <a href="#" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
+        <a href="{{ route('category.index') }}" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
     </div>
 </div>
 
