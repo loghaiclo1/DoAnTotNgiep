@@ -49,6 +49,7 @@ class DanhGiaController extends Controller
     {
         $review = DanhGiaSanPham::with(['book', 'user'])->findOrFail($id);
         $review->update(['TrangThai' => 1]);
+        event(new ReviewApproved($review));
         return back()->with('success', 'Đánh giá đã được duyệt.');
     }
     public function reject($id)
