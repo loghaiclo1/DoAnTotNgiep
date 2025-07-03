@@ -16,7 +16,7 @@ use App\Http\Controllers\Home\{
     CheckoutController,
     APIController,
     VNPayController,
-    PromoController,
+    KhuyenMaiController,
     AddressController,
     ReviewController
 };
@@ -125,7 +125,9 @@ Route::post('/vnpay/create-payment', [VNPayController::class, 'createPayment'])-
 Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])->name('vnpay.return');
 
 // Mã giảm giá
-Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.apply');
+Route::post('/khuyenmai/apply', [KhuyenMaiController::class, 'apply'])->name('khuyenmai.apply');
+Route::post('/khuyenmai/remove', [KhuyenMaiController::class, 'remove'])->name('khuyenmai.remove');
+
 
 // Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
