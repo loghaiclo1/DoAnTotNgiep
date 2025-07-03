@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@section('right-navbar')
+    @include('components.admin.logout-link')
+@endsection
+
 @section('title', 'Quản lý Liên hệ')
 
 @section('content_header')

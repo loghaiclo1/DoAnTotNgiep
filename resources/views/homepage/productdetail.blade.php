@@ -9,7 +9,7 @@
                 <nav class="breadcrumbs">
                     <ol>
                         <li><a href="{{ url('/') }}">Trang chủ</a></li>
-                        <li><a href="{{ url('/danh-muc/' . $book->category->slug) }}">{{ $book->category->name }}</a></li>
+                        <li><a href="{{ url('/category/' . $book->category->slug) }}">{{ $book->category->name }}</a></li>
                         <li class="current">{{ $book->TenSach }}</li>
                     </ol>
                 </nav>

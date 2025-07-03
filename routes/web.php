@@ -131,9 +131,10 @@ Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.appl
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])->names('orders');
-    Route::get('/reviews', [DanhGiaController::class, 'index'])->name('admin.reviews.index');
+    Route::get('/reviews', [DanhGiaController::class, 'index'])->name('reviews.index');
     Route::post('/reviews/{id}/approve', [DanhGiaController::class, 'approve'])->name('reviews.approve');
     Route::post('/reviews/{id}/reject', [DanhGiaController::class, 'reject'])->name('reviews.reject');
     Route::delete('/reviews/{id}', [DanhGiaController::class, 'destroy'])->name('reviews.destroy');
