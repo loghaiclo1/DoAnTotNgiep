@@ -40,16 +40,34 @@
         </div>
     @endforeach
 </div>
-{{-- NÚT CHỌN BIỂU ĐỒ --}}
 <div class="mb-4">
-    <button class="btn btn-outline-primary m-1" onclick="showChart('dailyRevenueCard')">Doanh thu ngày</button>
-    <button class="btn btn-outline-info m-1" onclick="showChart('monthlyRevenueCard')">Doanh thu tháng</button>
-    <button class="btn btn-outline-success m-1" onclick="showChart('yearlyRevenueCard')">Doanh thu năm</button>
-    <button class="btn btn-outline-dark m-1" onclick="showChart('dailyOrderCard')">Đơn hàng ngày</button>
-    <button class="btn btn-outline-warning m-1" onclick="showChart('yearlyOrderCard')">Đơn hàng năm</button>
-    <button class="btn btn-outline-indigo m-1" onclick="showChart('monthlyUserCard')">Người dùng mới</button>
-    <button class="btn btn-outline-orange m-1" onclick="showChart('booksSoldCard')">Sách đã bán</button>
+    <button class="btn btn-outline-primary m-1" onclick="showChart('dailyRevenueCard')">
+        <i class="fas fa-calendar-day"></i> Doanh thu ngày
+    </button>
+    <button class="btn btn-outline-info m-1" onclick="showChart('monthlyRevenueCard')">
+        <i class="fas fa-chart-bar"></i> Doanh thu tháng
+    </button>
+    <button class="btn btn-outline-success m-1" onclick="showChart('yearlyRevenueCard')">
+        <i class="fas fa-calendar-alt"></i> Doanh thu năm
+    </button>
+    <button class="btn btn-outline-dark m-1" onclick="showChart('dailyOrderCard')">
+        <i class="fas fa-box"></i> Đơn hàng ngày
+    </button>
+    <button class="btn btn-outline-secondary m-1" onclick="showChart('monthlyOrderCard')">
+        <i class="fas fa-th-large"></i> Đơn hàng tháng
+    </button>
+    <button class="btn btn-outline-warning m-1" onclick="showChart('yearlyOrderCard')">
+        <i class="fas fa-handshake"></i> Đơn hàng năm
+    </button>
+    <button class="btn btn-outline-indigo m-1" onclick="showChart('monthlyUserCard')">
+        <i class="fas fa-user-plus"></i> Người dùng mới
+    </button>
+    <button class="btn btn-outline-orange m-1" onclick="showChart('booksSoldCard')">
+        <i class="fas fa-book"></i> Sách đã bán
+    </button>
 </div>
+
+
 {{-- CÁC BIỂU ĐỒ (mặc định hiện dailyRevenueCard + orderStatus) --}}
 <div class="row">
     {{-- Biểu đồ chính (sẽ thay đổi) --}}
@@ -71,6 +89,11 @@
     <div class="col-md-6" id="dailyOrderCard" style="display: none;">
         <x-adminlte-card title="Đơn hàng theo ngày" theme="dark" icon="fas fa-calendar-day">
             <canvas id="dailyOrderChart"></canvas>
+        </x-adminlte-card>
+    </div>
+    <div class="col-md-6" id="monthlyOrderCard" style="display: none;">
+        <x-adminlte-card title="Đơn hàng theo tháng" theme="cyan" icon="fas fa-calendar">
+            <canvas id="monthlyOrderChart"></canvas>
         </x-adminlte-card>
     </div>
     <div class="col-md-6" id="yearlyOrderCard" style="display: none;">
@@ -143,6 +166,7 @@
         { id: 'dailyRevenueChart', labels: @json($dailyRevenueLabels), data: @json($dailyRevenueData), label: 'Doanh thu ngày', type: 'line', color: '#007bff' },
         { id: 'yearlyRevenueChart', labels: @json($yearLabels), data: @json($yearlyRevenueData), label: 'Doanh thu năm', type: 'bar', color: '#28a745' },
         { id: 'dailyOrderChart', labels: @json($dailyOrderLabels), data: @json($dailyOrderData), label: 'Đơn hàng ngày', type: 'line', color: '#343a40' },
+        { id: 'monthlyOrderChart', labels: @json($monthlyOrderLabels), data: @json($monthlyOrderData), label: 'Đơn hàng tháng', type: 'bar', color: '#17a2b8' },
         { id: 'yearlyOrderChart', labels: @json($yearLabels), data: @json($yearlyOrderData), label: 'Đơn hàng năm', type: 'bar', color: '#ffc107' },
         { id: 'monthlyUserChart', labels: @json($monthlyUserLabels), data: @json($monthlyUserData), label: 'Người dùng mới', type: 'line', color: '#6610f2' },
         { id: 'booksSoldChart', labels: @json($booksSoldLabels), data: @json($booksSoldData), label: 'Sách đã bán', type: 'bar', color: '#fd7e14' },
@@ -184,11 +208,11 @@
 
     // Hàm ẩn/hiện card theo id
     function showChart(cardId) {
-    const chartIds = [
-        'dailyRevenueCard', 'monthlyRevenueCard', 'yearlyRevenueCard',
-        'dailyOrderCard', 'yearlyOrderCard',
-        'monthlyUserCard', 'booksSoldCard'
-    ];
+        const chartIds = [
+    'dailyRevenueCard', 'monthlyRevenueCard', 'yearlyRevenueCard',
+    'dailyOrderCard', 'monthlyOrderCard', 'yearlyOrderCard',
+    'monthlyUserCard', 'booksSoldCard'
+]
 
     chartIds.forEach(id => {
         const el = document.getElementById(id);

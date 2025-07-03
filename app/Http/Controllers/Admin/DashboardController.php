@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $totalReviews = DanhGiaSanPham::count();
         $pendingContacts = LienHe::where('trang_thai', '0')->count();
 
-        // Biểu đồ doanh thu theo tháng (6 tháng gần nhất)
+        // Doanh thu theo tháng (6 tháng gần nhất)
         $monthlyRevenue = Hoadon::select(
                 DB::raw("DATE_FORMAT(NgayLap, '%m/%Y') as month"),
                 DB::raw("SUM(TongTien) as total")
@@ -46,7 +46,7 @@ class DashboardController extends Controller
             ->pluck('total', 'TrangThai');
 
         // Đơn hàng theo tháng
-        $ordersCountByMonth = Hoadon::select(
+        $monthlyOrders = Hoadon::select(
                 DB::raw("DATE_FORMAT(NgayLap, '%m/%Y') as month"),
                 DB::raw("COUNT(*) as total_orders")
             )
@@ -54,8 +54,8 @@ class DashboardController extends Controller
             ->groupBy('month')
             ->orderByRaw("STR_TO_DATE(CONCAT('01/', month), '%d/%m/%Y') DESC")
             ->take(6)->get()->reverse();
-        $orderCountLabels = $ordersCountByMonth->pluck('month');
-        $orderCountData = $ordersCountByMonth->pluck('total_orders');
+        $monthlyOrderLabels = $monthlyOrders->pluck('month');
+        $monthlyOrderData = $monthlyOrders->pluck('total_orders');
 
         // Doanh thu theo ngày (7 ngày gần nhất)
         $dailyRevenue = Hoadon::select(
@@ -149,7 +149,7 @@ class DashboardController extends Controller
             'totalOrders', 'totalRevenue', 'totalUsers', 'totalProducts', 'totalBooksSold', 'totalReviews', 'pendingContacts',
             'labels', 'data',
             'ordersByStatus',
-            'orderCountLabels', 'orderCountData',
+            'monthlyOrderLabels', 'monthlyOrderData',
             'dailyRevenueLabels', 'dailyRevenueData',
             'yearLabels', 'yearlyRevenueData',
             'dailyOrderLabels', 'dailyOrderData', 'yearlyOrderData',
