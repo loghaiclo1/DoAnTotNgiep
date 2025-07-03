@@ -157,10 +157,25 @@
                                 <span>Phí vận chuyển</span>
                                 <span>{{ number_format(session('shipping', 0), 0, ',', '.') }} ₫</span>
                             </div>
+                            @if (session()->has('promo'))
+    <div class="price-row text-success">
+        <span>Giảm giá ({{ session('promo.MaCode') }})</span>
+        <span>-{{ number_format(session('promo.discount'), 0, ',', '.') }} ₫</span>
+    </div>
+@endif
+
                             <div class="price-row total">
-                                <span>Tổng cộng</span>
-                                <span>{{ number_format($order->TongTien, 0, ',', '.') }} ₫</span>
-                            </div>
+    <span>Tổng cộng</span>
+    <span>
+        @php
+            $discount = session('promo.discount', 0);
+            $shipping = session('shipping', 0);
+            $totalAfterDiscount = $order->TongTien + $shipping - $discount;
+        @endphp
+        {{ number_format($totalAfterDiscount, 0, ',', '.') }} ₫
+    </span>
+</div>
+
                         </div>
                     </div>
                     <div class="detail-section">

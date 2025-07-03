@@ -44,7 +44,7 @@
                                 <h4>{{ $user->Ho . ' ' . $user->Ten }}</h4>
                                 <div class="user-status">
                                     <i class="bi bi-award"></i>
-                                    <span>{{ $user->membership_status ?? 'Thành viên thường' }}</span>
+                                    <span>{{ $user->role ?? 'Thành viên thường' }}</span>
                                 </div>
                             </div>
                             <!-- Navigation Menu -->
@@ -86,10 +86,12 @@
                                         <i class="bi bi-question-circle"></i>
                                         <span>Hỗ trợ khách hàng</span>
                                     </a>
-                                    <a href="{{ url('/logout') }}" class="logout-link">
-                                        <i class="bi bi-box-arrow-right"></i>
-                                        <span>Đăng xuất</span>
-                                    </a>
+                                   <a href="{{ route('logout') }}"
+   class="logout-link d-flex align-items-center mb-1 py-2 px-3 rounded-3 text-danger" style="height: 54px">
+    <i class="bi bi-box-arrow-right me-2"></i>
+    <span>Đăng xuất</span>
+</a>
+
                                 </div>
                             </nav>
                         </div>

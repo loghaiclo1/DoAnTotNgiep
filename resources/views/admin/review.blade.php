@@ -1,8 +1,5 @@
 @extends('adminlte::page')
 
-@section('right-navbar')
-    @include('components.admin.logout-link')
-@endsection
 
 @section('title', 'Quản lý đánh giá')
 
@@ -11,6 +8,10 @@
 @stop
 
 @section('content')
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
     {{-- FORM LỌC --}}
     <form method="GET" class="mb-3">
         <div class="row">

@@ -1,8 +1,5 @@
 @extends('adminlte::page')
 
-@section('right-navbar')
-    @include('components.admin.logout-link')
-@endsection
 
 @section('title', 'Quản lý Liên hệ')
 
@@ -11,6 +8,11 @@
 @endsection
 
 @section('content')
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+    
 @if (session('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ session('error') }}

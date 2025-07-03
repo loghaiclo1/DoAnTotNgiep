@@ -7,11 +7,14 @@
 @stop
 
 @section('content')
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+    
 @if (session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
-
-
 
 {{-- THỐNG KÊ TỔNG QUAN --}}
 <div class="row">

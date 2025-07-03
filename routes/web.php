@@ -128,7 +128,6 @@ Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])->name('vn
 Route::post('/khuyenmai/apply', [KhuyenMaiController::class, 'apply'])->name('khuyenmai.apply');
 Route::post('/khuyenmai/remove', [KhuyenMaiController::class, 'remove'])->name('khuyenmai.remove');
 
-
 // Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
 
