@@ -126,21 +126,26 @@ class DashboardController extends Controller
         $booksImportedData = $booksImported->pluck('total');
 
         // Top 20 sản phẩm bán chạy
-        $topProducts = ChiTietHoaDon::select('MaSach', DB::raw('SUM(SoLuong) as total_sold'))
-            ->groupBy('MaSach')
-            ->orderByDesc('total_sold')
-            ->with('sach')
-            ->take(20)->get();
+        $topProducts = ChiTietHoaDon::select('chitiethoadon.MaSach', DB::raw('SUM(chitiethoadon.SoLuong) as total_sold'))
+        ->join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+        ->where('hoadon.TrangThai', 'Hoàn tất')
+        ->groupBy('chitiethoadon.MaSach')
+        ->orderByDesc('total_sold')
+        ->with('sach')
+        ->take(20)->get();
+
         $topProductsLabels = $topProducts->pluck('sach.TenSach')->map(fn($n) => $n ?? 'Không rõ');
         $topProductsData = $topProducts->pluck('total_sold');
 
         // Top 20khách hàng chi tiêu nhiều nhất
         $topUsers = Hoadon::select('MaKhachHang', DB::raw('SUM(TongTien) as total_spent'), DB::raw('COUNT(*) as orders_count'))
-            ->whereNotNull('MaKhachHang')
-            ->groupBy('MaKhachHang')
-            ->orderByDesc('total_spent')
-            ->with('khachhang')
-            ->take(20)->get();
+        ->whereNotNull('MaKhachHang')
+        ->where('TrangThai', 'Hoàn tất')
+        ->groupBy('MaKhachHang')
+        ->orderByDesc('total_spent')
+        ->with('khachhang')
+        ->take(20)->get();
+
         $topUsersLabels = $topUsers->map(fn($u) => trim(optional($u->khachhang)->Ho . ' ' . optional($u->khachhang)->Ten) ?: 'Ẩn danh');
         $topUsersData = $topUsers->pluck('total_spent');
 
