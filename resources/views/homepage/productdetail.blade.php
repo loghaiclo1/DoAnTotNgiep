@@ -61,7 +61,7 @@
                             @endphp
 
                             @if ($book->SoLuong > 0)
-                                <form class="add-to-cart-form" action="{{ route('cart.add') }}" method="POST" data-book-id="{{ $book->MaSach }}">
+                                <form class="add-to-cart-form"  action="{{ route('cart.add') }}" method="POST" data-book-id="{{ $book->MaSach }}">
                                     @csrf
                                     <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
                                     <div class="product-quantity mb-4">
@@ -195,7 +195,9 @@
                                                     </div>
                                                     <div class="specs-row">
                                                         <div class="specs-label">Số lượng trong kho</div>
-                                                        <div class="specs-value">{{ $book->SoLuong > 0 ? $book->SoLuong . ' cuốn' : 'Hết hàng' }}</div>
+                                                        <div class="specs-value book-stock-display" data-book-id="{{ $book->MaSach }}">
+                                                            {{ $book->SoLuong > 0 ? $book->SoLuong . ' cuốn' : 'Hết hàng' }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

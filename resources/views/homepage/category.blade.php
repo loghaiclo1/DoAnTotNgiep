@@ -255,22 +255,25 @@
                                                 @if($book->giam_gia)
                                                     <span class="product-label product-label-sale">-{{ $book->giam_gia }}%</span>
                                                 @else
-                                                    <span class="product-label">New</span>
+                                                    <span class="product-label"></span>
                                                 @endif
                                                 <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="width: 100%; max-height: 300px; object-fit: cover;">
-                                                <div class="product-overlay">
-                                                    <div class="product-quick-actions">
-                                                        <button type="button" class="quick-action-btn"><i class="bi bi-heart"></i></button>
-                                                        <a href="{{ route('product.detail', $book->slug) }}" class="quick-action-btn">
-                                                            <i class="bi bi-eye"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div class="add-to-cart-container">
-                                                        <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
-                                                            @csrf
-                                                            <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
-                                                            <button type="submit" class="add-to-cart-btn">Thêm vào giỏ</button>
-                                                        </form>
+                                                <div class="product-overlay" data-book-id="{{ $book->MaSach }}">
+
+                                                    <div class="cart-form-area">
+                                                        @if ($book->SoLuong <= 0)
+                                                            <button class="btn btn-secondary btn-add-to-cart btn-disabled" disabled>
+                                                                <i class="bi bi-bag-plus me-2"></i>Hết hàng
+                                                            </button>
+                                                        @else
+                                                            <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                                                @csrf
+                                                                <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                                                <button class="btn btn-primary btn-add-to-cart" type="submit">
+                                                                    <i class="bi bi-bag-plus me-2"></i>Thêm vào giỏ hàng
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

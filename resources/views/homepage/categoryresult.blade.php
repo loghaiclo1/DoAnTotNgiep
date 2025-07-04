@@ -20,15 +20,22 @@
                                 <div class="product-image">
                                     <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
                                         class="img-fluid uniform-img" loading="lazy">
-                                        <div class="product-overlay">
-                                            <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
-                                                @csrf
-                                                <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
-                                                <button type="submit" class="btn-cart">
-                                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                        <div class="product-overlay" data-book-id="{{ $book->MaSach }}">
+                                            @if ($book->SoLuong <= 0)
+                                                <button class="btn btn-secondary btn-add-to-cart btn-disabled" disabled>
+                                                    <i class="bi bi-bag-plus me-2"></i>Hết hàng
                                                 </button>
-                                            </form>
+                                            @else
+                                                <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                                    @csrf
+                                                    <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                                    <button type="submit" class="btn btn-primary btn-add-to-cart">
+                                                        <i class="bi bi-bag-plus me-2"></i>Thêm vào giỏ
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
+
                                 </div>
                                 <div class="product-info">
                                     <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>

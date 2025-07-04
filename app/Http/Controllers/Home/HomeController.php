@@ -43,9 +43,12 @@ class HomeController extends Controller
     }
     private function getFeaturedBooks()
     {
-        return Book::where('TrangThai', 1)->inRandomOrder()->take(3)->get();
+        return Book::where('TrangThai', 1)
+            ->where('SoLuong', '>', 0) // lọc sách còn hàng
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
     }
-
     private function getCategoryParentWithBookCount()
     {
         $dmcha = Category::whereNotNull('image')->get();
@@ -61,6 +64,7 @@ class HomeController extends Controller
     {
         return Book::with('category')
             ->where('TrangThai', 1)
+            ->where('SoLuong', '>', 0) //  lọc sách còn hàng
             ->inRandomOrder()
             ->take(8)
             ->get();
@@ -69,11 +73,11 @@ class HomeController extends Controller
     private function getBestSellerBooks()
     {
         return Book::where('TrangThai', 1)
+            ->where('SoLuong', '>', 0) // lọc sách còn hàng
             ->orderBy('luotmua', 'desc')
             ->take(4)
             ->get();
     }
-
     private function getFilterCategories($books)
     {
         return $books->map(function ($book) {

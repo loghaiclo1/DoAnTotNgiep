@@ -1,20 +1,17 @@
-
-document.querySelectorAll('.add-to-cart-form').forEach(form => {
+function bindAddToCartAjax(form) {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(form);
         const token = document.querySelector('meta[name="csrf-token"]')?.content;
         const quantityInput = form.querySelector('.quantity-input');
-        const requestedQuantity = quantityInput ? parseInt(quantityInput.value) : 1; // Mặc định quantity = 1 nếu không có input
+        const requestedQuantity = quantityInput ? parseInt(quantityInput.value) : 1;
         const errorContainer = form.querySelector('.error-message') || form.parentElement.querySelector('.error-message') || document.createElement('div');
 
-        // Đảm bảo errorContainer tồn tại
         if (!form.contains(errorContainer)) {
             errorContainer.classList.add('error-message');
             form.appendChild(errorContainer);
         }
 
-        // Xóa thông báo lỗi cũ
         errorContainer.textContent = '';
 
         if (!token) {
@@ -40,7 +37,6 @@ document.querySelectorAll('.add-to-cart-form').forEach(form => {
             return;
         }
 
-        // Thêm quantity vào formData nếu không có quantityInput
         if (!quantityInput) {
             formData.append('quantity', requestedQuantity);
         }
@@ -70,11 +66,11 @@ document.querySelectorAll('.add-to-cart-form').forEach(form => {
                 showConfirmButton: false,
                 timer: 3000
             });
+
             if (data.status === 'success') {
                 if (quantityInput) {
-                    quantityInput.value = 1; // Reset số lượng về 1 nếu có input
+                    quantityInput.value = 1;
                 }
-                // Cập nhật số lượng trong giỏ hàng
                 const cartCount = document.querySelector('.cart-count');
                 if (cartCount && data.new_quantity) {
                     cartCount.textContent = parseInt(cartCount.textContent || 0) + requestedQuantity;
@@ -95,7 +91,7 @@ document.querySelectorAll('.add-to-cart-form').forEach(form => {
             });
         });
     });
-});
+}
 
 // Xử lý quantity selector
 document.querySelectorAll('.quantity-selector').forEach(selector => {
@@ -128,7 +124,13 @@ document.querySelectorAll('.quantity-selector').forEach(selector => {
             let value = parseInt(quantityInput.value) || 0;
             quantityInput.value = value + 1;
             errorContainer.textContent = '';
+
         });
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+        bindAddToCartAjax(form);
+    });
+});

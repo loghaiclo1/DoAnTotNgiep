@@ -19,8 +19,5 @@ Broadcast::channel('user.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('orders.{orderId}', function ($user, $orderId) {
-    return true; // Hoặc thêm logic kiểm tra quyền
-});
-Broadcast::channel('book.reviews.{MaSach}', function ($user, $MaSach) {
-    return true; // hoặc kiểm tra quyền nếu cần
+    return true;
 });

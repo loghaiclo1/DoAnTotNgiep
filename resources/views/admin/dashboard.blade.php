@@ -9,9 +9,9 @@
 @section('content')
 
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-        @csrf
-    </form>
-    
+    @csrf
+</form>
+
 @if (session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
@@ -43,187 +43,163 @@
         </div>
     @endforeach
 </div>
+
 <div class="mb-4">
-    <button class="btn btn-outline-primary m-1" onclick="showChart('dailyRevenueCard')">
-        <i class="fas fa-calendar-day"></i> Doanh thu ngày
-    </button>
-    <button class="btn btn-outline-info m-1" onclick="showChart('monthlyRevenueCard')">
-        <i class="fas fa-chart-bar"></i> Doanh thu tháng
-    </button>
-    <button class="btn btn-outline-success m-1" onclick="showChart('yearlyRevenueCard')">
-        <i class="fas fa-calendar-alt"></i> Doanh thu năm
-    </button>
-    <button class="btn btn-outline-dark m-1" onclick="showChart('dailyOrderCard')">
-        <i class="fas fa-box"></i> Đơn hàng ngày
-    </button>
-    <button class="btn btn-outline-secondary m-1" onclick="showChart('monthlyOrderCard')">
-        <i class="fas fa-th-large"></i> Đơn hàng tháng
-    </button>
-    <button class="btn btn-outline-warning m-1" onclick="showChart('yearlyOrderCard')">
-        <i class="fas fa-handshake"></i> Đơn hàng năm
-    </button>
-    <button class="btn btn-outline-indigo m-1" onclick="showChart('monthlyUserCard')">
-        <i class="fas fa-user-plus"></i> Người dùng mới
-    </button>
-    <button class="btn btn-outline-orange m-1" onclick="showChart('booksSoldCard')">
-        <i class="fas fa-book"></i> Sách đã bán
-    </button>
+    <button class="btn btn-outline-primary m-1" onclick="showChart('dailyRevenueCard')"><i class="fas fa-calendar-day"></i> Doanh thu ngày</button>
+    <button class="btn btn-outline-info m-1" onclick="showChart('monthlyRevenueCard')"><i class="fas fa-chart-bar"></i> Doanh thu tháng</button>
+    <button class="btn btn-outline-success m-1" onclick="showChart('yearlyRevenueCard')"><i class="fas fa-calendar-alt"></i> Doanh thu năm</button>
+    <button class="btn btn-outline-dark m-1" onclick="showChart('dailyOrderCard')"><i class="fas fa-box"></i> Đơn hàng ngày</button>
+    <button class="btn btn-outline-secondary m-1" onclick="showChart('monthlyOrderCard')"><i class="fas fa-th-large"></i> Đơn hàng tháng</button>
+    <button class="btn btn-outline-warning m-1" onclick="showChart('yearlyOrderCard')"><i class="fas fa-handshake"></i> Đơn hàng năm</button>
+    <button class="btn btn-outline-indigo m-1" onclick="showChart('monthlyUserCard')"><i class="fas fa-user-plus"></i> Người dùng mới</button>
+    <button class="btn btn-outline-orange m-1" onclick="showChart('booksSoldCard')"><i class="fas fa-book"></i> Sách đã bán</button>
+    <button class="btn btn-outline-purple m-1" onclick="showChart('booksCreatedCard')"><i class="fas fa-plus-square"></i> Sách mới thêm</button>
+    <button class="btn btn-outline-brown m-1" onclick="showChart('booksImportedCard')"><i class="fas fa-truck-loading"></i> Sách nhập kho</button>
 </div>
 
-
-{{-- CÁC BIỂU ĐỒ (mặc định hiện dailyRevenueCard + orderStatus) --}}
+{{-- BIỂU ĐỒ --}}
 <div class="row">
-    {{-- Biểu đồ chính (sẽ thay đổi) --}}
-    <div class="col-md-6" id="dailyRevenueCard">
-        <x-adminlte-card title="Doanh thu theo ngày" theme="primary" icon="fas fa-calendar-day">
-            <canvas id="dailyRevenueChart"></canvas>
-        </x-adminlte-card>
-    </div>
-    <div class="col-md-6" id="monthlyRevenueCard" style="display: none;">
-        <x-adminlte-card title="Doanh thu theo tháng" theme="info" icon="fas fa-chart-bar">
-            <canvas id="monthlyRevenueChart"></canvas>
-        </x-adminlte-card>
-    </div>
-    <div class="col-md-6" id="yearlyRevenueCard" style="display: none;">
-        <x-adminlte-card title="Doanh thu theo năm" theme="success" icon="fas fa-calendar-alt">
-            <canvas id="yearlyRevenueChart"></canvas>
-        </x-adminlte-card>
-    </div>
-    <div class="col-md-6" id="dailyOrderCard" style="display: none;">
-        <x-adminlte-card title="Đơn hàng theo ngày" theme="dark" icon="fas fa-calendar-day">
-            <canvas id="dailyOrderChart"></canvas>
-        </x-adminlte-card>
-    </div>
-    <div class="col-md-6" id="monthlyOrderCard" style="display: none;">
-        <x-adminlte-card title="Đơn hàng theo tháng" theme="cyan" icon="fas fa-calendar">
-            <canvas id="monthlyOrderChart"></canvas>
-        </x-adminlte-card>
-    </div>
-    <div class="col-md-6" id="yearlyOrderCard" style="display: none;">
-        <x-adminlte-card title="Đơn hàng theo năm" theme="warning" icon="fas fa-calendar-alt">
-            <canvas id="yearlyOrderChart"></canvas>
-        </x-adminlte-card>
-    </div>
-    <div class="col-md-6" id="monthlyUserCard" style="display: none;">
-        <x-adminlte-card title="Khách hàng mới theo tháng" theme="indigo" icon="fas fa-user-plus">
-            <canvas id="monthlyUserChart"></canvas>
-        </x-adminlte-card>
-    </div>
-    <div class="col-md-6" id="booksSoldCard" style="display: none;">
-        <x-adminlte-card title="Sách đã bán theo tháng" theme="orange" icon="fas fa-book">
-            <canvas id="booksSoldChart"></canvas>
-        </x-adminlte-card>
-    </div>
-
-    {{-- Biểu đồ trạng thái luôn hiển thị --}}
-    <div class="col-md-6">
-        <x-adminlte-card title="Tỷ lệ trạng thái đơn hàng" theme="teal" icon="fas fa-chart-pie">
-            <canvas id="orderStatusChart"></canvas>
-        </x-adminlte-card>
-    </div>
+    <div class="col-md-6" id="dailyRevenueCard"><x-adminlte-card title="Doanh thu theo ngày" theme="primary" icon="fas fa-calendar-day"><canvas id="dailyRevenueChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="monthlyRevenueCard" style="display: none;"><x-adminlte-card title="Doanh thu theo tháng" theme="info" icon="fas fa-chart-bar"><canvas id="monthlyRevenueChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="yearlyRevenueCard" style="display: none;"><x-adminlte-card title="Doanh thu theo năm" theme="success" icon="fas fa-calendar-alt"><canvas id="yearlyRevenueChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="dailyOrderCard" style="display: none;"><x-adminlte-card title="Đơn hàng theo ngày" theme="dark" icon="fas fa-calendar-day"><canvas id="dailyOrderChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="monthlyOrderCard" style="display: none;"><x-adminlte-card title="Đơn hàng theo tháng" theme="cyan" icon="fas fa-calendar"><canvas id="monthlyOrderChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="yearlyOrderCard" style="display: none;"><x-adminlte-card title="Đơn hàng theo năm" theme="warning" icon="fas fa-calendar-alt"><canvas id="yearlyOrderChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="monthlyUserCard" style="display: none;"><x-adminlte-card title="Khách hàng mới theo tháng" theme="indigo" icon="fas fa-user-plus"><canvas id="monthlyUserChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="booksSoldCard" style="display: none;"><x-adminlte-card title="Sách đã bán theo ngày" theme="orange" icon="fas fa-book"><canvas id="booksSoldChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="booksCreatedCard" style="display: none;"><x-adminlte-card title="Sách được thêm mới theo tháng" theme="purple" icon="fas fa-plus-square"><canvas id="booksCreatedChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6" id="booksImportedCard" style="display: none;"><x-adminlte-card title="Sách nhập kho theo tháng" theme="brown" icon="fas fa-truck-loading"><canvas id="booksImportedChart"></canvas></x-adminlte-card></div>
+    <div class="col-md-6"><x-adminlte-card title="Tỷ lệ trạng thái đơn hàng" theme="teal" icon="fas fa-chart-pie"><canvas id="orderStatusChart"></canvas></x-adminlte-card></div>
 </div>
-{{-- TOP SP & KH --}}
-<x-adminlte-card title="Top 5 sản phẩm bán chạy" theme="success" icon="fas fa-fire">
-    @if ($topProducts->isEmpty())
-        <p class="text-center text-muted">Không có dữ liệu</p>
-    @else
-        <table class="table table-bordered">
-            <thead><tr><th>Sản phẩm</th><th>Số lượng bán</th></tr></thead>
-            <tbody>
-                @foreach ($topProducts as $item)
-                    <tr>
-                        <td>{{ $item->sach->TenSach ?? 'Không rõ' }}</td>
-                        <td>{{ $item->total_sold }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
-</x-adminlte-card>
 
-<x-adminlte-card title="Top 5 khách hàng chi tiêu nhiều nhất" theme="warning" icon="fas fa-crown">
-    @if ($topUsers->isEmpty())
-        <p class="text-center text-muted">Không có dữ liệu</p>
-    @else
-        <table class="table table-bordered">
-            <thead><tr><th>Khách hàng</th><th>Tổng chi</th><th>Số đơn</th></tr></thead>
-            <tbody>
-                @foreach ($topUsers as $user)
-                    <tr>
-                        <td>{{ optional($user->khachhang)->Ho }} {{ optional($user->khachhang)->Ten }}</td>
-                        <td>{{ number_format($user->total_spent) }}₫</td>
-                        <td>{{ $user->orders_count }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
-</x-adminlte-card>
+<div class="col-md">
+    <x-adminlte-card title="Top20 sách bán ra" theme="success" icon="fas fa-book">
+        <div style="overflow-x: auto;">
+            <canvas id="topProductsChart" style="min-width: 1500px; height: 400px;"></canvas>
+        </div>
+    </x-adminlte-card>
+</div>
+
+<div class="col-md">
+    <x-adminlte-card title="Top20 Khách hàng chi tiêu nhiều" theme="warning" icon="fas fa-user-tie">
+        <div style="overflow-x: auto;">
+            <canvas id="topUsersChart" style="min-width: 1500px; height: 400px;"></canvas>
+        </div>
+    </x-adminlte-card>
+</div>
+
 @stop
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const chartConfigs = [
-        { id: 'monthlyRevenueChart', labels: @json($labels), data: @json($data), label: 'Doanh thu', type: 'bar', color: '#36a2eb' },
-        { id: 'dailyRevenueChart', labels: @json($dailyRevenueLabels), data: @json($dailyRevenueData), label: 'Doanh thu ngày', type: 'line', color: '#007bff' },
-        { id: 'yearlyRevenueChart', labels: @json($yearLabels), data: @json($yearlyRevenueData), label: 'Doanh thu năm', type: 'bar', color: '#28a745' },
-        { id: 'dailyOrderChart', labels: @json($dailyOrderLabels), data: @json($dailyOrderData), label: 'Đơn hàng ngày', type: 'line', color: '#343a40' },
-        { id: 'monthlyOrderChart', labels: @json($monthlyOrderLabels), data: @json($monthlyOrderData), label: 'Đơn hàng tháng', type: 'bar', color: '#17a2b8' },
-        { id: 'yearlyOrderChart', labels: @json($yearLabels), data: @json($yearlyOrderData), label: 'Đơn hàng năm', type: 'bar', color: '#ffc107' },
-        { id: 'monthlyUserChart', labels: @json($monthlyUserLabels), data: @json($monthlyUserData), label: 'Người dùng mới', type: 'line', color: '#6610f2' },
-        { id: 'booksSoldChart', labels: @json($booksSoldLabels), data: @json($booksSoldData), label: 'Sách đã bán', type: 'bar', color: '#fd7e14' },
-    ];
+const chartConfigs = [
+    { id: 'monthlyRevenueChart', labels: @json($labels), data: @json($data), label: 'Doanh thu', type: 'bar', color: '#36a2eb' },
+    { id: 'dailyRevenueChart', labels: @json($dailyRevenueLabels), data: @json($dailyRevenueData), label: 'Doanh thu ngày', type: 'line', color: '#007bff' },
+    { id: 'yearlyRevenueChart', labels: @json($yearLabels), data: @json($yearlyRevenueData), label: 'Doanh thu năm', type: 'bar', color: '#28a745' },
+    { id: 'dailyOrderChart', labels: @json($dailyOrderLabels), data: @json($dailyOrderData), label: 'Đơn hàng ngày', type: 'line', color: '#343a40' },
+    { id: 'monthlyOrderChart', labels: @json($monthlyOrderLabels), data: @json($monthlyOrderData), label: 'Đơn hàng tháng', type: 'bar', color: '#17a2b8' },
+    { id: 'yearlyOrderChart', labels: @json($yearLabels), data: @json($yearlyOrderData), label: 'Đơn hàng năm', type: 'bar', color: '#ffc107' },
+    { id: 'monthlyUserChart', labels: @json($monthlyUserLabels), data: @json($monthlyUserData), label: 'Người dùng mới', type: 'line', color: '#6610f2' },
+    { id: 'booksSoldChart', labels: @json($booksSoldLabels), data: @json($booksSoldData), label: 'Sách đã bán', type: 'bar', color: '#fd7e14' },
+    { id: 'booksCreatedChart', labels: @json($booksCreatedLabels), data: @json($booksCreatedData), label: 'Sách thêm mới', type: 'bar', color: '#6f42c1' },
+    { id: 'booksImportedChart', labels: @json($booksImportedLabels), data: @json($booksImportedData), label: 'Sách nhập kho', type: 'bar', color: '#795548' },
+];
 
-    chartConfigs.forEach(cfg => {
-        new Chart(document.getElementById(cfg.id), {
-            type: cfg.type,
-            data: {
-                labels: cfg.labels,
-                datasets: [{
-                    label: cfg.label,
-                    data: cfg.data,
-                    backgroundColor: cfg.color + '66',
-                    borderColor: cfg.color,
-                    fill: cfg.type === 'line',
-                    tension: 0.3,
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    });
-
-    // Biểu đồ trạng thái đơn hàng
-    new Chart(document.getElementById('orderStatusChart'), {
-        type: 'pie',
+chartConfigs.forEach(cfg => {
+    new Chart(document.getElementById(cfg.id), {
+        type: cfg.type,
         data: {
-            labels: Object.keys(@json($ordersByStatus)),
+            labels: cfg.labels,
             datasets: [{
-                data: Object.values(@json($ordersByStatus)),
-                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
+                label: cfg.label,
+                data: cfg.data,
+                backgroundColor: cfg.color + '66',
+                borderColor: cfg.color,
+                fill: cfg.type === 'line',
+                tension: 0.3,
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { position: 'bottom' } }
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
         }
     });
+});
 
-    // Hàm ẩn/hiện card theo id
-    function showChart(cardId) {
-        const chartIds = [
-    'dailyRevenueCard', 'monthlyRevenueCard', 'yearlyRevenueCard',
-    'dailyOrderCard', 'monthlyOrderCard', 'yearlyOrderCard',
-    'monthlyUserCard', 'booksSoldCard'
-]
+new Chart(document.getElementById('orderStatusChart'), {
+    type: 'pie',
+    data: {
+        labels: Object.keys(@json($ordersByStatus)),
+        datasets: [{
+            data: Object.values(@json($ordersByStatus)),
+            backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+
+new Chart(document.getElementById('topProductsChart'), {
+    type: 'bar',
+    data: {
+        labels: @json($topProductsLabels),
+        datasets: [{
+            label: 'Số lượng bán',
+            data: @json($topProductsData),
+            backgroundColor: '#28a745aa'
+        }]
+    },
+    options: {
+        indexAxis: 'x',
+        responsive: false,
+maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { autoSkip: false } } }
+    }
+});
+
+new Chart(document.getElementById('topUsersChart'), {
+    type: 'bar',
+    data: {
+        labels: @json($topUsersLabels),
+        datasets: [{
+            label: 'Tổng chi tiêu',
+            data: @json($topUsersData),
+            backgroundColor: '#ffc107aa'
+        }]
+    },
+    options: {
+        indexAxis: 'x',
+    responsive: false,
+maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { autoSkip: false } } }
+    }
+});
+
+function showChart(cardId) {
+    const chartIds = [
+        'dailyRevenueCard', 'monthlyRevenueCard', 'yearlyRevenueCard',
+        'dailyOrderCard', 'monthlyOrderCard', 'yearlyOrderCard',
+        'monthlyUserCard', 'booksSoldCard',
+        'booksCreatedCard', 'booksImportedCard'
+    ];
 
     chartIds.forEach(id => {
         const el = document.getElementById(id);
-        if (el) {
-            el.style.display = id === cardId ? 'block' : 'none';
-        }
+        if (el) el.style.display = id === cardId ? 'block' : 'none';
     });
 }
-
 </script>
 @endpush

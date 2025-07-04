@@ -173,3 +173,9 @@ Route::get('/check-auth', function () {
         'user' => Auth::user()
     ]);
 });
+use App\Events\BookQuantityUpdated;
+Route::get('/test-event', function () {
+    event(new \App\Events\BookQuantityUpdated(2, 10));
+    \Log::info('Test event fired', ['bookId' => 2, 'quantity' => 10, 'user_id' => auth()->id() ?? 'null']);
+    return 'Event fired';
+});

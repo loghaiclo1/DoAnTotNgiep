@@ -35,7 +35,14 @@ class BookController extends Controller
                 $q->whereIn('NamXuatBan', $years);
             })
             ->when(!empty($statuses), function ($q) use ($statuses) {
-                $q->whereIn('TrangThai', $statuses);
+                $q->where(function ($query) use ($statuses) {
+                    if (in_array('0', $statuses)) {
+                        $query->orWhere('SoLuong', '=', 0); // Hết hàng
+                    }
+                    if (in_array('1', $statuses)) {
+                        $query->orWhere('SoLuong', '>', 0); // Còn hàng
+                    }
+                });
             })
             ->when(in_array($sort, ['MaSach', 'GiaBan', 'SoLuong', 'created_at', 'LuotMua', 'NamXuatBan']), function ($q) use ($sort, $direction) {
                 $q->orderBy($sort, $direction);
@@ -100,7 +107,11 @@ class BookController extends Controller
 
         $data['slug'] = Str::slug($data['TenSach']);
         $book->update($data);
-
+        event(new \App\Events\BookQuantityUpdated($book->MaSach, $book->SoLuong));
+        \Log::info('Event fired', [
+            'bookId' => $book->MaSach,
+            'quantity' => $book->SoLuong
+        ]);
         return redirect()->route('admin.books.index')->with('success', 'Cập nhật sách thành công!');
     }
 
