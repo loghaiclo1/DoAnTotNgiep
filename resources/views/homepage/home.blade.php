@@ -104,7 +104,10 @@
                             }
                         }
                     </script>
-
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Khám Phá Danh Mục Sách</h2>
+                        <p class="text-muted">Chọn thể loại yêu thích và khám phá kho sách đa dạng tại cửa hàng của chúng tôi.</p>
+                    </div>
                     <div class="swiper-wrapper">
                         @foreach ($demDMcha as $category)
                             <div class="swiper-slide">

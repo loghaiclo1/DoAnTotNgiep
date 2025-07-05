@@ -86,12 +86,17 @@
                                         <i class="bi bi-question-circle"></i>
                                         <span>Hỗ trợ khách hàng</span>
                                     </a>
-                                   <a href="{{ route('logout') }}"
-   class="logout-link d-flex align-items-center mb-1 py-2 px-3 rounded-3 text-danger" style="height: 54px">
-    <i class="bi bi-box-arrow-right me-2"></i>
-    <span>Đăng xuất</span>
-</a>
+                                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
 
+                                    <a href="#" 
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+                                    class="logout-link d-flex align-items-center mb-1 py-2 px-3 rounded-3 text-danger" 
+                                    style="height: 54px">
+                                        <i class="bi bi-box-arrow-right me-2"></i>
+                                        <span>Đăng xuất</span>
+                                    </a>
                                 </div>
                             </nav>
                         </div>
@@ -601,7 +606,19 @@
     });
 });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
 
-
+        if (tab) {
+            const tabTrigger = document.querySelector(`a[href="#${tab}"]`);
+            if (tabTrigger) {
+                const tabInstance = new bootstrap.Tab(tabTrigger);
+                tabInstance.show();
+            }
+        }
+    });
+</script>
 @endsection
 

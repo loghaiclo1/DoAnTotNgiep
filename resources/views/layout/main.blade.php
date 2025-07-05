@@ -98,15 +98,19 @@
                               <i class="bi bi-person-circle me-2"></i>
                               <span>Tài khoản</span>
                           </a>
-                          <a class="dropdown-item d-flex align-items-center" href="#">
+                          <a class="dropdown-item d-flex align-items-center" href=" {{ route('cart.index')}} ">
                               <i class="bi bi-bag-check me-2"></i>
                               <span>Giỏ hàng</span>
                           </a>
-                          <a class="dropdown-item d-flex align-items-center" href="#">
-                              <i class="bi bi-heart me-2"></i>
-                              <span>Yêu thích</span>
+                          <a class="dropdown-item d-flex align-items-center" href=" {{ route('account')}}?tab=addresses">
+                              <i class="bi bi-geo-alt me-2"></i>
+                              <span>Địa chỉ</span>  
                           </a>
-                          <a class="dropdown-item d-flex align-items-center" href="#">
+                          <a class="dropdown-item d-flex align-items-center" href=" {{ route('account')}}?tab=reviews">
+                              <i class="bi bi-star me-2"></i>
+                              <span>Đánh giá</span>
+                          </a>
+                          <a class="dropdown-item d-flex align-items-center" href=" {{ route('account')}}?tab=settings">
                               <i class="bi bi-gear me-2"></i>
                               <span>Cài đặt</span>
                           </a>
@@ -130,21 +134,11 @@
                       </div>
                   @endguest
               </div>
-
-
             </div>
-
-            <!-- Wishlist -->
-            <a href="#" class="header-action-btn d-none d-md-block">
-              <i class="bi bi-heart"></i>
-              <span class="badge">0</span>
-            </a>
 
             <a href="{{ url('/cart') }}" class="header-action-btn">
                 <i class="bi bi-cart3"></i>
-                {{-- <span class="badge"></span> --}}
             </a>
-
 
             <!-- Mobile Navigation Toggle -->
             <i class="mobile-nav-toggle d-xl-none bi bi-list me-0"></i>
@@ -255,7 +249,6 @@
               </li><!-- End Products Mega Menu 2 -->
 
               <li><a href=" {{ url('/contact') }} " class=" {{ request()->is('contact') ? 'active' : '' }} ">Liên hệ</a></li>
-
             </ul>
           </nav>
         </div>

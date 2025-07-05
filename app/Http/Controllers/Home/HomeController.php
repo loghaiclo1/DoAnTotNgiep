@@ -70,14 +70,14 @@ class HomeController extends Controller
             ->get();
     }
 
-    private function getBestSellerBooks()
-    {
-        return Book::where('TrangThai', 1)
-            ->where('SoLuong', '>', 0) // lọc sách còn hàng
-            ->orderBy('luotmua', 'desc')
-            ->take(4)
-            ->get();
-    }
+        private function getBestSellerBooks()
+        {
+            return Book::where('TrangThai', 1)
+                ->where('SoLuong', '>', 0) // lọc sách còn hàng
+                ->orderBy('luotmua', 'desc')
+                ->take(4)
+                ->get();
+        }
     private function getFilterCategories($books)
     {
         return $books->map(function ($book) {
