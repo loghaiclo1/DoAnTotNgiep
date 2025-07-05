@@ -300,6 +300,7 @@ return [
 
     'menu' => [
         ['header' => 'QUẢN LÝ WEBSITE'],
+
         [
             'text' => 'Thống kê',
             'url'  => 'admin',
@@ -334,6 +335,11 @@ return [
             'text' => 'Liên hệ',
             'url'  => 'admin/contacts',
             'icon' => 'fas fa-envelope',
+        ],
+        [
+            'text' => 'Quản lý Footer',
+            'url'  => 'admin/footer',
+            'icon' => 'fas fa-shoe-prints', // Hoặc chọn icon khác như 'fas fa-link'
         ],
         [
             'text' => 'Phiếu nhập',
