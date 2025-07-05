@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckAccountStatus;
 use App\Events\AccountLocked;
+use App\Http\Controllers\Home\FooterClientController;
 use App\Http\Controllers\Home\{
     HomeController,
     ContactController,
@@ -52,6 +53,8 @@ Route::prefix('about')->name('about.')->group(function () {
 // Danh mục
 Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
+
+
 
 // Chi tiết sản phẩm
 Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
@@ -130,6 +133,12 @@ Route::post('/khuyenmai/remove', [KhuyenMaiController::class, 'remove'])->name('
 
 // Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
+    Route::get('footer', [App\Http\Controllers\Admin\FooterController::class, 'index'])->name('footer.index');
+    Route::get('footer/{id}/edit', [App\Http\Controllers\Admin\FooterController::class, 'edit'])->name('footer.edit');
+    Route::put('footer/{id}', [App\Http\Controllers\Admin\FooterController::class, 'update'])->name('footer.update');
+    Route::get('footer/create', [App\Http\Controllers\Admin\FooterController::class, 'create'])->name('footer.create');
+    Route::post('footer', [App\Http\Controllers\Admin\FooterController::class, 'store'])->name('footer.store');
+    Route::delete('footer/{id}', [App\Http\Controllers\Admin\FooterController::class, 'destroy'])->name('footer.destroy');
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -157,25 +166,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
 });
 
 Route::get('/account/order-status/{id}', [AccountController::class, 'getOrderStatus'])->name('account.order-status');
-Route::get('/test-broadcast', function () {
-    if (!Auth::check()) {
-        return 'Chưa đăng nhập!';
-    }
-
-    broadcast(new AccountLocked(auth()->id()));
-
-    return '✅ Đã phát sự kiện AccountLocked cho user ID: ' . auth()->id();
-})->middleware('auth');
-
-Route::get('/check-auth', function () {
-    return response()->json([
-        'auth' => Auth::check(),
-        'user' => Auth::user()
-    ]);
-});
-use App\Events\BookQuantityUpdated;
-Route::get('/test-event', function () {
-    event(new \App\Events\BookQuantityUpdated(2, 10));
-    \Log::info('Test event fired', ['bookId' => 2, 'quantity' => 10, 'user_id' => auth()->id() ?? 'null']);
-    return 'Event fired';
-});
+Route::get('/{slug}', [FooterClientController::class, 'show'])->name('footer.show');

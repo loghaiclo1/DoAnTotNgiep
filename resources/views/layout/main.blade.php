@@ -60,7 +60,9 @@
           <a href="{{ url("/")}}" class="logo d-flex align-items-center">
             <!-- Uncomment the line below if you also wish to use an image logo -->
             <!-- <img src="assets/img/logo.webp" alt=""> -->
-            <h1 class="sitename">BookShop</h1>
+            <h1 class="sitename">
+                {{ $thongTinChung->ten_cong_ty ?? 'BookShop' }}
+            </h1>
           </a>
 
           <!-- Search -->
@@ -126,7 +128,7 @@
                   @guest
                       {{-- Trạng thái: Chưa đăng nhập --}}
                       <div class="dropdown-header">
-                          <h6>Chào mừng đến <span class="sitename">BookShop</span></h6>
+                          <h6>Chào mừng đến <span class="sitename">   {{ $thongTinChung->ten_cong_ty ?? 'BookShop' }}</span></h6>
                       </div>
                       <div class="dropdown-footer">
                           <a href="{{ url('/login') }}" class="btn btn-primary w-100 mb-2">Đăng nhập</a>
@@ -312,9 +314,16 @@
                     <div class="footer-widget footer-about">
                         <a href=" #" class="logo">
                             @if(isset($thongTinChung) && $thongTinChung->logo_url)
-                            {{-- <img src="{{ asset($thongTinChung->logo_url) }}" alt="{{ $thongTinChung->ten_cong_ty ?? 'Logo' }}" class="sitename"> --}}
+                            <span class="sitename fw-bold text-primary" style="font-size: 24px;">
+                                <a href="{{ route('home') }}" class="text-decoration-none">
+                                <h1 class="sitename">
+                                    {{ $thongTinChung->ten_cong_ty ?? 'BookShop' }}
+                                </h1>
+                                  </a>
+                            </span>
                         @else
-                            <span class="sitename">BookShop</span>
+                        <a href="{{ route('/') }}" class="text-decoration-none">
+                        </a>
                         @endif
                         </a>
                         @if(isset($thongTinChung))
@@ -339,53 +348,28 @@
                     </div>
                 </div>
 
-                <!-- Shop (Dịch Vụ) -->
+                @foreach($duLieuChanTrang as $tenMuc => $danhSachMucCon)
                 <div class="col-lg-2 col-md-6 col-sm-6">
                     <div class="footer-widget">
-                        <h4>Dịch Vụ</h4>
+                        <h4>{{ $tenMuc }}</h4>
                         <ul class="footer-links">
-                            @if(isset($duLieuChanTrang['Dịch Vụ']))
-                                @foreach($duLieuChanTrang['Dịch Vụ'] as $item)
-                                    <li><a href="{{ $item->duong_dan ?? '#' }}">{{ $item->noi_dung }}</a></li>
-                                @endforeach
-                            @else
+                            @forelse($danhSachMucCon as $item)
+                                <li>
+                                    @php
+                                        // Nếu duong_dan bắt đầu bằng dấu / thì là link nội bộ (route thật), còn lại là slug động
+                                        $isInternal = str_starts_with($item->duong_dan, '/');
+                                        $url = $isInternal ? url($item->duong_dan) : route('footer.show', ['slug' => $item->duong_dan]);
+                                    @endphp
+                                    <a href="{{ $url }}">{{ $item->ten_muc_con }}</a>
+                                </li>
+                            @empty
                                 <li>Không có dữ liệu</li>
-                            @endif
+                            @endforelse
                         </ul>
                     </div>
                 </div>
+            @endforeach
 
-                <!-- Support (Hỗ Trợ) -->
-                <div class="col-lg-2 col-md-6 col-sm-6">
-                    <div class="footer-widget">
-                        <h4>Hỗ Trợ</h4>
-                        <ul class="footer-links">
-                            @if(isset($duLieuChanTrang['Hỗ Trợ']))
-                                @foreach($duLieuChanTrang['Hỗ Trợ'] as $item)
-                                    <li><a href="{{ $item->duong_dan ?? '#' }}">{{ $item->noi_dung }}</a></li>
-                                @endforeach
-                            @else
-                                <li>Không có dữ liệu</li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Company (Tài Khoản Của Tôi) -->
-                <div class="col-lg-2 col-md-6 col-sm-6">
-                    <div class="footer-widget">
-                        <h4>Tài khoản của tôi</h4>
-                        <ul class="footer-links">
-                            @if(isset($duLieuChanTrang['Tài Khoản Của Tôi']))
-                                @foreach($duLieuChanTrang['Tài Khoản Của Tôi'] as $item)
-                                    <li><a href="{{ $item->duong_dan ?? '#' }}">{{ $item->noi_dung }}</a></li>
-                                @endforeach
-                            @else
-                                <li>Không có dữ liệu</li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
 
                 <!-- Download App + Social Links -->
                 <div class="col-lg-3 col-md-6 col-sm-6">
@@ -603,76 +587,5 @@
 <script src="https://unpkg.com/laravel-echo/dist/echo.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    window.Pusher = Pusher;
-    window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: '{{ env("PUSHER_APP_KEY") }}',
-        cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
-        forceTLS: true,
-        encrypted: true
-    });
-
-    @if (Auth::check())
-        const userId = {{ Auth::id() }};
-        console.log('User ID:', userId);
-
-        window.Echo.private(`user.${userId}`)
-            .listen('.account.locked', (e) => {
-                console.log('Sự kiện account.locked nhận được:', e);
-                Swal.fire({
-                    title: 'Tài khoản bị khóa',
-                    text: 'Tài khoản của bạn đã bị khóa. Bạn sẽ được đăng xuất.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    fetch('/logout', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json'
-                        },
-                        credentials: 'same-origin'
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.href = '/login';
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Lỗi fetch logout:", err);
-                        window.location.href = '/login';
-                    });
-                });
-            })
-            .listen('.account.deleted', (e) => {
-                console.log('Sự kiện account.deleted nhận được:', e);
-                Swal.fire({
-                    title: 'Tài khoản đã bị xóa',
-                    text: 'Tài khoản của bạn đã bị xóa khỏi hệ thống.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    fetch('/logout', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json'
-                        },
-                        credentials: 'same-origin'
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.href = '/login';
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Lỗi fetch logout:", err);
-                        window.location.href = '/login';
-                    });
-                });
-            });
-    @endif
-</script>
 @stack('scripts')
 </body></html>

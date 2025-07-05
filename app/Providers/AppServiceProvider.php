@@ -30,30 +30,29 @@ class AppServiceProvider extends ServiceProvider
             require base_path('routes/channels.php');
         }
     }
-
     protected function bootViewComposer()
     {
         try {
             View::composer('*', function ($view) {
                 $thongTinChung = Footer::where('loai_du_lieu', 'thong_tin_chung')->first();
-                $tatCaDuLieu = Footer::all();
-                $mucCon = Footer::where('loai_du_lieu', 'muc_con')
+
+                // Lấy các mục con (mục điều khoản, hỗ trợ...)
+                $duLieuChanTrang = Footer::where('loai_du_lieu', 'muc_con')
+                    ->select('ten_muc', 'ten_muc_con', 'duong_dan')
                     ->get()
-                    ->groupBy('ten_muc');
+                    ->groupBy('ten_muc'); // group theo tên menu lớn: Dịch Vụ, Hỗ Trợ...
 
                 $view->with([
-                    'dmWithTop3'     => $this->getDmWithTop3ByParent(1),
-                    'dmWithTop3QT'   => $this->getDmWithTop3ByParent(2),
-                    'thongTinChung'  => $thongTinChung,
-                    'duLieuChanTrang'=> $mucCon,
-                    'tatCaDuLieu'    => $tatCaDuLieu,
+                    'dmWithTop3'       => $this->getDmWithTop3ByParent(1),
+                    'dmWithTop3QT'     => $this->getDmWithTop3ByParent(2),
+                    'thongTinChung'    => $thongTinChung,
+                    'duLieuChanTrang'  => $duLieuChanTrang,
                 ]);
             });
         } catch (\Exception $e) {
             \Log::error("View Composer Error: " . $e->getMessage());
         }
     }
-
 
     private function getDmWithTop3ByParent($parentId)
     {
