@@ -149,32 +149,52 @@
                                     <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}"
                                         loading="lazy">
                                     <div class="product-actions">
-                                        <button class="btn-wishlist" type="button" aria-label="Thêm vào yêu thích">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
                                         <button class="btn-quickview" type="button" aria-label="Xem nhanh">
-                                            <i class="bi bi-eye"></i>
+                                            <a href=" {{route('product.detail', $book->slug)}} "><i class="bi bi-eye"></i></a>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="product-info">
-                                    <h3 class="product-title">
+                                    <h3 class="product-title" style="height: 20px;">
                                         <a href="{{ route('product.detail', $book->slug) }}">{{ $book->TenSach }}</a>
                                     </h3>
                                     <div class="product-price">
                                         <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
                                     </div>
                                     <div class="product-quantity">
-                                        <span><span class="book-quantity"
-                                            ></span></span>
+                                        <span><span class="book-quantity"></span></span>
                                     </div>
-                                    <div class="product-rating">
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            <i class="bi {{ $i <= 5 - $index ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                    @php
+                                        $average = number_format($book->avg_rating ?? 0, 1);
+                                        $reviewCount = $book->review_count ?? 0;
+
+                                        $fullStars = floor($average);
+                                        $halfStar = ($average - $fullStars) >= 0.5;
+                                        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+                                    @endphp
+
+                                    <div class="product-rating" style="margin-bottom: 5px">
+                                        {{-- Sao đầy --}}
+                                        @for ($i = 0; $i < $fullStars; $i++)
+                                            <i class="bi bi-star-fill text-warning"></i>
                                         @endfor
-                                        <span class="rating-count">({{ 10 + $index * 5 }} đánh giá)</span>
+
+                                        {{-- Nửa sao --}}
+                                        @if ($halfStar)
+                                            <i class="bi bi-star-half text-warning"></i>
+                                        @endif
+
+                                        {{-- Sao rỗng --}}
+                                        @for ($i = 0; $i < $emptyStars; $i++)
+                                            <i class="bi bi-star text-warning"></i>
+                                        @endfor
+
+                                        <span class="rating-count">({{ $book->reviews_count }} đánh giá)</span>
                                     </div>
+
+                                    <div style="color: #7A7E7F; margin-bottom: 5px;">Đã bán {{ $book->LuotMua}} </div>
+
                                     <div class="add-to-cart-container" data-book-id="{{ $book->MaSach }}">
                                         @if ($book->SoLuong <= 0)
                                             <button class="btn btn-secondary btn-add-to-cart btn-disabled" disabled>
@@ -252,9 +272,32 @@
                                     <div class="product-quantity">
                                         <span><span class="book-quantity" data-book-id="{{ $book->MaSach }}"></span></span>
                                     </div>
-                                    <div class="product-rating">
-                                        <span>({{ $book->LuotMua }} lượt bán)</span>
-                                    </div>
+                                    @php
+                                        $average = number_format($book->avg_rating ?? 0, 1);
+                                        $reviewCount = $book->reviews_count ?? 0;
+
+                                        $fullStars = floor($average);
+                                        $halfStar = ($average - $fullStars) >= 0.5;
+                                        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+                                    @endphp
+                                    <div class="product-rating" style="margin-bottom: 5px">
+                                        {{-- Sao đầy --}}
+                                        @for ($i = 0; $i < $fullStars; $i++)
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        @endfor 
+
+                                        {{-- Nửa sao --}}
+                                        @if ($halfStar)
+                                            <i class="bi bi-star-half text-warning"></i>
+                                        @endif  
+
+                                        {{-- Sao rỗng --}}
+                                        @for ($i = 0; $i < $emptyStars; $i++)
+                                            <i class="bi bi-star text-warning"></i>
+                                        @endfor 
+                                        <span class="rating-count">({{ $reviewCount }} đánh giá)</span>
+                                    </div> 
+                                    <div style="color: #7A7E7F; margin-bottom: 5px;">Đã bán {{ $book->LuotMua}} </div>
                                 </div>
                             </div>
                         </div>

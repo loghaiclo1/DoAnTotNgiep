@@ -21,14 +21,14 @@ class HomeController extends Controller
         $dmWithTop3 = $this->getDmWithTop3($dmCap2);
 
         $quotes = [
-        'Mỗi cuốn sách là một người thầy im lặng.',
-        'Đọc sách là cách trò chuyện với những bộ óc vĩ đại nhất.',
-        'Sách mở rộng thế giới, ngay cả khi bạn đang ngồi yên.',
-        'Tri thức là chìa khóa mở mọi cánh cửa thành công.',
-        'Một ngày không đọc là một ngày lãng phí.'
-    ];
+            'Mỗi cuốn sách là một người thầy im lặng.',
+            'Đọc sách là cách trò chuyện với những bộ óc vĩ đại nhất.',
+            'Sách mở rộng thế giới, ngay cả khi bạn đang ngồi yên.',
+            'Tri thức là chìa khóa mở mọi cánh cửa thành công.',
+            'Một ngày không đọc là một ngày lãng phí.'
+        ];
 
-    $randomQuote = $quotes[array_rand($quotes)];
+        $randomQuote = $quotes[array_rand($quotes)];
 
         return view('homepage.home', compact(
             'demDMcha',
@@ -70,14 +70,20 @@ class HomeController extends Controller
             ->get();
     }
 
-        private function getBestSellerBooks()
-        {
-            return Book::where('TrangThai', 1)
-                ->where('SoLuong', '>', 0) // lọc sách còn hàng
-                ->orderBy('luotmua', 'desc')
-                ->take(4)
-                ->get();
-        }
+    private function getBestSellerBooks()
+    {
+        return Book::where('TrangThai', 1)
+            ->where('SoLuong', '>', 0)
+            ->withCount(['reviews as reviews_count' => function ($query) {
+                $query->where('TrangThai', 1);
+            }])
+            ->withAvg(['reviews as avg_rating' => function ($query) {
+                $query->where('TrangThai', 1);
+            }], 'SoSao')
+            ->orderByDesc('luotmua')
+            ->take(4)
+            ->get();
+    }
     private function getFilterCategories($books)
     {
         return $books->map(function ($book) {

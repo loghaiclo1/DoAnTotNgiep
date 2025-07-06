@@ -54,8 +54,6 @@ Route::prefix('about')->name('about.')->group(function () {
 Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 
-
-
 // Chi tiết sản phẩm
 Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
 Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');

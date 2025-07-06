@@ -33,7 +33,6 @@ class OrderController extends Controller
             }
         }
 
-
         if ($status = $request->input('status')) {
             $query->where('TrangThai', $status);
         }
@@ -54,9 +53,8 @@ class OrderController extends Controller
         $perPage = (int) $request->input('per_page', 10); // mặc định 10
         $orders = $query->paginate($perPage)->appends($request->query());
 
-        return view('admin.orders.index', compact('orders'));
+        return view('admin.orders', compact('orders'));
     }
-
 
     public function show($id)
     {
@@ -118,10 +116,10 @@ class OrderController extends Controller
         $donhang->TrangThai = $trangThaiMoi;
         $donhang->save();
 
-
         event(new OrderStatusUpdated($donhang->MaHoaDon, $donhang->TrangThai));
         if ($trangThaiMoi === 'Hoàn tất') {
             app(\App\Http\Controllers\Home\InventoryController::class)->finalizeStock($donhang->MaHoaDon);
+
         }
         \Log::info('Gửi broadcast cho đơn hàng: ' . $donhang->MaHoaDon);
         return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
