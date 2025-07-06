@@ -53,9 +53,16 @@ class CategoryController extends Controller
 
         // Số lượng mỗi trang
         $perPage = $request->input('per_page', 12);
-
-        $books = $query->paginate($perPage)->appends($request->query());
-
+        
+        $books = $query
+            ->withCount(['reviews as reviews_count' => function ($query) {
+                $query->where('TrangThai', 1);
+            }])
+            ->withAvg(['reviews as avg_rating' => function ($query) {
+                $query->where('TrangThai', 1);
+            }], 'SoSao')
+            ->paginate($perPage)
+            ->appends($request->query());
 
         return view('homepage.category', compact('categories', 'minPrice', 'maxPrice', 'books'));
     }

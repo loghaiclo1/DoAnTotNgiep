@@ -19,11 +19,8 @@
 
         <div class="container">
             <div class="row">
-
                 <div class="col-lg-4 sidebar">
-
                     <div class="widgets-container">
-
                         <!-- Product Categories Widget -->
                         <div class="product-categories-widget widget-item">
                             <ul class="category-tree list-unstyled mb-0">
@@ -250,7 +247,7 @@
                             <div class="row gy-4">
                                 @foreach ($books as $book)
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="product-box">
+                                        <div class="product-box" style="height: 435px">
                                             <div class="product-thumb" style="position: relative; height: 261.33px;">
                                                 @if($book->giam_gia)
                                                     <span class="product-label product-label-sale">-{{ $book->giam_gia }}%</span>
@@ -279,7 +276,7 @@
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-details">
-                                                    <h3 class="product-title"><a href="{{ route('product.detail', $book->slug) }}">{{ $book->TenSach }}</a></h3>
+                                                    <h3 class="product-title" style="min-height: 20px"><a href="{{ route('product.detail', $book->slug) }}">{{ $book->TenSach }}</a></h3>
                                                     <div class="product-price">
                                                         @if($book->GiaGoc && $book->GiaGoc > $book->GiaBan)
                                                             <span class="original">{{ number_format($book->GiaGoc) }}đ</span>
@@ -287,14 +284,26 @@
                                                         <span class="sale">{{ number_format($book->GiaBan) }}đ</span>
                                                     </div>
                                                 </div>
-                                                <div class="product-rating-container">
+                                                <div class="product-rating-container" style="height: 0px;">
+                                                    @php
+                                                        $rating = $book->avg_rating ?? 0;
+                                                        $reviewsCount = $book->reviews_count ?? 0;
+                                                    @endphp
                                                     <div class="rating-stars">
                                                         @for ($i = 1; $i <= 5; $i++)
-                                                            <i class="bi {{ $i <= 4 ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                                            @if ($rating >= $i)
+                                                                <i class="bi bi-star-fill text-warning"></i>
+                                                            @elseif ($rating >= ($i - 0.5))
+                                                                <i class="bi bi-star-half text-warning"></i>
+                                                            @else
+                                                                <i class="bi bi-star text-warning"></i>
+                                                            @endif
                                                         @endfor
                                                     </div>
-                                                    <span class="rating-number">4.0</span>
+                                                    <span class="rating-number">{{ $reviewsCount }} đánh giá</span>
                                                 </div>
+                                                <div style="color: #7A7E7F; margin-bottom: 5px;">Đã bán {{ $book->LuotMua}} </div>
+
                                                 {{-- Màu hoặc các đặc điểm khác --}}
                                             </div>
                                         </div>
