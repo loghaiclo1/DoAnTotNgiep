@@ -40,7 +40,10 @@
                                 <div class="product-info">
                                     <h5 class="product-title"><a href="#">{{ $book->TenSach }}</a></h5>
                                     <div class="product-price">
-                                        <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                        <span class="current-price" data-book-id="{{ $book->MaSach }}">
+                                            {{ number_format($book->GiaBan, 0, ',', '.') }}₫
+                                        </span>
+
                                     </div>
                                     <div class="product-rating">
                                         {{-- @for ($i = 1; $i <= 5; $i++)

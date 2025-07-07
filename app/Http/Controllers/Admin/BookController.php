@@ -14,18 +14,29 @@ class BookController extends Controller
     {
         $query = $request->input('query');
         $sort = $request->input('sort', 'MaSach'); // mặc định sort theo id
-        $direction = $request->input('direction', 'desc'); // mới nhất
+        $direction = $request->input('direction', 'desc'); // mặc định mới nhất
 
         $categoryIds = (array) $request->input('category_id', []);
         $years = (array) $request->input('NamXuatBan', []);
         $statuses = (array) $request->input('TrangThai', []);
+
         $books = Book::with('category')
             ->when($query, function ($q) use ($query) {
                 $nonAccentQuery = $this->removeAccents($query);
-                $q->where(function ($q2) use ($query, $nonAccentQuery) {
+                $cleanedQuery = preg_replace('/[^0-9]/', '', $query); // loại bỏ ký tự không phải số
+
+                $q->where(function ($q2) use ($query, $nonAccentQuery, $cleanedQuery) {
+                    // Tìm theo tên sách hoặc mô tả gần đúng
                     $q2->where('TenSach', 'LIKE', "%$query%")
-                       ->orWhere('MoTa', 'LIKE', "%$query%")
-                       ->orWhereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", ["%$nonAccentQuery%"]);
+                        ->orWhere('MoTa', 'LIKE', "%$query%")
+                        ->orWhereRaw("LOWER(REPLACE(REPLACE(REPLACE(TenSach, 'đ', 'd'), 'Đ', 'D'), ' ', '')) LIKE ?", [
+                            '%' . str_replace(' ', '', strtolower($nonAccentQuery)) . '%'
+                        ]);
+
+                    // Tìm theo giá nếu người dùng nhập số
+                    if (is_numeric($cleanedQuery)) {
+                        $q2->orWhere('GiaBan', (int) $cleanedQuery);
+                    }
                 });
             })
             ->when(!empty($categoryIds), function ($q) use ($categoryIds) {
@@ -47,7 +58,6 @@ class BookController extends Controller
             ->when(in_array($sort, ['MaSach', 'GiaBan', 'SoLuong', 'created_at', 'LuotMua', 'NamXuatBan']), function ($q) use ($sort, $direction) {
                 $q->orderBy($sort, $direction);
             })
-
             ->paginate(10)
             ->appends($request->all());
 
@@ -88,6 +98,7 @@ class BookController extends Controller
     public function update(Request $request, $id)
     {
         $book = Book::findOrFail($id);
+
         $data = $request->validate([
             'TenSach' => 'required|string|max:255|unique:sach,TenSach,' . $book->MaSach . ',MaSach',
             'GiaNhap' => 'required|numeric|min:1000',
@@ -98,6 +109,7 @@ class BookController extends Controller
             'HinhAnh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'MoTa' => 'nullable|string',
         ]);
+
         if ($request->hasFile('HinhAnh')) {
             $file = $request->file('HinhAnh');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -106,14 +118,37 @@ class BookController extends Controller
         }
 
         $data['slug'] = Str::slug($data['TenSach']);
+
+
+        $oldPrice = $book->GiaBan;
+
         $book->update($data);
+
+        if ($oldPrice != $data['GiaBan']) {
+            event(new \App\Events\BookPriceUpdated(
+                $book->MaSach,
+                $book->TenSach,
+                $oldPrice,
+                $data['GiaBan']
+            ));
+
+            \Log::info('Giá sách đã thay đổi, phát sự kiện BookPriceUpdated', [
+                'bookId' => $book->MaSach,
+                'bookName' => $book->TenSach,
+                'oldPrice' => $oldPrice,
+                'newPrice' => $data['GiaBan']
+            ]);
+        }
+
         event(new \App\Events\BookQuantityUpdated($book->MaSach, $book->SoLuong));
         \Log::info('Event fired', [
             'bookId' => $book->MaSach,
             'quantity' => $book->SoLuong
         ]);
+
         return redirect()->route('admin.books.index')->with('success', 'Cập nhật sách thành công!');
     }
+
 
     public function destroy($id)
     {

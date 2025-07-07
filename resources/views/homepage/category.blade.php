@@ -279,9 +279,13 @@
                                                     <h3 class="product-title" style="min-height: 20px"><a href="{{ route('product.detail', $book->slug) }}">{{ $book->TenSach }}</a></h3>
                                                     <div class="product-price">
                                                         @if($book->GiaGoc && $book->GiaGoc > $book->GiaBan)
-                                                            <span class="original">{{ number_format($book->GiaGoc) }}đ</span>
+                                                        <span class="original current-price-original" data-book-id="{{ $book->MaSach }}">
+                                                            {{ number_format($book->GiaGoc, 0, ',', '.') }}đ
+                                                        </span>
                                                         @endif
-                                                        <span class="sale">{{ number_format($book->GiaBan) }}đ</span>
+                                                        <span class="sale current-price" data-book-id="{{ $book->MaSach }}">
+                                                            {{ number_format($book->GiaBan, 0, ',', '.') }}đ
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div class="product-rating-container" style="height: 0px;">

@@ -34,7 +34,9 @@
                                             alt="{{ $book1->TenSach }}">
                                         <div class="product-info d-flex flex-column align-items-center">
                                             <h4>{{ $book1->TenSach }}</h4>
-                                            <span class="price">{{ number_format($book1->GiaBan, 0, ',', '.') }}₫</span>
+                                            <span class="price current-price" data-book-id="{{ $book1->MaSach }}">
+                                                {{ number_format($book1->GiaBan, 0, ',', '.') }}₫
+                                            </span>
                                         </div>
                                     </a>
                                 </div>
@@ -49,7 +51,9 @@
                                             alt="{{ $book2->TenSach }}">
                                         <div class="product-info d-flex flex-column align-items-center">
                                             <h4>{{ $book2->TenSach }}</h4>
-                                            <span class="price">{{ number_format($book2->GiaBan, 0, ',', '.') }}₫</span>
+                                            <span class="price current-price" data-book-id="{{ $book2->MaSach }}">
+                                                {{ number_format($book2->GiaBan, 0, ',', '.') }}₫
+                                            </span>
                                         </div>
                                     </a>
                                 </div>
@@ -160,10 +164,12 @@
                                         <a href="{{ route('product.detail', $book->slug) }}">{{ $book->TenSach }}</a>
                                     </h3>
                                     <div class="product-price">
-                                        <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                        <span class="current-price" data-book-id="{{ $book->MaSach }}">
+                                            {{ number_format($book->GiaBan, 0, ',', '.') }}₫
+                                        </span>
                                     </div>
                                     <div class="product-quantity">
-                                        <span><span class="book-quantity"></span></span>
+                                        <span><span class="book-quantity" hide></span></span hide>
                                     </div>
                                     @php
                                         $average = number_format($book->avg_rating ?? 0, 1);
@@ -267,7 +273,9 @@
                                         <a href="{{ route('product.detail', ['slug' => $book->slug]) }}">{{ $book->TenSach }}</a>
                                     </h5>
                                     <div class="product-price">
-                                        <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                        <span class="current-price" data-book-id="{{ $book->MaSach }}">
+                                            {{ number_format($book->GiaBan, 0, ',', '.') }}₫
+                                        </span>
                                     </div>
                                     <div class="product-quantity">
                                         <span><span class="book-quantity" data-book-id="{{ $book->MaSach }}"></span></span>
@@ -284,19 +292,19 @@
                                         {{-- Sao đầy --}}
                                         @for ($i = 0; $i < $fullStars; $i++)
                                             <i class="bi bi-star-fill text-warning"></i>
-                                        @endfor 
+                                        @endfor
 
                                         {{-- Nửa sao --}}
                                         @if ($halfStar)
                                             <i class="bi bi-star-half text-warning"></i>
-                                        @endif  
+                                        @endif
 
                                         {{-- Sao rỗng --}}
                                         @for ($i = 0; $i < $emptyStars; $i++)
                                             <i class="bi bi-star text-warning"></i>
-                                        @endfor 
+                                        @endfor
                                         <span class="rating-count">({{ $reviewCount }} đánh giá)</span>
-                                    </div> 
+                                    </div>
                                     <div style="color: #7A7E7F; margin-bottom: 5px;">Đã bán {{ $book->LuotMua}} </div>
                                 </div>
                             </div>

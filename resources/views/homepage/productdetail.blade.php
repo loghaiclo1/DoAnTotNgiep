@@ -39,7 +39,9 @@
                                 <h1 class="product-title">{{ $book->TenSach }}</h1>
 
                                 <div class="product-price-container mb-4">
-                                    <span class="current-price">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</span>
+                                    <span class="current-price" data-book-id="{{ $book->MaSach }}">
+                                        {{ number_format($book->GiaBan, 0, ',', '.') }}₫
+                                    </span>
                                     @if ($book->GiaCu)
                                         <span class="original-price">{{ number_format($book->GiaCu, 0, ',', '.') }}₫</span>
                                         <span class="discount-badge">-{{ round(100 - ($book->GiaBan / $book->GiaCu) * 100) }}%</span>

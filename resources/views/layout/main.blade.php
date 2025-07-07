@@ -6,7 +6,7 @@
   <title>@yield('title', 'BookShop - Trang chủ')</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
-
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <meta name="robots" content="noindex, nofollow">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <script>

@@ -94,8 +94,9 @@
                                                 </div>
                                                 <div class="col-lg-2 col-12 text-center">
                                                     <div class="price-tag">
-                                                        <span
-                                                            class="current-price">{{ number_format($item['price'], 0, ',', '.') }}₫</span>
+                                                        <span class="current-price" data-book-id="{{ $id }}">
+                                                            {{ number_format($item['price'], 0, ',', '.') }}₫
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-2 col-12 text-center">
@@ -145,9 +146,9 @@
                     <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
                         <div class="cart-summary">
                             <h4 class="summary-title">Tổng đơn hàng</h4>
-                            <div class="summary-item">
+                            <div class="summary-item" hidden>
                                 <span class="summary-label"></span>
-                                <span class="summary-value" id="subtotal">{{ number_format($total, 0, ',', '.') }}₫</span>
+                                <span  class="summary-value" id="subtotal">{{ number_format($total, 0, ',', '.') }}₫</span>
                             </div>
                             <div class="summary-total">
                                 <span class="summary-label">Tổng cộng</span>
