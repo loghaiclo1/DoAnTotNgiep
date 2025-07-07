@@ -90,9 +90,9 @@
                                         @csrf
                                     </form>
 
-                                    <a href="#" 
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
-                                    class="logout-link d-flex align-items-center mb-1 py-2 px-3 rounded-3 text-danger" 
+                                    <a href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                    class="logout-link d-flex align-items-center mb-1 py-2 px-3 rounded-3 text-danger"
                                     style="height: 54px">
                                         <i class="bi bi-box-arrow-right me-2"></i>
                                         <span>Đăng xuất</span>
@@ -603,6 +603,13 @@
 
     document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function() {
         loadWards(this.value, 'edit_phuong_xa_id');
+    });
+    document.getElementById('tinh_thanh_id')?.addEventListener('change', function () {
+        loadDistricts(this.value, 'quan_huyen_id');
+    });
+
+    document.getElementById('quan_huyen_id')?.addEventListener('change', function () {
+        loadWards(this.value, 'phuong_xa_id');
     });
 });
 </script>
