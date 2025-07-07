@@ -43,7 +43,6 @@
                                 </div>
                                 <h4>{{ $user->Ho . ' ' . $user->Ten }}</h4>
                                 <div class="user-status">
-                                    <i class="bi bi-award"></i>
                                     <span>{{ $user->role ?? 'Thành viên thường' }}</span>
                                 </div>
                             </div>
@@ -225,8 +224,9 @@
                                     <div class="settings-content">
                                         <div class="settings-section" data-aos="fade-up">
                                             <h3>Thông Tin Cá Nhân</h3>
-                                            {{-- <form class="settings-form" method="POST" action="{{ route('account.update') }}"> --}}
+                                            <form class="settings-form" method="POST" action="{{ route('account.update') }}" enctype="multipart/form-data">
                                             @csrf
+                                            @method('PUT')
                                             <div class="row g-3">
                                                 <div class="col-md-6">
                                                     <label for="firstName" class="form-label">Họ</label>
@@ -239,19 +239,15 @@
                                                         name="Ten" value="{{ auth()->user()->Ten }}" required>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <label for="email" class="form-label">Email</label>
                                                     <input type="email" class="form-control" id="email"
                                                         name="email" value="{{ auth()->user()->email }}" required>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <label for="phone" class="form-label">Số Điện Thoại</label>
-                                                    <input type="tel" class="form-control" id="phone"
-                                                        name="phone" value="{{ auth()->user()->SoDienThoai ?? '' }}">
+                                                <div class=" col-md-6 form-buttons">
+                                                    <label></label>
+                                                    <button type="submit" class="btn-save">Lưu Thay Đổi</button>
                                                 </div>
                                             </div>
-                                            <div class="form-buttons">
-                                                <button type="submit" class="btn-save">Lưu Thay Đổi</button>
-                                            </div>
+                                            
                                             </form>
                                         </div>
                                     </div>
@@ -261,87 +257,85 @@
                                 <!-- Reviews Tab -->
                                <div class="tab-pane fade" id="reviews" role="tabpanel">
 
-    {{-- 1. Chưa đánh giá trước --}}
-    <div class="section-header mt-2" data-aos="fade-up">
-        <h2>Chưa đánh giá</h2>
-    </div>
+                                    {{-- 1. Chưa đánh giá trước --}}
+                                    <div class="section-header mt-2" data-aos="fade-up">
+                                        <h2>Chưa đánh giá</h2>
+                                    </div>
 
-    <div class="reviews-grid">
-        @forelse($unreviewedBooks as $book)
-            @php
-                $bookModel = $book['book'];
-            @endphp
-            <div class="review-card" data-aos="fade-up">
-                <div class="review-header">
-                    <img src="{{ asset('image/book/' . ltrim($bookModel->HinhAnh ?? 'no-image.png', '/')) }}"
-                        alt="{{ $bookModel->TenSach ?? 'Sách' }}" class="product-image"
-                        loading="lazy">
-                    <div class="review-meta">
-                        <h4>
-                            <a href="{{ route('product.detail', $bookModel->slug) }}"
-                                class="text-decoration-none">
-                                {{ $bookModel->TenSach ?? 'Sách không tồn tại' }}
-                            </a>
-                        </h4>
-                        <div class="review-date">
-                            Đã mua:
-                            {{ \Carbon\Carbon::parse($book['order_date'])->format('d/m/Y') }}
-                        </div>
-                    </div>
-                </div>
-                <div class="review-footer">
-                    <a href="{{ route('review.create', ['MaSach' => $bookModel->MaSach]) }}"
-                        class="btn btn-primary">Viết đánh giá</a>
-                </div>
-            </div>
-        @empty
-            <p>Bạn đã đánh giá hết các sách đã mua.</p>
-        @endforelse
-        <div class="d-flex justify-content-center">
-            {{ $unreviewedBooks->links('pagination::bootstrap-5') }}
-        </div>
-    </div>
+                                    <div class="reviews-grid">
+                                        @forelse($unreviewedBooks as $book)
+                                            @php
+                                                $bookModel = $book['book'];
+                                            @endphp
+                                            <div class="review-card" data-aos="fade-up">
+                                                <div class="review-header">
+                                                    <img src="{{ asset('image/book/' . ltrim($bookModel->HinhAnh ?? 'no-image.png', '/')) }}"
+                                                        alt="{{ $bookModel->TenSach ?? 'Sách' }}" class="product-image"
+                                                        loading="lazy">
+                                                    <div class="review-meta">
+                                                        <h4>
+                                                            <a href="{{ route('product.detail', $bookModel->slug) }}"
+                                                                class="text-decoration-none">
+                                                                {{ $bookModel->TenSach ?? 'Sách không tồn tại' }}
+                                                            </a>
+                                                        </h4>
+                                                        <div class="review-date">
+                                                            Đã mua:
+                                                            {{ \Carbon\Carbon::parse($book['order_date'])->format('d/m/Y') }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="review-footer">
+                                                    <a href="{{ route('review.create', ['MaSach' => $bookModel->MaSach]) }}"
+                                                        class="btn btn-primary">Viết đánh giá</a>
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <p>Bạn đã đánh giá hết các sách đã mua.</p>
+                                        @endforelse
+                                        <div class="d-flex justify-content-center">
+                                            {{ $unreviewedBooks->links('pagination::bootstrap-5') }}
+                                        </div>
+                                    </div>
 
-    <hr class="my-4">
+                                    <hr class="my-4">
 
-    {{-- 2. Đánh giá của tôi sau --}}
-    <div class="section-header" data-aos="fade-up">
-        <h2>Đánh giá của tôi</h2>
-        <div class="header-actions">
-            <div class="dropdown">
-                <button class="filter-btn" data-bs-toggle="dropdown">
-                    <i class="bi bi-funnel"></i>
-                    <span>Sắp xếp:
-                        <span id="review-sort-text">
-                            @if (request('sort') === 'high')
-                                Từ cao đến thấp
-                            @elseif(request('sort') === 'low')
-                                Từ thấp đến cao
-                            @else
-                                Gần đây
-                            @endif
-                        </span>
-                    </span>
-                </button>
-                <ul class="dropdown-menu">
-                    <a href="#" class="dropdown-item review-sort" data-sort="recent">Gần đây</a>
-                    <a href="#" class="dropdown-item review-sort" data-sort="high">Từ cao đến thấp</a>
-                    <a href="#" class="dropdown-item review-sort" data-sort="low">Từ thấp đến cao</a>
-                </ul>
-            </div>
-        </div>
-    </div>
+                                    {{-- 2. Đánh giá của tôi sau --}}
+                                    <div class="section-header" data-aos="fade-up">
+                                        <h2>Đánh giá của tôi</h2>
+                                        <div class="header-actions">
+                                            <div class="dropdown">
+                                                <button class="filter-btn" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-funnel"></i>
+                                                    <span>Sắp xếp:
+                                                        <span id="review-sort-text">
+                                                            @if (request('sort') === 'high')
+                                                                Từ cao đến thấp
+                                                            @elseif(request('sort') === 'low')
+                                                                Từ thấp đến cao
+                                                            @else
+                                                                Gần đây
+                                                            @endif
+                                                        </span>
+                                                    </span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <a href="#" class="dropdown-item review-sort" data-sort="recent">Gần đây</a>
+                                                    <a href="#" class="dropdown-item review-sort" data-sort="high">Từ cao đến thấp</a>
+                                                    <a href="#" class="dropdown-item review-sort" data-sort="low">Từ thấp đến cao</a>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+                                    @if (session('success'))
+                                        <div class="alert alert-success">{{ session('success') }}</div>
+                                    @endif
 
-    <div id="review-list-container">
-        @include('homepage.partials.review_list', ['reviews' => $reviews])
-    </div>
-
-</div>
-
+                                    <div id="review-list-container">
+                                        @include('homepage.partials.review_list', ['reviews' => $reviews])
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

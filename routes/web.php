@@ -79,6 +79,8 @@ Route::prefix('cart')->name('cart.')->group(function () {
 // Tài khoản người dùng (đã đăng nhập)
 Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'index'])->name('account');
+    Route::put('/account/update', [AccountController::class, 'update'])->name('account.update');
+
     Route::post('/user/addresses', [AddressController::class, 'store'])->name('user.addresses.store');
     Route::delete('/user/addresses/{id}', [AddressController::class, 'destroy'])->name('user.addresses.destroy');
     Route::put('/user/addresses/{id}', [AddressController::class, 'update'])->name('user.addresses.update');
