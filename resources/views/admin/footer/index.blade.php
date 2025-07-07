@@ -11,6 +11,10 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    @if (session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
+
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -38,7 +42,14 @@
                     <td>{{ $footer->ten_cong_ty }}</td>
                     <td>
                         <a href="{{ route('admin.footer.edit', $footer->id) }}" class="btn btn-primary btn-sm">Sửa</a>
+
+                        <form action="{{ route('admin.footer.destroy', $footer->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xoá mục này không?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                        </form>
                     </td>
+
                 </tr>
                 <div class="modal fade" id="modalNoiDung{{ $footer->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $footer->id }}" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">

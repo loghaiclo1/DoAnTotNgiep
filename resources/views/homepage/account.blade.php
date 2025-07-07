@@ -91,9 +91,9 @@
                                     </form>
 
                                     <a href="#"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                        class="logout-link d-flex align-items-center mb-1 py-2 px-3 rounded-3 text-danger"
-                                        style="height: 54px">
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                    class="logout-link d-flex align-items-center mb-1 py-2 px-3 rounded-3 text-danger"
+                                    style="height: 54px">
                                         <i class="bi bi-box-arrow-right me-2"></i>
                                         <span>Đăng xuất</span>
                                     </a>

@@ -6,24 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Footer;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class FooterController extends Controller
 {
-    // Hiển thị danh sách điều khoản
     public function index()
     {
         $footers = Footer::orderBy('loai_du_lieu')->get();
         return view('admin.footer.index', compact('footers'));
     }
 
-    // Form tạo điều khoản mới
     public function create()
     {
         return view('admin.footer.create');
     }
 
-    // Lưu điều khoản mới
     public function store(Request $request)
     {
         $request->validate([
@@ -31,41 +27,47 @@ class FooterController extends Controller
             'ten_muc'        => 'required|string|max:255',
             'ten_muc_con'    => 'nullable|string|max:255',
             'noi_dung'       => 'nullable|string',
+            'duong_dan'      => 'nullable|string|max:255',
         ]);
 
-        $slugSource = $request->ten_muc_con ?: $request->ten_muc;
-        $slug = '/' . Str::slug($slugSource);
-
-        // Kiểm tra trùng slug
-        if (Footer::where('duong_dan', $slug)->exists()) {
-            return back()->withErrors(['ten_muc_con' => 'Tên mục con dẫn đã tồn tại!'])->withInput();
+        if ($request->loai_du_lieu !== 'muc_con') {
+            return back()->withErrors(['loai_du_lieu' => 'Chỉ được phép thêm dữ liệu loại mục con'])->withInput();
         }
 
-        Footer::create([
+        // Nếu là mạng xã hội hoặc user nhập sẵn thì lấy đường dẫn trực tiếp, ngược lại tạo slug
+        $slugSource = $request->duong_dan ?: '/' . Str::slug($request->ten_muc_con ?: $request->ten_muc);
+
+        // Kiểm tra trùng
+        if (Footer::where('duong_dan', $slugSource)->exists()) {
+            return back()->withErrors(['duong_dan' => 'Đường dẫn đã tồn tại!'])->withInput();
+        }
+
+       
+        $footer = Footer::create([
             'loai_du_lieu'   => $request->loai_du_lieu,
             'ten_muc'        => $request->ten_muc,
             'ten_muc_con'    => $request->ten_muc_con,
-            'duong_dan'      => $slug,
+            'duong_dan'      => $slugSource,
             'noi_dung'       => $request->noi_dung,
         ]);
 
-        return redirect()->route('admin.footer.index')->with('success', 'Thêm điều khoản thành công!');
+        return redirect()->route('admin.footer.edit', $footer->id)
+            ->with('success', 'Tạo mục thành công! Bạn có thể cập nhật nội dung chi tiết.');
     }
-
-    // Form sửa điều khoản
     public function edit($id)
     {
         $footer = Footer::findOrFail($id);
         return view('admin.footer.edit', compact('footer'));
     }
 
-    // Cập nhật điều khoản
     public function update(Request $request, $id)
     {
         $footer = Footer::findOrFail($id);
+
         if ($footer->ten_muc === 'Tài Khoản Của Tôi') {
-            return redirect()->back()->with('error', 'Không thể chỉnh sửa hoặc xoá các mục mặc định của hệ thống!');
+            return redirect()->back()->with('error', 'Không thể chỉnh sửa mục hệ thống!');
         }
+
         if ($footer->loai_du_lieu === 'thong_tin_chung') {
             $request->validate([
                 'ten_cong_ty' => 'required|string|max:255',
@@ -87,35 +89,38 @@ class FooterController extends Controller
                 'ten_muc'     => 'required|string|max:255',
                 'ten_muc_con' => 'nullable|string|max:255',
                 'noi_dung'    => 'nullable|string',
+                'duong_dan'   => 'nullable|string|max:255',
             ]);
 
-            $slugSource = $request->ten_muc_con ?: $request->ten_muc;
-            $slug = '/' . Str::slug($slugSource);
+            $slugSource = $request->duong_dan ?: '/' . Str::slug($request->ten_muc_con ?: $request->ten_muc);
 
-            // Kiểm tra trùng slug nhưng bỏ qua chính nó
-            $exists = Footer::where('duong_dan', $slug)->where('id', '!=', $footer->id)->exists();
+            // Kiểm tra trùng (bỏ qua chính mình)
+            $exists = Footer::where('duong_dan', $slugSource)->where('id', '!=', $footer->id)->exists();
             if ($exists) {
-                return back()->withErrors(['ten_muc_con' => 'Tên mục con dẫn đã tồn tại!'])->withInput();
+                return back()->withErrors(['duong_dan' => 'Đường dẫn đã tồn tại!'])->withInput();
             }
 
             $footer->update([
                 'ten_muc'     => $request->ten_muc,
                 'ten_muc_con' => $request->ten_muc_con,
-                'duong_dan'   => $slug,
+                'duong_dan'   => $slugSource,
                 'noi_dung'    => $request->noi_dung,
             ]);
         }
 
         return redirect()->route('admin.footer.index')->with('success', 'Cập nhật footer thành công!');
     }
-
-    // Xoá điều khoản
     public function destroy($id)
     {
-        if ($footer->ten_muc === 'Tài Khoản Của Tôi') {
-            return redirect()->back()->with('error', 'Không thể chỉnh sửa hoặc xoá các mục mặc định của hệ thống!');
-        }
         $footer = Footer::findOrFail($id);
+
+        if (
+            $footer->loai_du_lieu === 'thong_tin_chung' ||
+            $footer->ten_muc === 'Tài Khoản Của Tôi'
+        ) {
+            return redirect()->back()->with('error', 'Không thể xoá thông tin chung hoặc mục mặc định của hệ thống!');
+        }
+
         $footer->delete();
 
         return redirect()->route('admin.footer.index')->with('success', 'Xoá điều khoản thành công!');

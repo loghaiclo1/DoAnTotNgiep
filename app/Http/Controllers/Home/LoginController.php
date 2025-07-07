@@ -12,7 +12,7 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers, ThrottlesLogins;
 
-    public function username() 
+    public function username()
     {
         return 'email';
     }
@@ -32,7 +32,7 @@ class LoginController extends Controller
             $seconds = $this->limiter()->availableIn(
                 $this->throttleKey($request)
             );
-             
+
             return back()->withErrors(['email' => 'Bạn đã đăng nhập quá nhiều lần. Vui lòng thử lại sau ' . $seconds . ' giây ',]);
         }
 
@@ -58,7 +58,7 @@ class LoginController extends Controller
             }
 
             $this->clearLoginAttempts($request);
-    
+
             $user->update(['last_login_at' => now()]);
             // Gộp giỏ hàng
             (new \App\Http\Controllers\Home\CartController())->mergeCart();

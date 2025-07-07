@@ -9,28 +9,26 @@
 @section('content')
     <form action="{{ route('admin.footer.update', $footer->id) }}" method="POST">
         @csrf
-        @if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
-
         @method('PUT')
+
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
         @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         {{-- Nếu KHÔNG phải thong_tin_chung => HIỆN Thông tin chung --}}
         @if ($footer->loai_du_lieu !== 'thong_tin_chung')
             <div class="card shadow mb-3">
-                <div class="card-header bg-secondary text-white">
-                    Thông tin chung
-                </div>
+                <div class="card-header bg-secondary text-white">Thông tin chung</div>
                 <div class="card-body">
                     <div class="form-group">
                         <label>Loại dữ liệu</label>
@@ -48,13 +46,14 @@
                     </div>
 
                     <div class="form-group">
-
-                        <input type="text" name="duong_dan" class="form-control" value="{{ $footer->duong_dan }}" hidden>
+                        <label>Đường dẫn</label>
+                        <input type="text" name="duong_dan" class="form-control" value="{{ $footer->duong_dan }}">
+                        <small class="text-muted">Nếu là link mạng xã hội thì nhập đầy đủ, ví dụ: https://facebook.com/abc</small>
                     </div>
 
                     <div class="form-group">
-                        <label>Nội dung chi tiết của điều khoản</label>
-                        <textarea name="noi_dung" class="form-control" rows="10" placeholder="Ví dụ: Điều 1: ...&#10;Điều 2: ...">{{ old('noi_dung', $footer->noi_dung) }}</textarea>
+                        <label>Nội dung chi tiết</label>
+                        <textarea name="noi_dung" class="form-control" rows="8">{{ old('noi_dung', $footer->noi_dung) }}</textarea>
                     </div>
                 </div>
             </div>
@@ -63,9 +62,7 @@
         {{-- Nếu LÀ thong_tin_chung => HIỆN Thông tin công ty --}}
         @if ($footer->loai_du_lieu === 'thong_tin_chung')
             <div class="card shadow mb-3">
-                <div class="card-header bg-primary text-white">
-                    Thông tin công ty
-                </div>
+                <div class="card-header bg-primary text-white">Thông tin công ty</div>
                 <div class="card-body">
                     <div class="form-group">
                         <label>Tên web</label>
