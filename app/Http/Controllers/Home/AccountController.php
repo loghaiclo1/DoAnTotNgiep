@@ -48,19 +48,19 @@ class AccountController extends Controller
         $query = Hoadon::with(['chitiethoadon.sach', 'phuongthucthanhtoan', 'khachhang'])
             ->where('MaKhachHang', $user->MaKhachHang);
 
-           $activeTab = 'orders';
+        $activeTab = 'orders';
 
-if (
-    $request->query('tab') === 'reviews' ||
-    $request->has('reviews_ajax') ||
-    $request->has('sort')
-) {
-    $activeTab = 'reviews';
-} elseif ($request->query('tab') === 'addresses') {
-    $activeTab = 'addresses';
-} elseif ($request->query('tab') === 'settings') {
-    $activeTab = 'settings';
-}
+        if (
+            $request->query('tab') === 'reviews' ||
+            $request->has('reviews_ajax') ||
+            $request->has('sort')
+        ) {
+            $activeTab = 'reviews';
+        } elseif ($request->query('tab') === 'addresses') {
+            $activeTab = 'addresses';
+        } elseif ($request->query('tab') === 'settings') {
+            $activeTab = 'settings';
+        }
 
         // Xử lý tìm kiếm
         if ($request->filled('order_search')) {
@@ -192,7 +192,7 @@ if (
                 break;
         }
 
-$reviews = $reviewsQuery->paginate(5)->appends(['tab' => 'reviews']);
+        $reviews = $reviewsQuery->paginate(5)->appends(['tab' => 'reviews']);
 
         if ($request->ajax()) {
             if ($request->has('reviews_ajax')) {
@@ -227,4 +227,22 @@ $reviews = $reviewsQuery->paginate(5)->appends(['tab' => 'reviews']);
             'class' => $statusMap[$order->TrangThai] ?? 'processing'
         ]);
     }
+    public function update(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'Ho' => 'required|string|max:255',
+            'Ten' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:khachhang,email,' . $user->MaKhachHang. ',MaKhachHang',
+       ]);
+
+        $user->Ho = $validated['Ho'];
+        $user->Ten = $validated['Ten'];
+        $user->email = $validated['email'];
+        $user->save();
+
+        return redirect()->back()->with('success', 'Cập nhật thông tin thành công!');
+    }
+
 }

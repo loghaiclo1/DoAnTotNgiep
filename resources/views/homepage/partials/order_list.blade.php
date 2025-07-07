@@ -191,8 +191,8 @@
     @empty
         <p>Chưa có đơn hàng nào.</p>
     @endforelse
-    <div class="card-footer">
-        {{ $orders->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    <div class="card-footer" style="display: flex; justify-content: center;">
+        {{-- Pagination --}}
+        {{ $orders->appends(request()->query())->links('vendor.pagination.bootstrap-5') }}
     </div>
-
 </div>
