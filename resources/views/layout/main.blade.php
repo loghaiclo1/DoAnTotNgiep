@@ -287,27 +287,7 @@
 </div>
 
    <footer id="footer" class="footer">
-    <div class="footer-newsletter">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2>Tham Gia Bản Tin Của Chúng Tôi</h2>
-                    <p>Đăng ký để nhận ưu đãi đặc biệt, quà tặng miễn phí và những chương trình khuyến mãi hiếm có.</p>
-                    <form action="#" method="post" class="php-email-form">
-                        <div class="newsletter-form d-flex">
-                            <input type="email" name="email" placeholder="Địa chỉ email của bạn" required="">
-                            <button type="submit">Đăng ký</button>
-                        </div>
-                        <div class="loading">Đang xử lý...</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Yêu cầu đăng ký của bạn đã được gửi. Cảm ơn bạn!</div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer-main">
+    <div class="footer-main" style="background: rgba(10, 77, 184, 0.05)">
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-3 col-md-6 col-sm-12">

@@ -130,7 +130,7 @@
 
                         <!-- Product Details Tabs -->
                         <div class="row mt-5" data-aos="fade-up">
-                            <div class="col-12" style="margin-top: -50px">
+                            <div class="col-12" style="margin-top: -50px; height: 700px;">
                                 <div class="product-details-tabs">
                                     <ul class="nav nav-tabs" id="productTabs" role="tablist" style="margin-bottom: -10px">
                                         <li class="nav-item" role="presentation">
@@ -206,6 +206,41 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="related-books mt-5">
+                                <h2 style="text-align: center; margin-top: 20px; margin-bottom: 20px;">Sản phẩm liên quan</h2>
+                                <div class="row">
+                                    @forelse ($relatedBooks as $related)
+                                        <div class="col-md-3">
+                                            <div class="card" style="border: none;">
+                                                <a href="{{ route('product.detail', $related->slug) }}" 
+                                                style="width: 100%; height: 255px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                                                    <img src="{{ asset('image/book/' . $related->HinhAnh) }}" 
+                                                        class="card-img-top" 
+                                                        alt="{{ $related->TenSach }}" 
+                                                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                                </a>
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <a href="{{ route('product.detail', $related->TenSach) }}" style="color: #2d465e;">
+                                                            {{$related->TenSach}}
+                                                        </a>    
+                                                    </h5>
+                                                    <div style="display: flex; justify-content: space-between;">
+                                                        <p class="card-text text-danger">{{ number_format($related->GiaBan) }}đ</p>
+                                                        <p class="text-muted small">Đã bán: {{ $related->LuotMua ?? 0 }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <p>Không có sách liên quan.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+
                             </div>
                         </div>
                     </div>
