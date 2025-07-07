@@ -315,8 +315,7 @@
 
                 <!-- Nút xem tất cả -->
                 <div class="text-center mt-5 aos-init" data-aos="fade-up">
-                    <a href="{{ route('category.index') }}" class="view-all-btn">Xem tất cả sách <i
-                            class="bi bi-arrow-right"></i></a>
+                    <a href="{{ route('category.index') }}" class="view-all-btn">Xem tất cả sách <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </section><!-- /Product List Section -->

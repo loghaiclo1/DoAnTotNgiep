@@ -66,12 +66,20 @@ class BookController extends Controller
             return view('components.reviews-list', compact('reviews'))->render();
         }
 
+        $relatedBooks = Book::where('TrangThai', 1)
+            ->where('category_id', $book->category_id) // CÙNG THỂ LOẠI
+            ->where('MaSach', '!=', $book->MaSach)     // KHÁC CHÍNH NÓ
+            ->orderBy('LuotMua', 'desc')               // ƯU TIÊN SÁCH BÁN CHẠY
+            ->limit(4)
+            ->get();
+
         return view('homepage.productdetail', compact(
             'book',
             'reviewCount',
             'averageRating',
             'ratingDistribution',
-            'reviews'
+            'reviews',
+            'relatedBooks'
         ));
     }
 

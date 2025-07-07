@@ -85,7 +85,8 @@
                                         <i class="bi bi-question-circle"></i>
                                         <span>Hỗ trợ khách hàng</span>
                                     </a>
-                                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        style="display: none;">
                                         @csrf
                                     </form>
 
@@ -107,8 +108,9 @@
                                 <!-- Orders Tab -->
                                 <div class="tab-pane fade show active" id="orders" role ="tabpanel">
                                     <div class="section-header" data-aos="fade-up">
-                                        <div class="header-actions">
-                                            <form id="orderFilterForm" method="GET" action="{{ route('account') }}">
+                                        <div class="header-actions" style="width: 100%">
+                                            <form id="orderFilterForm" method="GET" action="{{ route('account') }}"
+                                                style="display: flex; width: 100%; justify-content: space-between;">
                                                 <div class="search-box">
                                                     <i class="bi bi-search"></i>
                                                     <input type="text" name="order_search" id="orderSearchInput"
@@ -116,17 +118,31 @@
                                                         value="{{ request('order_search') }}">
                                                 </div>
                                                 <div class="dropdown">
-                                                    <select name="status" id="statusFilter" class="form-select">
-                                                        <option value="Tất Cả Đơn Hàng" {{ request('status', 'Tất Cả Đơn Hàng') == 'Tất Cả Đơn Hàng' ? 'selected' : '' }}>Tất Cả Đơn Hàng</option>
-                                                        <option value="Đang chờ" {{ request('status') == 'Đang chờ' ? 'selected' : '' }}>Đang chờ</option>
-                                                        <option value="Đã xác nhận" {{ request('status') == 'Đã xác nhận' ? 'selected' : '' }}>Đã xác nhận</option>
-                                                        <option value="Đang giao hàng" {{ request('status') == 'Đang giao hàng' ? 'selected' : '' }}>Đang giao hàng</option>
-                                                        <option value="Hoàn tất" {{ request('status') == 'Hoàn tất' ? 'selected' : '' }}>Hoàn tất</option>
-                                                        <option value="Đã hủy" {{ request('status') == 'Đã hủy' ? 'selected' : '' }}>Đã hủy</option>
+                                                    <select name="status" id="statusFilter" class="form-select"
+                                                        style="height: 100%">
+                                                        <option value="Tất Cả Đơn Hàng"
+                                                            {{ request('status', 'Tất Cả Đơn Hàng') == 'Tất Cả Đơn Hàng' ? 'selected' : '' }}>
+                                                            Tất Cả Đơn Hàng</option>
+                                                        <option value="Đang chờ"
+                                                            {{ request('status') == 'Đang chờ' ? 'selected' : '' }}>Đang
+                                                            chờ</option>
+                                                        <option value="Đã xác nhận"
+                                                            {{ request('status') == 'Đã xác nhận' ? 'selected' : '' }}>Đã
+                                                            xác nhận</option>
+                                                        <option value="Đang giao hàng"
+                                                            {{ request('status') == 'Đang giao hàng' ? 'selected' : '' }}>
+                                                            Đang giao hàng</option>
+                                                        <option value="Hoàn tất"
+                                                            {{ request('status') == 'Hoàn tất' ? 'selected' : '' }}>Hoàn
+                                                            tất</option>
+                                                        <option value="Đã hủy"
+                                                            {{ request('status') == 'Đã hủy' ? 'selected' : '' }}>Đã hủy
+                                                        </option>
                                                     </select>
                                                 </div>
                                                 <button type="submit" class="btn btn-primary ms-2">Tìm</button>
-                                                <a href="{{ route('account') }}" class="btn btn-secondary ms-2">Xóa bộ lọc</a>
+                                                <a href="{{ route('account') }}" class="btn btn-secondary ms-2">Xóa bộ
+                                                    lọc</a>
                                             </form>
                                         </div>
                                     </div>
@@ -224,30 +240,31 @@
                                     <div class="settings-content">
                                         <div class="settings-section" data-aos="fade-up">
                                             <h3>Thông Tin Cá Nhân</h3>
-                                            <form class="settings-form" method="POST" action="{{ route('account.update') }}" enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label for="firstName" class="form-label">Họ</label>
-                                                    <input type="text" class="form-control" id="firstName"
-                                                        name="Ho" value="{{ auth()->user()->Ho }}" required>
+                                            <form class="settings-form" method="POST"
+                                                action="{{ route('account.update') }}" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="firstName" class="form-label">Họ</label>
+                                                        <input type="text" class="form-control" id="firstName"
+                                                            name="Ho" value="{{ auth()->user()->Ho }}" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="lastName" class="form-label">Tên</label>
+                                                        <input type="text" class="form-control" id="lastName"
+                                                            name="Ten" value="{{ auth()->user()->Ten }}" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="email" class="form-control" id="email"
+                                                            name="email" value="{{ auth()->user()->email }}" required>
+                                                    </div>
+                                                    <div class=" col-md-6 form-buttons">
+                                                        <label></label>
+                                                        <button type="submit" class="btn-save">Lưu Thay Đổi</button>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <label for="lastName" class="form-label">Tên</label>
-                                                    <input type="text" class="form-control" id="lastName"
-                                                        name="Ten" value="{{ auth()->user()->Ten }}" required>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <input type="email" class="form-control" id="email"
-                                                        name="email" value="{{ auth()->user()->email }}" required>
-                                                </div>
-                                                <div class=" col-md-6 form-buttons">
-                                                    <label></label>
-                                                    <button type="submit" class="btn-save">Lưu Thay Đổi</button>
-                                                </div>
-                                            </div>
-                                            
+
                                             </form>
                                         </div>
                                     </div>
@@ -255,7 +272,7 @@
                                 </div>
 
                                 <!-- Reviews Tab -->
-                               <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="tab-pane fade" id="reviews" role="tabpanel">
 
                                     {{-- 1. Chưa đánh giá trước --}}
                                     <div class="section-header mt-2" data-aos="fade-up">
@@ -320,9 +337,12 @@
                                                     </span>
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <a href="#" class="dropdown-item review-sort" data-sort="recent">Gần đây</a>
-                                                    <a href="#" class="dropdown-item review-sort" data-sort="high">Từ cao đến thấp</a>
-                                                    <a href="#" class="dropdown-item review-sort" data-sort="low">Từ thấp đến cao</a>
+                                                    <a href="#" class="dropdown-item review-sort"
+                                                        data-sort="recent">Gần đây</a>
+                                                    <a href="#" class="dropdown-item review-sort"
+                                                        data-sort="high">Từ cao đến thấp</a>
+                                                    <a href="#" class="dropdown-item review-sort"
+                                                        data-sort="low">Từ thấp đến cao</a>
                                                 </ul>
                                             </div>
                                         </div>
@@ -444,39 +464,43 @@
                     </div>
                 </div>
                 <!-- Modal chỉnh sửa đánh giá -->
-                <div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <form method="POST" id="editReviewForm">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h5 class="modal-title" id="editReviewModalLabel">Sửa đánh giá</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                        </div>
-                        <div class="modal-body">
-                        <input type="hidden" id="editReviewId" name="review_id">
-                        <div class="mb-3">
-                            <label class="form-label d-block">Số sao</label>
-                            <div id="editStarContainer">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <i class="bi bi-star star-edit" data-value="{{ $i }}" style="font-size: 1.5rem; cursor: pointer; color: #ccc;"></i>
-                                @endfor
+                <div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form method="POST" id="editReviewForm">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editReviewModalLabel">Sửa đánh giá</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Đóng"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" id="editReviewId" name="review_id">
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Số sao</label>
+                                        <div id="editStarContainer">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star star-edit" data-value="{{ $i }}"
+                                                    style="font-size: 1.5rem; cursor: pointer; color: #ccc;"></i>
+                                            @endfor
+                                        </div>
+                                        <input type="hidden" id="editSoSao" name="SoSao" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editNoiDung" class="form-label">Nội dung</label>
+                                        <textarea id="editNoiDung" name="NoiDung" class="form-control" rows="4" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                </div>
                             </div>
-                            <input type="hidden" id="editSoSao" name="SoSao" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editNoiDung" class="form-label">Nội dung</label>
-                            <textarea id="editNoiDung" name="NoiDung" class="form-control" rows="4" required></textarea>
-                        </div>
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                        </div>
+                        </form>
                     </div>
-                    </form>
-                </div>
                 </div>
             </div>
 
@@ -490,136 +514,135 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.hash === '#reviews') {
-        const reviewsTab = document.querySelector('a[href="#reviews"]');
-        if (reviewsTab) {
-            new bootstrap.Tab(reviewsTab).show();
-        }
-    }
-
-    // Các hàm load địa chỉ (Giữ nguyên không thay đổi)
-    function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
-        fetch(`/api/quan-huyen/${provinceId}`)
-            .then(response => response.json())
-            .then(data => {
-                const districtSelect = document.getElementById(districtSelectId);
-                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                data.forEach(item => {
-                    districtSelect.innerHTML +=
-                        `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
-                });
-
-                if (resetWard) {
-                    const wardSelect = document.getElementById(districtSelectId.replace('quan_huyen',
-                        'phuong_xa'));
-                    if (wardSelect) wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.location.hash === '#reviews') {
+                const reviewsTab = document.querySelector('a[href="#reviews"]');
+                if (reviewsTab) {
+                    new bootstrap.Tab(reviewsTab).show();
                 }
-            })
-            .catch(err => {
-                console.error('Lỗi tải Quận/Huyện:', err);
-                Toastify({
-                    text: "Lỗi khi tải Quận/Huyện. Vui lòng thử lại!",
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#dc3545",
-                }).showToast();
-            });
-    }
+            }
 
-    function loadWards(districtId, wardSelectId, selectedId = null) {
-        fetch(`/api/phuong-xa/${districtId}`)
-            .then(response => response.json())
-            .then(data => {
-                const wardSelect = document.getElementById(wardSelectId);
-                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                data.forEach(item => {
-                    wardSelect.innerHTML +=
-                        `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+            // Các hàm load địa chỉ (Giữ nguyên không thay đổi)
+            function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
+                fetch(`/api/quan-huyen/${provinceId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const districtSelect = document.getElementById(districtSelectId);
+                        districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                        data.forEach(item => {
+                            districtSelect.innerHTML +=
+                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+                        });
+
+                        if (resetWard) {
+                            const wardSelect = document.getElementById(districtSelectId.replace('quan_huyen',
+                                'phuong_xa'));
+                            if (wardSelect) wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Lỗi tải Quận/Huyện:', err);
+                        Toastify({
+                            text: "Lỗi khi tải Quận/Huyện. Vui lòng thử lại!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "#dc3545",
+                        }).showToast();
+                    });
+            }
+
+            function loadWards(districtId, wardSelectId, selectedId = null) {
+                fetch(`/api/phuong-xa/${districtId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const wardSelect = document.getElementById(wardSelectId);
+                        wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                        data.forEach(item => {
+                            wardSelect.innerHTML +=
+                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Lỗi tải Phường/Xã:', err);
+                        Toastify({
+                            text: "Lỗi khi tải Phường/Xã. Vui lòng thử lại!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "#dc3545",
+                        }).showToast();
+                    });
+            }
+
+            // Modal địa chỉ (Không thay đổi)
+            const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+            const form = document.getElementById('editAddressForm');
+
+            document.querySelectorAll('.edit-address-btn').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const {
+                        id,
+                        ten,
+                        sdt,
+                        diachi,
+                        tinh,
+                        quan,
+                        phuong
+                    } = this.dataset;
+
+                    form.action = `/user/addresses/${id}`;
+                    document.getElementById('edit_ten_nguoi_nhan').value = ten;
+                    document.getElementById('edit_so_dien_thoai').value = sdt;
+                    document.getElementById('edit_dia_chi_cu_the').value = diachi;
+                    document.getElementById('edit_tinh_thanh_id').value = tinh;
+
+                    try {
+                        await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
+                        await loadWards(quan, 'edit_phuong_xa_id', phuong);
+                        console.log('Gọi modal');
+                        editModal.show();
+                    } catch (err) {
+                        console.error('Lỗi khi tải địa chỉ:', err);
+                        Toastify({
+                            text: "Không thể tải dữ liệu địa chỉ. Vui lòng thử lại!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "#dc3545",
+                        }).showToast();
+                    }
                 });
-            })
-            .catch(err => {
-                console.error('Lỗi tải Phường/Xã:', err);
-                Toastify({
-                    text: "Lỗi khi tải Phường/Xã. Vui lòng thử lại!",
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#dc3545",
-                }).showToast();
             });
-    }
 
-    // Modal địa chỉ (Không thay đổi)
-    const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
-    const form = document.getElementById('editAddressForm');
+            document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function() {
+                loadDistricts(this.value, 'edit_quan_huyen_id');
+            });
 
-    document.querySelectorAll('.edit-address-btn').forEach(button => {
-        button.addEventListener('click', async function() {
-            const {
-                id,
-                ten,
-                sdt,
-                diachi,
-                tinh,
-                quan,
-                phuong
-            } = this.dataset;
+            document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function() {
+                loadWards(this.value, 'edit_phuong_xa_id');
+            });
+            document.getElementById('tinh_thanh_id')?.addEventListener('change', function () {
+                loadDistricts(this.value, 'quan_huyen_id');
+            });
 
-            form.action = `/user/addresses/${id}`;
-            document.getElementById('edit_ten_nguoi_nhan').value = ten;
-            document.getElementById('edit_so_dien_thoai').value = sdt;
-            document.getElementById('edit_dia_chi_cu_the').value = diachi;
-            document.getElementById('edit_tinh_thanh_id').value = tinh;
+            document.getElementById('quan_huyen_id')?.addEventListener('change', function () {
+                loadWards(this.value, 'phuong_xa_id');
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
 
-            try {
-                await loadDistricts(tinh, 'edit_quan_huyen_id', false, quan);
-                await loadWards(quan, 'edit_phuong_xa_id', phuong);
-                console.log('Gọi modal');
-                editModal.show();
-            } catch (err) {
-                console.error('Lỗi khi tải địa chỉ:', err);
-                Toastify({
-                    text: "Không thể tải dữ liệu địa chỉ. Vui lòng thử lại!",
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#dc3545",
-                }).showToast();
+            if (tab) {
+                const tabTrigger = document.querySelector(`a[href="#${tab}"]`);
+                if (tabTrigger) {
+                    const tabInstance = new bootstrap.Tab(tabTrigger);
+                    tabInstance.show();
+                }
             }
         });
-    });
-
-    document.getElementById('edit_tinh_thanh_id')?.addEventListener('change', function() {
-        loadDistricts(this.value, 'edit_quan_huyen_id');
-    });
-
-    document.getElementById('edit_quan_huyen_id')?.addEventListener('change', function() {
-        loadWards(this.value, 'edit_phuong_xa_id');
-    });
-    document.getElementById('tinh_thanh_id')?.addEventListener('change', function () {
-        loadDistricts(this.value, 'quan_huyen_id');
-    });
-
-    document.getElementById('quan_huyen_id')?.addEventListener('change', function () {
-        loadWards(this.value, 'phuong_xa_id');
-    });
-});
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tab = urlParams.get('tab');
-
-        if (tab) {
-            const tabTrigger = document.querySelector(`a[href="#${tab}"]`);
-            if (tabTrigger) {
-                const tabInstance = new bootstrap.Tab(tabTrigger);
-                tabInstance.show();
-            }
-        }
-    });
-</script>
+    </script>
 @endsection
-
