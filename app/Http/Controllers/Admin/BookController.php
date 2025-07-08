@@ -152,10 +152,12 @@ class BookController extends Controller
 
     public function destroy($id)
     {
-        Book::destroy($id);
-        return redirect()->route('admin.books.index')->with('success', 'Xóa sách thành công!');
-    }
+        $book = Book::findOrFail($id);
+        $book->TrangThai = 0; // 0: đã bị ẩn / xóa mềm
+        $book->save();
 
+        return redirect()->route('admin.books.index')->with('success', 'Đã ẩn sách khỏi danh sách hiển thị!');
+    }
     private function removeAccents($str)
     {
         $str = \Normalizer::normalize($str, \Normalizer::FORM_D);
@@ -163,4 +165,13 @@ class BookController extends Controller
         $str = str_replace(['đ', 'Đ'], ['d', 'D'], $str);
         return $str;
     }
+    public function restore($id)
+{
+    $book = Book::findOrFail($id);
+    $book->TrangThai = 1;
+    $book->save();
+
+    return redirect()->route('admin.books.index')->with('success', 'Đã khôi phục sách thành công!');
+}
+
 }
