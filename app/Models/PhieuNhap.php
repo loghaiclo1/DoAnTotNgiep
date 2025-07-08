@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\KhachHang;
 class PhieuNhap extends Model
 {
-    protected $table = 'phieu_nhap';
+    protected $table = 'phieunhap';
     protected $primaryKey = 'MaPhieuNhap';
 
     protected $fillable = [

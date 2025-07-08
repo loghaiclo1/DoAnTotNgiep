@@ -11,7 +11,7 @@ class ContactController extends Controller
     {
         return view('homepage.contact');
     }
-    
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -23,7 +23,7 @@ class ContactController extends Controller
 
         Contact::create($validated);
 
-        return response()->json(['message' => 'Gửi liên hệ thành công']);
+        return response()->json(['message' => 'Gửi hỗ trợ thành công']);
     }
 
 }

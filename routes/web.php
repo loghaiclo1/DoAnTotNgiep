@@ -40,15 +40,6 @@ use App\Http\Controllers\Admin\{
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // About
-Route::prefix('about')->name('about.')->group(function () {
-    Route::get('/', [AboutController::class, 'index'])->name('index');
-    Route::get('/search', [AboutController::class, 'search'])->name('search');
-    Route::get('/{slug}', [AboutController::class, 'show'])->name('show');
-    Route::get('/vanhoccodien/ajax', [AboutController::class, 'fetchVanHocCoDien'])->name('vanhoccodien.ajax');
-    Route::get('/tamlyhoc/ajax', [AboutController::class, 'tamLyHocAjax'])->name('tamlyhoc.ajax');
-    Route::get('/sachthieunhi/ajax', [AboutController::class, 'sachThieuNhiAjax'])->name('sachthieunhi.ajax');
-    Route::get('/sachhay/ajax', [AboutController::class, 'sachHayAjax'])->name('sachhay.ajax');
-});
 
 // Danh mục
 Route::get('/category', [CategoryController::class, 'index'])->name('category.index');

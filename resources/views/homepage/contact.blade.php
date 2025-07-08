@@ -1,16 +1,16 @@
 @extends('layout.main')
 
-@section('title', 'BookShop - Liên hệ')
+@section('title', 'BookShop - Hỗ trợ')
 
 @section('content')
 <main class="main">
     <div class="page-title light-background">
         <div class="container d-lg-flex justify-content-between align-items-center">
-            <h1 class="mb-2 mb-lg-0">Liên hệ</h1>
+            <h1 class="mb-2 mb-lg-0">Hỗ trợ</h1>
             <nav class="breadcrumbs">
                 <ol>
                     <li>Trang chủ</li>
-                    <li class="current">Liên hệ</li>
+                    <li class="current">Hỗ trợ</li>
                 </ol>
             </nav>
         </div>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                         <div id="sendMessage" class="alert alert-success text-center mt-3" style="display:none;">
-                            Thông tin liên hệ của bạn đã được gửi. Cảm ơn bạn!
+                            Thông tin hỗ trợ của bạn đã được gửi. Cảm ơn bạn!
                         </div>
                     </form>
                 </div>

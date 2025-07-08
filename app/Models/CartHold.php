@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CartHold extends Model
 {
-    protected $fillable = ['user_id', 'session_id', 'book_id', 'quantity', 'expires_at'];
+    protected $table = 'giugiohang';
+    protected $fillable = ['user_id', 'session_id', 'book_id', 'quantity'];
+
     public function book()
-{
-    return $this->belongsTo(Book::class, 'book_id', 'MaSach');
-}
+    {
+        return $this->belongsTo(Book::class, 'book_id', 'MaSach');
+    }
 }

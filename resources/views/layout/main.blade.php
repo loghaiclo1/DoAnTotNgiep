@@ -87,6 +87,11 @@
             <div class="dropdown account-dropdown">
               <button class="header-action-btn" data-bs-toggle="dropdown">
                 <i class="bi bi-person"></i>
+                   @auth
+                   <span class="ms-2 d-none d-md-inline" style="font-size: 14px;">
+                    {{ Auth::user()->Ho }} {{ Auth::user()->Ten }}
+                </span>
+                 @endauth
               </button>
 
               <div class="dropdown-menu">
@@ -250,7 +255,7 @@
                 </div><!-- End Products Mega Menu 2 Desktop View -->
               </li><!-- End Products Mega Menu 2 -->
 
-              <li><a href=" {{ url('/contact') }} " class=" {{ request()->is('contact') ? 'active' : '' }} ">Liên hệ</a></li>
+              <li><a href=" {{ url('/contact') }} " class=" {{ request()->is('contact') ? 'active' : '' }} ">Hỗ trợ</a></li>
             </ul>
           </nav>
         </div>
@@ -302,7 +307,7 @@
                                   </a>
                             </span>
                         @else
-                        <a href="{{ route('/') }}" class="text-decoration-none">
+                        <a href="" class="text-decoration-none">
                         </a>
                         @endif
                         </a>
@@ -336,11 +341,20 @@
                             @forelse($danhSachMucCon as $item)
                                 <li>
                                     @php
-                                        // Nếu duong_dan bắt đầu bằng dấu / thì là link nội bộ (route thật), còn lại là slug động
-                                        $isInternal = str_starts_with($item->duong_dan, '/');
-                                        $url = $isInternal ? url($item->duong_dan) : route('footer.show', ['slug' => $item->duong_dan]);
+                                        // Xác định URL đúng: nếu bắt đầu bằng http hoặc https thì dùng luôn, nếu bắt đầu bằng / là nội bộ, còn lại là slug
+                                        $duongDan = $item->duong_dan;
+                                        if (Str::startsWith($duongDan, ['http://', 'https://'])) {
+                                            $url = $duongDan;
+                                        } elseif (Str::startsWith($duongDan, '/')) {
+                                            $url = url($duongDan);
+                                        } else {
+                                            $url = route('footer.show', ['slug' => $duongDan]);
+                                        }
                                     @endphp
-                                    <a href="{{ $url }}">{{ $item->ten_muc_con }}</a>
+                                   <a href="{{ $url }}"
+                                   @if(Str::startsWith($url, ['http://', 'https://'])) target="_blank" rel="noopener noreferrer" @endif>
+                                   <i class="{{ $item->icon ?? '' }}"></i> {{ $item->ten_muc_con }}
+                                </a>
                                 </li>
                             @empty
                                 <li>Không có dữ liệu</li>
@@ -349,6 +363,7 @@
                     </div>
                 </div>
             @endforeach
+
             </div>
         </div>
     </div>

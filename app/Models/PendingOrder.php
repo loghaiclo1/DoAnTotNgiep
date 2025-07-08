@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PendingOrder extends Model
 {
+    protected $table = 'donhangtam';
     // Cho phép gán hàng loạt những cột này
     protected $fillable = [
         'txn_ref',
