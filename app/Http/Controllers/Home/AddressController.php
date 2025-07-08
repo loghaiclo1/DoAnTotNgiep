@@ -21,9 +21,9 @@ class AddressController extends Controller
         $validated = $request->validate([
             'ten_nguoi_nhan' => 'required|string|max:255',
             'so_dien_thoai' => 'required|regex:/^[0-9]{10}$/',
-            'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
-            'quan_huyen_id' => 'required|exists:quan_huyens,id',
-            'phuong_xa_id' => 'required|exists:phuong_xas,id',
+            'tinh_thanh_id' => 'required|exists:tinh,id',
+            'quan_huyen_id' => 'required|exists:quanhuyen,id',
+            'phuong_xa_id' => 'required|exists:phuongxa,id',
             'dia_chi_cu_the' => 'required|string|max:255',
             'mac_dinh' => 'nullable|boolean',
         ]);
@@ -73,9 +73,9 @@ class AddressController extends Controller
         $validated = $request->validate([
             'ten_nguoi_nhan' => 'required|string|max:255',
             'so_dien_thoai' => 'required|regex:/^[0-9]{10}$/',
-            'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
-            'quan_huyen_id' => 'required|exists:quan_huyens,id',
-            'phuong_xa_id' => 'required|exists:phuong_xas,id',
+            'tinh_thanh_id' => 'required|exists:tinh,id',
+            'quan_huyen_id' => 'required|exists:quanhuyen,id',
+            'phuong_xa_id' => 'required|exists:phuongxa,id',
             'dia_chi_cu_the' => 'required|string|max:255',
         ]);
 
@@ -87,6 +87,7 @@ class AddressController extends Controller
 
         return redirect()->back()->with('success', 'Cập nhật địa chỉ thành công!');
     }
+
     public function destroy($id)
     {
         $userId = auth()->id();

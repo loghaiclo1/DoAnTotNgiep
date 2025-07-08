@@ -146,9 +146,9 @@ class CheckoutController extends Controller
                     'ten_nguoi_nhan' => 'required|string|max:255',
                     'so_dien_thoai' => 'required|string|regex:/^0[0-9]{9}$/',
                     'dia_chi_cu_the' => 'required|string|max:255',
-                    'tinh_thanh_id' => 'required|exists:tinh_thanhs,id',
-                    'quan_huyen_id' => 'required|exists:quan_huyens,id',
-                    'phuong_xa_id' => 'required|exists:phuong_xas,id',
+                    'tinh_thanh_id' => 'required|exists:tinh,id',
+                    'quan_huyen_id' => 'required|exists:quanhuyen,id',
+                    'phuong_xa_id' => 'required|exists:phuongxa,id',
                 ], [
                     'ten_nguoi_nhan.required' => 'Vui lòng nhập Họ và Tên người nhận.',
                     'so_dien_thoai.required' => 'Vui lòng nhập Số điện thoại.',
