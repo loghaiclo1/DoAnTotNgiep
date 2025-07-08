@@ -132,7 +132,8 @@
         <div class="text-muted mb-2">
             Hiển thị từ {{ $accounts->firstItem() }} đến {{ $accounts->lastItem() }} trong tổng số {{ $accounts->total() }} kết quả
         </div>
-        <div class="card-footer">
+        <div class="card-footer" style="display: flex; justify-content: center;">
+            {{-- Phân trang --}}
             {{ $accounts->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
         </div>
 
