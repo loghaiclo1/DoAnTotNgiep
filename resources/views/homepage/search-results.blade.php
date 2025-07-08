@@ -34,15 +34,24 @@
                     <div class="product-card">
                         <div class="product-image">
                             <img src="{{ asset('./image/book/' . $book->HinhAnh) }}" alt="{{ $book->TenSach }}" style="object-fit: cover">
-                            <div class="product-overlay">
-                                <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
-                                    @csrf
-                                    <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
-                                    <button type="submit" class="btn-cart">
-                                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                    </button>
-                                </form>
-                            </div>
+                                <div class="product-overlay" data-book-id="{{ $book->MaSach }}">
+
+                                        <div class="cart-form-area">
+                                            @if ($book->SoLuong <= 0)
+                                                <button class="btn btn-secondary btn-add-to-cart btn-disabled" disabled>
+                                                    <i class="bi bi-bag-plus me-2"></i>Hết hàng
+                                                </button>
+                                            @else
+                                                <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
+                                                    @csrf
+                                                    <input type="hidden" name="book_id" value="{{ $book->MaSach }}">
+                                                    <button class="btn btn-primary btn-add-to-cart" type="submit">
+                                                        <i class="bi bi-bag-plus me-2"></i>Thêm vào giỏ hàng
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
                         </div>
                         <div class="product-info">
                             <h5 class="product-title"><a href="{{ route('product.detail', ['slug' => $book->slug]) }}">{{ $book->TenSach }}</a></h5>

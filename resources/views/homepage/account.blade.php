@@ -381,7 +381,7 @@
                                     <div class="mb-3">
                                         <label for="so_dien_thoai" class="form-label">Số điện thoại</label>
                                         <input type="text" name="so_dien_thoai" id="so_dien_thoai"
-                                            class="form-control" required>
+                                            class="form-control" required pattern="^0[0-9]{9}$" title="Số điện thoại phải có 10 chữ số và bắt đầu bằng 0">
                                     </div>
 
                                     <div class="mb-3">
@@ -441,7 +441,7 @@
                                     <input type="text" name="ten_nguoi_nhan" id="edit_ten_nguoi_nhan"
                                         class="form-control mb-2" placeholder="Tên người nhận" required>
                                     <input type="text" name="so_dien_thoai" id="edit_so_dien_thoai"
-                                        class="form-control mb-2" placeholder="SĐT" required>
+                                        class="form-control mb-2" placeholder="SĐT" required pattern="^0[0-9]{9}$" title="Số điện thoại phải có 10 chữ số và bắt đầu bằng 0">
                                     <input type="text" name="dia_chi_cu_the" id="edit_dia_chi_cu_the"
                                         class="form-control mb-2" placeholder="Địa chỉ cụ thể" required>
                                     <select name="tinh_thanh_id" id="edit_tinh_thanh_id" class="form-select mb-2"

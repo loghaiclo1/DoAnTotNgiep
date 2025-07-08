@@ -81,6 +81,13 @@ class AccountController extends Controller
     public function toggle($id)
     {
         $account = KhachHang::findOrFail($id);
+
+        // Không cho phép khóa/mở khóa superadmin
+        if ($account->role === 'superadmin') {
+            \Log::warning('Cố gắng khóa superadmin: MaKhachHang=' . $account->MaKhachHang);
+            return redirect()->back()->with('error', 'Không thể khóa hoặc mở khóa tài khoản superadmin.');
+        }
+
         \Log::info('Toggling account ID: ' . $id . ', Current TrangThai: ' . $account->TrangThai);
         $account->TrangThai = !$account->TrangThai;
         $account->save();
@@ -94,4 +101,5 @@ class AccountController extends Controller
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái tài khoản thành công.');
     }
+
 }

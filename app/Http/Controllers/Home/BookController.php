@@ -82,7 +82,6 @@ class BookController extends Controller
             'relatedBooks'
         ));
     }
-
     public function searchResults(Request $request)
     {
         $query = $request->input('query', '');
@@ -92,10 +91,18 @@ class BookController extends Controller
 
         $results = collect();
 
+        // Nếu có từ khóa tìm kiếm
         if (!empty($query)) {
+            // Loại bỏ ký tự lạ và chuẩn hóa
             $cleanQuery = preg_replace('/[^A-Za-z0-9\s\p{L}]/u', '', $query);
             $searchTerms = trim($cleanQuery);
             $nonAccentQuery = $this->removeAccents($searchTerms);
+
+            // Kiểm tra nếu người dùng nhập '10 lượt bán' hoặc '10 luot ban'
+            $matchLuotBan = null;
+            if (preg_match('/(\d+)\s*(lượt bán|luot ban)/iu', $searchTerms, $matches)) {
+                $matchLuotBan = (int)$matches[1];
+            }
 
             if (!empty($searchTerms)) {
                 $queryBuilder = Book::query()
@@ -111,33 +118,50 @@ class BookController extends Controller
                         'HinhAnh',
                         'slug'
                     ])
-                    ->where('TrangThai', 1)
-                    ->where(function ($q) use ($searchTerms, $nonAccentQuery) {
+                    ->where('TrangThai', 1);
+
+                if ($matchLuotBan !== null) {
+                    // Nếu nhập kiểu "10 lượt bán"
+                    $queryBuilder->where('LuotMua', $matchLuotBan);
+                } elseif (is_numeric($searchTerms)) {
+                    // Nếu là số → tìm theo giá, năm, hoặc lượt mua
+                    $queryBuilder->where(function ($q) use ($searchTerms) {
+                        $q->where('GiaBan', $searchTerms)
+                          ->orWhere('NamXuatBan', $searchTerms)
+                          ->orWhere('LuotMua', $searchTerms);
+                    });
+                } else {
+                    // Nếu là chữ → tìm trong tên, mô tả (có dấu & không dấu)
+                    $queryBuilder->where(function ($q) use ($searchTerms, $nonAccentQuery) {
                         $q->where(function ($q2) use ($searchTerms) {
                             $q2->where('TenSach', 'LIKE', "%{$searchTerms}%")
-                                ->orWhere('MoTa', 'LIKE', "%{$searchTerms}%");
+                               ->orWhere('MoTa', 'LIKE', "%{$searchTerms}%");
                         })
-                            ->orWhere(function ($q3) use ($nonAccentQuery) {
-                                $q3->whereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"])
-                                    ->orWhereRaw("LOWER(REPLACE(MoTa, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
-                            });
-                    })
-                    ->orWhere(function ($q) use ($searchTerms) {
-                        $q->where('NamXuatBan', '=', $searchTerms);
+                        ->orWhere(function ($q3) use ($nonAccentQuery) {
+                            $q3->whereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"])
+                               ->orWhereRaw("LOWER(REPLACE(MoTa, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
+                        });
                     });
+                }
+
+                // Sắp xếp nếu có
                 if ($sort === 'high-to-low') {
                     $queryBuilder->orderBy('GiaBan', 'desc')->orderBy('TenSach', 'asc');
                 } elseif ($sort === 'low-to-high') {
                     $queryBuilder->orderBy('GiaBan', 'asc')->orderBy('TenSach', 'asc');
                 }
+
+                // Phân trang kết quả
                 $results = $queryBuilder->paginate($perPage, ['*'], 'page', $page);
             } else {
+                // Chuỗi sau khi xử lý rỗng
                 $results = new LengthAwarePaginator([], 0, $perPage, $page, [
                     'path' => $request->url(),
                     'query' => $request->query()
                 ]);
             }
         } else {
+            // Không có query → trả về rỗng
             $results = new LengthAwarePaginator([], 0, $perPage, $page, [
                 'path' => $request->url(),
                 'query' => $request->query()

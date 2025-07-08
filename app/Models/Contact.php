@@ -10,7 +10,7 @@ class Contact extends Model
     use HasFactory;
     protected $table = 'lienhe';
     protected $fillable = [
-        'ho_ten', 'email', 'chu_de', 'noi_dung', 'trang_thai'
+        'ho_ten', 'email', 'chu_de', 'noi_dung', 'trang_thai,khachhang_id'
     ];
 
 }
