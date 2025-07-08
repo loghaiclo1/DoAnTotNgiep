@@ -3,7 +3,14 @@
 @section('title', 'BookShop - Đăng Nhập')
 @section('content')
     <main class="main">
+        @if (session('status'))
+    <div class="alert alert-success">{{ session('status') }}</div>
+@endif
 
+{{-- Hiển thị thông báo nếu bị khóa --}}
+<div id="account-locked-alert" style="display: none;" class="alert alert-danger">
+    Tài khoản của bạn đã bị khóa.
+</div>
         <!-- Page Title -->
         <div class="page-title light-background">
             <div class="container d-lg-flex justify-content-between align-items-center">
@@ -95,6 +102,17 @@
             </div>
 
         </section>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (localStorage.getItem('account_locked') === 'true') {
+            document.getElementById('account-locked-alert').style.display = 'block';
+            localStorage.removeItem('account_locked'); // Xóa để tránh hiện lại lần sau
+        }
+    });
+</script>
+
     </main>
 
 

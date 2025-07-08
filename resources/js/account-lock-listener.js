@@ -1,25 +1,20 @@
 window.Echo.private(`user.${authUserId}`)
-    .listen('.account.locked', () => {
+    .listen('.account.locked', async () => {
         console.log("📥 Nhận sự kiện account.locked");
-        alert("🔒 Tài khoản đã bị khóa. Đang đăng xuất...");
 
-        fetch('/logout', {
+        // Đăng xuất ngay lập tức
+        await fetch('/logout', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Accept': 'application/json'
             },
             credentials: 'same-origin'
-        })
-        .then(response => {
-            console.log("✅ Response logout", response.status);
-            if (response.ok) {
-                window.location.href = '/login';
-            } else {
-                console.error("❌ Logout thất bại:", response.status);
-            }
-        })
-        .catch(err => {
-            console.error("❌ Lỗi fetch logout:", err);
         });
+
+        // Ghi flag vào localStorage để hiển thị thông báo sau khi redirect
+        localStorage.setItem('account_locked', 'true');
+
+        // Chuyển về trang đăng nhập
+        window.location.href = '/login';
     });
