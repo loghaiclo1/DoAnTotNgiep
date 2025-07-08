@@ -82,11 +82,13 @@
         <div class="mb-3">
             <label class="fw-bold">Trạng thái:</label><br>
             @php
-                $statuses = [
-                    1 => 'Còn hàng',
-                    0 => 'Hết hàng'
-                ];
-            @endphp
+            $statuses = [
+                'in_stock' => 'Còn hàng',
+                'out_of_stock' => 'Hết hàng',
+                'active' => 'Đang hiển thị',
+                'hidden' => 'Đã ẩn',
+            ];
+        @endphp
             @foreach($statuses as $val => $label)
                 <label class="btn btn-sm btn-outline-light m-1 {{ collect(request('TrangThai'))->contains($val) ? 'active' : '' }}">
                     <input type="checkbox" name="TrangThai[]" value="{{ $val }}" class="d-none"

@@ -47,11 +47,21 @@ class BookController extends Controller
             })
             ->when(!empty($statuses), function ($q) use ($statuses) {
                 $q->where(function ($query) use ($statuses) {
-                    if (in_array('0', $statuses)) {
-                        $query->orWhere('SoLuong', '=', 0); // Hết hàng
-                    }
-                    if (in_array('1', $statuses)) {
-                        $query->orWhere('SoLuong', '>', 0); // Còn hàng
+                    foreach ($statuses as $status) {
+                        switch ($status) {
+                            case 'in_stock':
+                                $query->orWhere('SoLuong', '>', 0);
+                                break;
+                            case 'out_of_stock':
+                                $query->orWhere('SoLuong', '=', 0);
+                                break;
+                            case 'active':
+                                $query->orWhere('TrangThai', 1);
+                                break;
+                            case 'hidden':
+                                $query->orWhere('TrangThai', 0);
+                                break;
+                        }
                     }
                 });
             })
