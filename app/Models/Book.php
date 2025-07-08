@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
+    
     protected $table = 'sach'; // Tên bảng đúng trong CSDL của bạn
 
     protected $primaryKey = 'MaSach'; // Khóa chính không phải "id"

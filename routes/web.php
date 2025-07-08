@@ -142,7 +142,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::resource('books', AdminBookController::class)->except(['show']);
     Route::delete('books/{id}', [AdminBookController::class, 'destroy'])->name('books.destroy');
     Route::post('books/{id}/restore', [AdminBookController::class, 'restore'])->name('books.restore');
-
+    Route::delete('/admin/books/{id}/force-delete', [AdminBookController::class, 'forceDelete'])->name('books.forceDelete');
     Route::get('contacts', [AdminContactController::class, 'index'])->name('contacts');
     Route::put('contacts/{id}/update-status', [AdminContactController::class, 'updateStatus'])->name('contacts.updateStatus');
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);

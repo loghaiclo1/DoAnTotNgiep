@@ -14,7 +14,11 @@
     @if (session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
-
+<div class="mb-3">
+    <a href="{{ route('admin.footer.create') }}" class="btn btn-success">
+        <i class="fas fa-plus"></i> Thêm mới
+    </a>
+</div>
     <table class="table table-bordered">
         <thead>
             <tr>

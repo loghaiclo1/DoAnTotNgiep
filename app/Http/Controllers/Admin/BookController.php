@@ -183,5 +183,16 @@ class BookController extends Controller
 
     return redirect()->route('admin.books.index')->with('success', 'Đã khôi phục sách thành công!');
 }
+public function forceDelete($id)
+{
+    $book = Book::findOrFail($id);
+
+    if ($book->HinhAnh && file_exists(public_path('image/book/' . $book->HinhAnh))) {
+        unlink(public_path('image/book/' . $book->HinhAnh));
+    }
+
+    $book->delete(); // Xóa luôn khỏi DB
+    return redirect()->route('admin.books.index')->with('success', 'Đã xóa vĩnh viễn sách.');
+}
 
 }

@@ -63,17 +63,7 @@
         </div>
     </form>
 
-    {{-- THỐNG KÊ ĐÁNH GIÁ --}}
-    @if($starsCount->isNotEmpty())
-        <div class="mb-3">
-            <h5>Thống kê đánh giá:</h5>
-            @for($i = 5; $i >= 1; $i--)
-                <span class="badge badge-info mr-1">
-                    {{ $i }}⭐: {{ $starsCount[$i] ?? 0 }}
-                </span>
-            @endfor
-        </div>
-    @endif
+
 
     {{-- THÔNG BÁO --}}
     @if (session('success'))

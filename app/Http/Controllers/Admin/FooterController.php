@@ -34,15 +34,17 @@ class FooterController extends Controller
             return back()->withErrors(['loai_du_lieu' => 'Chỉ được phép thêm dữ liệu loại mục con'])->withInput();
         }
 
-        // Nếu là mạng xã hội hoặc user nhập sẵn thì lấy đường dẫn trực tiếp, ngược lại tạo slug
         $slugSource = $request->duong_dan ?: '/' . Str::slug($request->ten_muc_con ?: $request->ten_muc);
 
-        // Kiểm tra trùng
-        if (Footer::where('duong_dan', $slugSource)->exists()) {
+        // ✅ Cho phép trùng đường dẫn nếu cùng tên mục
+        $exists = Footer::where('duong_dan', $slugSource)
+            ->where('ten_muc', '!=', $request->ten_muc)
+            ->exists();
+
+        if ($exists) {
             return back()->withErrors(['duong_dan' => 'Đường dẫn đã tồn tại!'])->withInput();
         }
 
-       
         $footer = Footer::create([
             'loai_du_lieu'   => $request->loai_du_lieu,
             'ten_muc'        => $request->ten_muc,
@@ -54,6 +56,7 @@ class FooterController extends Controller
         return redirect()->route('admin.footer.edit', $footer->id)
             ->with('success', 'Tạo mục thành công! Bạn có thể cập nhật nội dung chi tiết.');
     }
+
     public function edit($id)
     {
         $footer = Footer::findOrFail($id);
@@ -63,10 +66,6 @@ class FooterController extends Controller
     public function update(Request $request, $id)
     {
         $footer = Footer::findOrFail($id);
-
-        if ($footer->ten_muc === 'Tài Khoản Của Tôi') {
-            return redirect()->back()->with('error', 'Không thể chỉnh sửa mục hệ thống!');
-        }
 
         if ($footer->loai_du_lieu === 'thong_tin_chung') {
             $request->validate([
@@ -94,8 +93,12 @@ class FooterController extends Controller
 
             $slugSource = $request->duong_dan ?: '/' . Str::slug($request->ten_muc_con ?: $request->ten_muc);
 
-            // Kiểm tra trùng (bỏ qua chính mình)
-            $exists = Footer::where('duong_dan', $slugSource)->where('id', '!=', $footer->id)->exists();
+            // ✅ Cho phép trùng nếu cùng tên mục (bỏ qua chính mình)
+            $exists = Footer::where('duong_dan', $slugSource)
+                ->where('id', '!=', $footer->id)
+                ->where('ten_muc', '!=', $request->ten_muc)
+                ->exists();
+
             if ($exists) {
                 return back()->withErrors(['duong_dan' => 'Đường dẫn đã tồn tại!'])->withInput();
             }
@@ -110,15 +113,14 @@ class FooterController extends Controller
 
         return redirect()->route('admin.footer.index')->with('success', 'Cập nhật footer thành công!');
     }
+
     public function destroy($id)
     {
         $footer = Footer::findOrFail($id);
 
-        if (
-            $footer->loai_du_lieu === 'thong_tin_chung' ||
-            $footer->ten_muc === 'Tài Khoản Của Tôi'
-        ) {
-            return redirect()->back()->with('error', 'Không thể xoá thông tin chung hoặc mục mặc định của hệ thống!');
+        // ❗ Chỉ chặn xóa mục "thông tin chung"
+        if ($footer->loai_du_lieu === 'thong_tin_chung') {
+            return redirect()->back()->with('error', 'Không thể xoá thông tin chung của công ty!');
         }
 
         $footer->delete();
