@@ -467,7 +467,7 @@
                 <div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
-                        <form method="POST" id="editReviewForm">
+                        <form method="POST" id="editReviewForm" action="">
                             @csrf
                             @method('PUT')
                             <div class="modal-content">
@@ -631,6 +631,7 @@
             });
         });
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -645,4 +646,83 @@
             }
         });
     </script>
+
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        attachEditReviewHandlers();
+
+        const form = document.getElementById('editReviewForm');
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const url = form.action;
+
+            fetch(url, {
+                method: 'POST', // Laravel dùng @method('PUT') để spoof method
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector('.reviews-grid').outerHTML = data.html;
+                        bootstrap.Modal.getInstance(document.getElementById('editReviewModal')).hide();
+                        attachEditReviewHandlers(); // Gắn lại sự kiện
+                        alert('Cập nhật đánh giá thành công! Vui lòng tải lại trang để xem kết quả.');
+                    } else {
+                        alert(data.message || 'Cập nhật thất bại!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    alert('Có lỗi xảy ra khi gửi yêu cầu!');
+                });
+        });
+
+        function attachEditReviewHandlers() {
+            const editButtons = document.querySelectorAll('.edit-review-btn');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = this.dataset.id;
+                    const sosao = this.dataset.sosao;
+                    const noidung = this.dataset.noidung;
+
+                    document.getElementById('editReviewId').value = id;
+                    document.getElementById('editSoSao').value = sosao;
+                    document.getElementById('editNoiDung').value = noidung;
+
+                    document.getElementById('editReviewForm').action = '/my-reviews/' + id;
+
+                    document.querySelectorAll('#editStarContainer i').forEach(star => {
+                        if (star.dataset.value <= sosao) {
+                            star.classList.remove('bi-star');
+                            star.classList.add('bi-star-fill');
+                            star.style.color = '#ffc107';
+                        } else {
+                            star.classList.remove('bi-star-fill');
+                            star.classList.add('bi-star');
+                            star.style.color = '#ccc';
+                        }
+                        star.onclick = function () {
+                            const value = this.dataset.value;
+                            document.getElementById('editSoSao').value = value;
+                            document.querySelectorAll('#editStarContainer i').forEach(s => {
+                                s.style.color = s.dataset.value <= value ? '#ffc107' : '#ccc';
+                            });
+                        };
+                    });
+
+                    const modal = new bootstrap.Modal(document.getElementById('editReviewModal'));
+                    modal.show();
+                });
+            });
+        }
+    });
+</script>
+
+
 @endsection

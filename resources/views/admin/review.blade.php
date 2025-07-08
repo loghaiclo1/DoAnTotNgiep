@@ -144,7 +144,7 @@
     </table>
 
     {{-- PHÂN TRANG --}}
-    <div class="mt-3">
+    <div class="mt-3" style="display: flex; justify-content: center;">
         {{ $reviews->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
     </div>
 @stop
