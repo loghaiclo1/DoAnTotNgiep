@@ -20,7 +20,7 @@
                 <th>Sách</th>
                 <th>Số lượng</th>
                 <th>Giá nhập</th>
-                <th>Giá bán hiện tại</th>
+                <th>Giá bán lúc nhập</th>
 
             </tr>
         </thead>
@@ -36,7 +36,7 @@
                     <td>{{ $item->SoLuong }}</td>
                     <td>{{ number_format($item->DonGia) }}₫</td>
                     <td>{{ number_format($item->sach->GiaBan ?? 0) }}₫</td>
-              
+
                 </tr>
             @endforeach
         </tbody>
