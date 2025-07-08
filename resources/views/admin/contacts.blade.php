@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
 
-@section('title', 'Quản lý Liên hệ')
+@section('title', 'Quản lý Hỗ trợ')
 
 @section('content_header')
-    <h1>Danh sách liên hệ</h1>
+    <h1>Danh sách hỗ trợ</h1>
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
     </form>
-    
+
 @if (session('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ session('error') }}
@@ -27,8 +27,8 @@
 
         <select name="trang_thai" class="form-control mr-2">
             <option value="">-- Trạng thái --</option>
-            <option value="0" {{ request('trang_thai') === '0' ? 'selected' : '' }}>Chưa duyệt</option>
-            <option value="1" {{ request('trang_thai') === '1' ? 'selected' : '' }}>Đã duyệt</option>
+            <option value="0" {{ request('trang_thai') === '0' ? 'selected' : '' }}>Chưa xử lí</option>
+            <option value="1" {{ request('trang_thai') === '1' ? 'selected' : '' }}>Đã xử lí</option>
         </select>
 
         <select name="sort" class="form-control mr-2">
@@ -42,7 +42,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Liên hệ từ người dùng</h3>
+            <h3 class="card-title">Hỗ trợ từ người dùng</h3>
         </div>
         <div class="card-body">
             <table class="table table-bordered table-striped">
@@ -73,21 +73,21 @@
                             <td>{{ $contact->created_at->format('d/m/Y H:i') }}</td>
                             <td>
                                 @if($contact->trang_thai == 0)
-                                    <span class="badge badge-warning">Chưa duyệt</span>
+                                    <span class="badge badge-warning">Chưa xử lí</span>
                                 @else
-                                    <span class="badge badge-success">Đã duyệt</span>
+                                    <span class="badge badge-success">Đã xử lí</span>
                                 @endif
                             </td>
                             <td>
                                 <form action="{{ route('admin.contacts.updateStatus', $contact->id) }}" method="POST"
-                                 onsubmit="return confirm('Bạn có chắc muốn {{ $contact->trang_thai == 0 ? 'duyệt' : 'hoàn tác' }} liên hệ này?')">
+                                 onsubmit="return confirm('Bạn có chắc muốn {{ $contact->trang_thai == 0 ? 'đánh dấu hoàn tất' : 'hoàn tác' }} hỗ trợ này?')">
 
                                     @csrf
                                     @method('PUT')
                                     @if($contact->trang_thai == 0)
-                                        <button class="btn btn-success btn-sm">Duyệt</button>
+                                        <button class="btn btn-success btn-sm">Đánh dấu hoàn tất</button>
                                     @else
-                                        <button class="btn btn-warning btn-sm">Hoàn tác</button>
+                                        <button class="btn btn-warning btn-sm">Hoàn tác </button>
                                     @endif
                                 </form>
                             </td>

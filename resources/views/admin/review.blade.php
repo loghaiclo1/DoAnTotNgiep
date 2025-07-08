@@ -8,7 +8,30 @@
 @stop
 
 @section('content')
+{{-- KẾT QUẢ TÌM KIẾM --}}
+@if(request()->hasAny(['keyword', 'status', 'sosao']))
+    <div class="alert alert-info">
+        <strong>Kết quả tìm kiếm:</strong>
+        @if(request('keyword'))
+            Nội dung chứa từ khóa "<strong>{{ request('keyword') }}</strong>"
+        @endif
 
+        @if(request('status'))
+            | Trạng thái:
+            <strong>
+                @switch(request('status'))
+                    @case('approved') Đã duyệt @break
+                    @case('pending') Chờ duyệt @break
+                    @case('rejected') Đã ẩn @break
+                @endswitch
+            </strong>
+        @endif
+
+        @if(request('sosao'))
+            | Đánh giá: <strong>{{ request('sosao') }} sao</strong>
+        @endif
+    </div>
+@endif
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
     </form>
@@ -56,6 +79,7 @@
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    <p class="text-muted mt-1">Tìm thấy <strong>{{ $reviews->total() }}</strong> đánh giá phù hợp.</p>
 
     {{-- BẢNG --}}
     <table class="table table-bordered table-hover">

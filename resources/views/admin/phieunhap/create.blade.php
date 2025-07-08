@@ -45,7 +45,7 @@
                 <td><input type="number" name="books[0][SoLuong]" class="form-control" min="1" required></td>
                 <td><input type="number" name="books[0][DonGia]" class="form-control" min="1000" required></td>
                 <td><input type="number" name="books[0][GiaBan]" class="form-control" min="1000" required></td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">×</button></td>
+
             </tr>
         </tbody>
     </table>

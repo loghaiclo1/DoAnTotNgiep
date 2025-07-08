@@ -11,7 +11,7 @@
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
     </form>
-    
+
 @if (session('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ session('error') }}
@@ -82,11 +82,13 @@
         <div class="mb-3">
             <label class="fw-bold">Trạng thái:</label><br>
             @php
-                $statuses = [
-                    1 => 'Còn hàng',
-                    0 => 'Hết hàng'
-                ];
-            @endphp
+            $statuses = [
+                'in_stock' => 'Còn hàng',
+                'out_of_stock' => 'Hết hàng',
+                'active' => 'Đang hiển thị',
+                'hidden' => 'Đã ẩn',
+            ];
+        @endphp
             @foreach($statuses as $val => $label)
                 <label class="btn btn-sm btn-outline-light m-1 {{ collect(request('TrangThai'))->contains($val) ? 'active' : '' }}">
                     <input type="checkbox" name="TrangThai[]" value="{{ $val }}" class="d-none"
@@ -139,6 +141,7 @@
                 <th>Lượt mua</th>
                 <th>Danh mục</th>
                 <th>Ngày thêm</th>
+                <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -157,11 +160,25 @@
             <td>{{ $book->category->name ?? 'Không có' }}</td>
             <td>{{ $book->created_at->format('d/m/Y H:i') }}</td>
             <td>
+                @if($book->TrangThai == 1)
+                    <span class="badge badge-success">Đang hiển thị</span>
+                @else
+                    <span class="badge badge-secondary">Đã ẩn</span>
+                @endif
+            </td>
+            <td>
                 <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEdit{{ $book->MaSach }}">Sửa</button>
+                @if($book->TrangThai == 1)
                 <form action="{{ route('admin.books.destroy', $book->MaSach) }}" method="POST" style="display:inline;">
                     @csrf @method('DELETE')
-                    <button onclick="return confirm('Xác nhận xóa?')" class="btn btn-sm btn-danger">Xóa</button>
+                    <button onclick="return confirm('Xác nhận ẩn sách?')" class="btn btn-sm btn-warning">Ẩn</button>
                 </form>
+            @else
+                <form action="{{ route('admin.books.restore', $book->MaSach) }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button onclick="return confirm('Khôi phục sách này?')" class="btn btn-sm btn-success">Kích hoạt</button>
+                </form>
+            @endif
             </td>
         </tr>
 

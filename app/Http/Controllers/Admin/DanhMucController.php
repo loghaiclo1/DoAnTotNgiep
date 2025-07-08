@@ -47,7 +47,7 @@ class DanhMucController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id',
+            'parent_id' => 'nullable|exists:danhmuc,id',
         ]);
 
         if (Category::where('name', $request->name)->exists()) {
@@ -78,7 +78,7 @@ class DanhMucController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id',
+            'parent_id' => 'nullable|exists:danhmuc,id',
         ]);
 
         $danhMuc = Category::findOrFail($id);
