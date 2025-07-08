@@ -44,6 +44,7 @@
     @endforeach
 </div>
 
+{{-- Nút chọn biểu đồ --}}
 <div class="mb-4">
     <button class="btn btn-outline-primary m-1" onclick="showChart('dailyRevenueCard')"><i class="fas fa-calendar-day"></i> Doanh thu ngày</button>
     <button class="btn btn-outline-info m-1" onclick="showChart('monthlyRevenueCard')"><i class="fas fa-chart-bar"></i> Doanh thu tháng</button>
@@ -57,23 +58,40 @@
     <button class="btn btn-outline-brown m-1" onclick="showChart('booksImportedCard')"><i class="fas fa-truck-loading"></i> Sách nhập kho</button>
 </div>
 
-{{-- BIỂU ĐỒ --}}
-<div class="row">
-    <div class="col-md-6" id="dailyRevenueCard"><x-adminlte-card title="Doanh thu theo ngày" theme="primary" icon="fas fa-calendar-day"><canvas id="dailyRevenueChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="monthlyRevenueCard" style="display: none;"><x-adminlte-card title="Doanh thu theo tháng" theme="info" icon="fas fa-chart-bar"><canvas id="monthlyRevenueChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="yearlyRevenueCard" style="display: none;"><x-adminlte-card title="Doanh thu theo năm" theme="success" icon="fas fa-calendar-alt"><canvas id="yearlyRevenueChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="dailyOrderCard" style="display: none;"><x-adminlte-card title="Đơn hàng theo ngày" theme="dark" icon="fas fa-calendar-day"><canvas id="dailyOrderChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="monthlyOrderCard" style="display: none;"><x-adminlte-card title="Đơn hàng theo tháng" theme="cyan" icon="fas fa-calendar"><canvas id="monthlyOrderChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="yearlyOrderCard" style="display: none;"><x-adminlte-card title="Đơn hàng theo năm" theme="warning" icon="fas fa-calendar-alt"><canvas id="yearlyOrderChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="monthlyUserCard" style="display: none;"><x-adminlte-card title="Khách hàng mới theo tháng" theme="indigo" icon="fas fa-user-plus"><canvas id="monthlyUserChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="booksSoldCard" style="display: none;"><x-adminlte-card title="Sách đã bán theo ngày" theme="orange" icon="fas fa-book"><canvas id="booksSoldChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="booksCreatedCard" style="display: none;"><x-adminlte-card title="Sách được thêm mới theo tháng" theme="purple" icon="fas fa-plus-square"><canvas id="booksCreatedChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6" id="booksImportedCard" style="display: none;"><x-adminlte-card title="Sách nhập kho theo tháng" theme="brown" icon="fas fa-truck-loading"><canvas id="booksImportedChart"></canvas></x-adminlte-card></div>
-    <div class="col-md-6"><x-adminlte-card title="Tỷ lệ trạng thái đơn hàng" theme="teal" icon="fas fa-chart-pie"><canvas id="orderStatusChart"></canvas></x-adminlte-card></div>
+{{-- Biểu đồ --}}
+<div class="row flex-wrap">
+    {{-- Các biểu đồ chiếm 50% --}}
+    @foreach ([
+        'dailyRevenueCard' => ['title' => 'Doanh thu theo ngày', 'theme' => 'primary', 'icon' => 'calendar-day', 'canvas' => 'dailyRevenueChart'],
+        'monthlyRevenueCard' => ['title' => 'Doanh thu theo tháng', 'theme' => 'info', 'icon' => 'chart-bar', 'canvas' => 'monthlyRevenueChart'],
+        'yearlyRevenueCard' => ['title' => 'Doanh thu theo năm', 'theme' => 'success', 'icon' => 'calendar-alt', 'canvas' => 'yearlyRevenueChart'],
+        'dailyOrderCard' => ['title' => 'Đơn hàng theo ngày', 'theme' => 'dark', 'icon' => 'calendar-day', 'canvas' => 'dailyOrderChart'],
+        'monthlyOrderCard' => ['title' => 'Đơn hàng theo tháng', 'theme' => 'cyan', 'icon' => 'calendar', 'canvas' => 'monthlyOrderChart'],
+        'yearlyOrderCard' => ['title' => 'Đơn hàng theo năm', 'theme' => 'warning', 'icon' => 'calendar-alt', 'canvas' => 'yearlyOrderChart'],
+        'monthlyUserCard' => ['title' => 'Khách hàng mới theo tháng', 'theme' => 'indigo', 'icon' => 'user-plus', 'canvas' => 'monthlyUserChart'],
+        'booksSoldCard' => ['title' => 'Sách đã bán theo ngày', 'theme' => 'orange', 'icon' => 'book', 'canvas' => 'booksSoldChart'],
+        'booksCreatedCard' => ['title' => 'Sách được thêm mới theo tháng', 'theme' => 'purple', 'icon' => 'plus-square', 'canvas' => 'booksCreatedChart'],
+        'booksImportedCard' => ['title' => 'Sách nhập kho theo tháng', 'theme' => 'brown', 'icon' => 'truck-loading', 'canvas' => 'booksImportedChart'],
+    ] as $id => $cfg)
+        <div class="equal-height" id="{{ $id }}" style="display: {{ $loop->first ? 'block' : 'none' }};">
+            <x-adminlte-card title="{{ $cfg['title'] }}" theme="{{ $cfg['theme'] }}" icon="fas fa-{{ $cfg['icon'] }}">
+                <canvas id="{{ $cfg['canvas'] }}"></canvas>
+            </x-adminlte-card>
+        </div>
+    @endforeach
+
+    {{-- Pie chart toàn chiều rộng nhưng giới hạn cao --}}
+    <div class="equal-height">
+        <x-adminlte-card title="Tỷ lệ trạng thái đơn hàng" theme="teal" icon="fas fa-chart-pie">
+            <canvas id="orderStatusChart"></canvas>
+        </x-adminlte-card>
+    </div>
+
 </div>
 
+{{-- Biểu đồ top sách và người dùng --}}
 <div class="col-md">
-    <x-adminlte-card title="Top20 sách bán ra" theme="success" icon="fas fa-book">
+    <x-adminlte-card title="Top 20 sách bán ra" theme="success" icon="fas fa-book">
         <div style="overflow-x: auto;">
             <canvas id="topProductsChart" style="min-width: 1500px; height: 400px;"></canvas>
         </div>
@@ -81,7 +99,7 @@
 </div>
 
 <div class="col-md">
-    <x-adminlte-card title="Top20 Khách hàng chi tiêu nhiều" theme="warning" icon="fas fa-user-tie">
+    <x-adminlte-card title="Top 20 Khách hàng chi tiêu nhiều" theme="warning" icon="fas fa-user-tie">
         <div style="overflow-x: auto;">
             <canvas id="topUsersChart" style="min-width: 1500px; height: 400px;"></canvas>
         </div>
@@ -90,116 +108,152 @@
 
 @stop
 
+@push('css')
+<style>
+    .row.flex-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .equal-height {
+        width: 50%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .equal-height.w-100 {
+        width: 100% !important;
+    }
+
+    .equal-height > .card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .equal-height .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .equal-height canvas {
+        flex-grow: 1;
+        width: 100% !important;
+        max-height: 400px;
+        object-fit: contain;
+    }
+</style>
+@endpush
+
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const chartConfigs = [
-    { id: 'monthlyRevenueChart', labels: @json($labels), data: @json($data), label: 'Doanh thu', type: 'bar', color: '#36a2eb' },
-    { id: 'dailyRevenueChart', labels: @json($dailyRevenueLabels), data: @json($dailyRevenueData), label: 'Doanh thu ngày', type: 'line', color: '#007bff' },
-    { id: 'yearlyRevenueChart', labels: @json($yearLabels), data: @json($yearlyRevenueData), label: 'Doanh thu năm', type: 'bar', color: '#28a745' },
-    { id: 'dailyOrderChart', labels: @json($dailyOrderLabels), data: @json($dailyOrderData), label: 'Đơn hàng ngày', type: 'line', color: '#343a40' },
-    { id: 'monthlyOrderChart', labels: @json($monthlyOrderLabels), data: @json($monthlyOrderData), label: 'Đơn hàng tháng', type: 'bar', color: '#17a2b8' },
-    { id: 'yearlyOrderChart', labels: @json($yearLabels), data: @json($yearlyOrderData), label: 'Đơn hàng năm', type: 'bar', color: '#ffc107' },
-    { id: 'monthlyUserChart', labels: @json($monthlyUserLabels), data: @json($monthlyUserData), label: 'Người dùng mới', type: 'line', color: '#6610f2' },
-    { id: 'booksSoldChart', labels: @json($booksSoldLabels), data: @json($booksSoldData), label: 'Sách đã bán', type: 'bar', color: '#fd7e14' },
-    { id: 'booksCreatedChart', labels: @json($booksCreatedLabels), data: @json($booksCreatedData), label: 'Sách thêm mới', type: 'bar', color: '#6f42c1' },
-    { id: 'booksImportedChart', labels: @json($booksImportedLabels), data: @json($booksImportedData), label: 'Sách nhập kho', type: 'bar', color: '#795548' },
-];
+    const chartConfigs = [
+        { id: 'monthlyRevenueChart', labels: @json($labels), data: @json($data), label: 'Doanh thu', type: 'bar', color: '#36a2eb' },
+        { id: 'dailyRevenueChart', labels: @json($dailyRevenueLabels), data: @json($dailyRevenueData), label: 'Doanh thu ngày', type: 'line', color: '#007bff' },
+        { id: 'yearlyRevenueChart', labels: @json($yearLabels), data: @json($yearlyRevenueData), label: 'Doanh thu năm', type: 'bar', color: '#28a745' },
+        { id: 'dailyOrderChart', labels: @json($dailyOrderLabels), data: @json($dailyOrderData), label: 'Đơn hàng ngày', type: 'line', color: '#343a40' },
+        { id: 'monthlyOrderChart', labels: @json($monthlyOrderLabels), data: @json($monthlyOrderData), label: 'Đơn hàng tháng', type: 'bar', color: '#17a2b8' },
+        { id: 'yearlyOrderChart', labels: @json($yearLabels), data: @json($yearlyOrderData), label: 'Đơn hàng năm', type: 'bar', color: '#ffc107' },
+        { id: 'monthlyUserChart', labels: @json($monthlyUserLabels), data: @json($monthlyUserData), label: 'Người dùng mới', type: 'line', color: '#6610f2' },
+        { id: 'booksSoldChart', labels: @json($booksSoldLabels), data: @json($booksSoldData), label: 'Sách đã bán', type: 'bar', color: '#fd7e14' },
+        { id: 'booksCreatedChart', labels: @json($booksCreatedLabels), data: @json($booksCreatedData), label: 'Sách thêm mới', type: 'bar', color: '#6f42c1' },
+        { id: 'booksImportedChart', labels: @json($booksImportedLabels), data: @json($booksImportedData), label: 'Sách nhập kho', type: 'bar', color: '#795548' },
+    ];
 
-chartConfigs.forEach(cfg => {
-    new Chart(document.getElementById(cfg.id), {
-        type: cfg.type,
+    chartConfigs.forEach(cfg => {
+        new Chart(document.getElementById(cfg.id), {
+            type: cfg.type,
+            data: {
+                labels: cfg.labels,
+                datasets: [{
+                    label: cfg.label,
+                    data: cfg.data,
+                    backgroundColor: cfg.color + '66',
+                    borderColor: cfg.color,
+                    fill: cfg.type === 'line',
+                    tension: 0.3,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: { maxRotation: 45, minRotation: 45 }
+                    }
+                }
+            }
+        });
+    });
+
+    new Chart(document.getElementById('orderStatusChart'), {
+        type: 'pie',
         data: {
-            labels: cfg.labels,
+            labels: Object.keys(@json($ordersByStatus)),
             datasets: [{
-                label: cfg.label,
-                data: cfg.data,
-                backgroundColor: cfg.color + '66',
-                borderColor: cfg.color,
-                fill: cfg.type === 'line',
-                tension: 0.3,
+                data: Object.values(@json($ordersByStatus)),
+                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                }
-            }
+            plugins: { legend: { position: 'bottom' } }
         }
     });
-});
 
-new Chart(document.getElementById('orderStatusChart'), {
-    type: 'pie',
-    data: {
-        labels: Object.keys(@json($ordersByStatus)),
-        datasets: [{
-            data: Object.values(@json($ordersByStatus)),
-            backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom' } }
-    }
-});
-
-new Chart(document.getElementById('topProductsChart'), {
-    type: 'bar',
-    data: {
-        labels: @json($topProductsLabels),
-        datasets: [{
-            label: 'Số lượng bán',
-            data: @json($topProductsData),
-            backgroundColor: '#28a745aa'
-        }]
-    },
-    options: {
-        indexAxis: 'x',
-        responsive: false,
-maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { x: { ticks: { autoSkip: false } } }
-    }
-});
-
-new Chart(document.getElementById('topUsersChart'), {
-    type: 'bar',
-    data: {
-        labels: @json($topUsersLabels),
-        datasets: [{
-            label: 'Tổng chi tiêu',
-            data: @json($topUsersData),
-            backgroundColor: '#ffc107aa'
-        }]
-    },
-    options: {
-        indexAxis: 'x',
-    responsive: false,
-maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { x: { ticks: { autoSkip: false } } }
-    }
-});
-
-function showChart(cardId) {
-    const chartIds = [
-        'dailyRevenueCard', 'monthlyRevenueCard', 'yearlyRevenueCard',
-        'dailyOrderCard', 'monthlyOrderCard', 'yearlyOrderCard',
-        'monthlyUserCard', 'booksSoldCard',
-        'booksCreatedCard', 'booksImportedCard'
-    ];
-
-    chartIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = id === cardId ? 'block' : 'none';
+    new Chart(document.getElementById('topProductsChart'), {
+        type: 'bar',
+        data: {
+            labels: @json($topProductsLabels),
+            datasets: [{
+                label: 'Số lượng bán',
+                data: @json($topProductsData),
+                backgroundColor: '#28a745aa'
+            }]
+        },
+        options: {
+            indexAxis: 'x',
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { ticks: { autoSkip: false } } }
+        }
     });
-}
+
+    new Chart(document.getElementById('topUsersChart'), {
+        type: 'bar',
+        data: {
+            labels: @json($topUsersLabels),
+            datasets: [{
+                label: 'Tổng chi tiêu',
+                data: @json($topUsersData),
+                backgroundColor: '#ffc107aa'
+            }]
+        },
+        options: {
+            indexAxis: 'x',
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { ticks: { autoSkip: false } } }
+        }
+    });
+
+    function showChart(cardId) {
+        const chartIds = [
+            'dailyRevenueCard', 'monthlyRevenueCard', 'yearlyRevenueCard',
+            'dailyOrderCard', 'monthlyOrderCard', 'yearlyOrderCard',
+            'monthlyUserCard', 'booksSoldCard', 'booksCreatedCard', 'booksImportedCard'
+        ];
+        chartIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = id === cardId ? 'block' : 'none';
+        });
+    }
 </script>
 @endpush
