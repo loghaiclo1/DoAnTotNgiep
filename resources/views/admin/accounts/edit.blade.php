@@ -3,7 +3,7 @@
 @section('title', 'Sửa tài khoản')
 
 @section('content_header')
-    <h1>Sửa tài khoản</h1>
+    <h1>Cập nhật thông tin tài khoản</h1>
 @endsection
 
 @section('content')

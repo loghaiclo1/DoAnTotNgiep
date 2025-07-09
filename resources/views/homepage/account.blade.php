@@ -258,6 +258,9 @@
                                                     <div class="col-md-6">
                                                         <input type="email" class="form-control" id="email"
                                                             name="email" value="{{ auth()->user()->email }}" required>
+                                                            @error('email')
+                                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                                            @enderror
                                                     </div>
                                                     <div class=" col-md-6 form-buttons">
                                                         <label></label>
@@ -303,8 +306,44 @@
                                                     </div>
                                                 </div>
                                                 <div class="review-footer">
-                                                    <a href="{{ route('review.create', ['MaSach' => $bookModel->MaSach]) }}"
-                                                        class="btn btn-primary">Viết đánh giá</a>
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal-{{ $bookModel->MaSach }}">
+                                                        Viết đánh giá
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="modal fade" id="reviewModal-{{ $bookModel->MaSach }}" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form method="POST" action="{{ route('review.store') }}">
+                                                            @csrf
+                                                            <input type="hidden" name="MaSach" value="{{ $bookModel->MaSach }}">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="reviewModalLabel">Viết đánh giá cho: {{ $bookModel->TenSach }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label d-block">Số sao:</label>
+                                                                    <div class="star-container" data-ma-sach="{{ $bookModel->MaSach }}">
+                                                                        @for ($i = 1; $i <= 5; $i++)
+                                                                            <i class="bi bi-star star-icon" data-value="{{ $i }}" style="font-size: 1.5rem; cursor: pointer; color: #ccc;"></i>
+                                                                        @endfor
+                                                                    </div>
+                                                                    <input type="hidden" name="SoSao" id="ratingInput-{{ $bookModel->MaSach }}" required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="NoiDung">Nội dung:</label>
+                                                                    <textarea name="NoiDung" class="form-control" rows="4" required></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                                <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         @empty
@@ -724,5 +763,36 @@
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.star-container').forEach(container => {
+        const stars = container.querySelectorAll('.star-icon');
+        const maSach = container.getAttribute('data-ma-sach');
+        const input = document.getElementById('ratingInput-' + maSach);
 
+        function updateStars(selected) {
+            stars.forEach(star => {
+                const val = parseInt(star.getAttribute('data-value'));
+                if (val <= selected) {
+                    star.classList.remove('bi-star');
+                    star.classList.add('bi-star-fill');
+                    star.style.color = '#ffc107'; // vàng
+                } else {
+                    star.classList.remove('bi-star-fill');
+                    star.classList.add('bi-star');
+                    star.style.color = '#ccc'; // xám
+                }
+            });
+        }
+
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                const selected = parseInt(this.getAttribute('data-value'));
+                input.value = selected;
+                updateStars(selected);
+            });
+        });
+    });
+});
+</script>
 @endsection

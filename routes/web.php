@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
     Route::put('/my-reviews/{id}', [ReviewController::class, 'update'])->name('review.update');
     Route::delete('/my-reviews/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
-    Route::get('/my-reviews/create', [ReviewController::class, 'create'])->name('review.create');
+    // Route::get('/my-reviews/create', [ReviewController::class, 'create'])->name('review.create');
     Route::post('/my-reviews', [ReviewController::class, 'store'])->name('review.store');
 
 });

@@ -75,6 +75,7 @@
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
+                <th>STT</th>
                 <th>Sách</th>
                 <th>Người đánh giá</th>
                 <th>Sao</th>
@@ -87,6 +88,7 @@
         <tbody>
             @foreach($reviews as $review)
                 <tr>
+                    <td>{{ $review->MaDanhGia }}</td>
                     <td>{{ $review->book->TenSach ?? '[Sách đã xóa]' }}</td>
                     <td>
                         @if ($review->user)
