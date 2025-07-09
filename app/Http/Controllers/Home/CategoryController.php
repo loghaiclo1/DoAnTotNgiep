@@ -51,6 +51,8 @@ class CategoryController extends Controller
             }
         }
 
+        $query->orderByRaw('SoLuong > 0 DESC');
+
         // Số lượng mỗi trang
         $perPage = $request->input('per_page', 12);
         
