@@ -28,6 +28,20 @@ class PhieuNhapController extends Controller
             'books.*.GiaBan' => 'required|numeric|min:1000',
         ]);
 
+        // Kiểm tra lỗi trước khi lưu
+        $errors = [];
+        foreach ($request->books as $item) {
+            $book = \App\Models\Book::find($item['MaSach']);
+            if ($item['GiaBan'] < $item['DonGia']) {
+                $errors[] = 'Không thể nhập sách có giá bán nhỏ hơn giá nhập:
+                Sách "' . ($book->TenSach ?? 'Không rõ') . '" có giá bán (' . number_format($item['GiaBan']) . '₫) nhỏ hơn giá nhập (' . number_format($item['DonGia']) . '₫).';
+            }
+        }
+
+        if (!empty($errors)) {
+            return back()->withInput()->withErrors($errors);
+        }
+
         DB::beginTransaction();
         try {
             $phieuNhap = PhieuNhap::create([
@@ -44,7 +58,7 @@ class PhieuNhapController extends Controller
                     'DonGia' => $item['DonGia'],
                 ]);
 
-                // Cập nhật tồn kho và giá trong bảng sách
+                // Cập nhật tồn kho và giá sách
                 $book = Book::find($item['MaSach']);
                 $book->SoLuong += $item['SoLuong'];
                 $book->GiaNhap = $item['DonGia'];
@@ -55,16 +69,36 @@ class PhieuNhapController extends Controller
             DB::commit();
             return redirect()->route('admin.phieunhap.create')->with('success', 'Tạo phiếu nhập thành công!');
         } catch (\Exception $e) {
-            DB::rollback();
-            return back()->withErrors(['error' => 'Lỗi: ' . $e->getMessage()]);
+            DB::rollBack();
+            return back()->withInput()->withErrors(['Lỗi hệ thống: ' . $e->getMessage()]);
         }
     }
 
-    public function index()
-{
-    $phieuNhaps = PhieuNhap::with('nguoi_nhap')->orderByDesc('NgayNhap')->get();
-    return view('admin.phieunhap.index', compact('phieuNhaps'));
-}
+
+    public function index(Request $request)
+    {
+        $query = PhieuNhap::query()
+            ->join('khachhang', 'phieunhap.MaKhachHang', '=', 'khachhang.MaKhachHang')
+            ->leftJoin('chitietphieunhap', 'phieunhap.MaPhieuNhap', '=', 'chitietphieunhap.MaPhieuNhap')
+            ->leftJoin('sach', 'chitietphieunhap.MaSach', '=', 'sach.MaSach')
+            ->select('phieunhap.*', 'khachhang.Ho', 'khachhang.Ten');
+
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('phieunhap.MaPhieuNhap', 'like', "%$keyword%")
+                  ->orWhere('phieunhap.GhiChu', 'like', "%$keyword%")
+                  ->orWhere(DB::raw("CONCAT(khachhang.Ho, ' ', khachhang.Ten)"), 'like', "%$keyword%")
+                  ->orWhere('phieunhap.NgayNhap', 'like', "%$keyword%")
+                  ->orWhere('sach.TenSach', 'like', "%$keyword%"); //  tìm theo tên sách
+            });
+        }
+
+        $phieuNhaps = $query->orderByDesc('phieunhap.NgayNhap')->paginate(10)->appends($request->all());
+
+        return view('admin.phieunhap.index', compact('phieuNhaps'));
+    }
+
 
 public function show($id)
 {

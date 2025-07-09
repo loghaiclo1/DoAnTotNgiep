@@ -50,8 +50,8 @@
                                         <input type="text" class="form-control @error('ho') is-invalid @enderror"
                                             id="login-register-reg-firstname" name="ho" value="{{ old('ho') }}"
                                             required>
-                                        @error('ho')
-                                            <div class="invalid-feedback">Vui lòng nhập họ.</div>
+                                            @error('ho')
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
@@ -60,8 +60,8 @@
                                         <input type="text" class="form-control @error('ten') is-invalid @enderror"
                                             id="login-register-reg-lastname" name="ten" value="{{ old('ten') }}"
                                             required>
-                                        @error('ten')
-                                            <div class="invalid-feedback">Vui lòng nhập tên.</div>
+                                            @error('ten')
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
@@ -141,6 +141,37 @@
         });
     </script>
     @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const emailInput = document.getElementById('login-register-reg-email');
+            const errorDiv = emailInput.parentElement.querySelector('.invalid-feedback');
 
+            emailInput.addEventListener('input', function () {
+                if (errorDiv) {
+                    errorDiv.style.display = 'none';
+                    emailInput.classList.remove('is-invalid');
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Các field cần theo dõi
+            const fields = ['login-register-reg-firstname', 'login-register-reg-lastname'];
+
+            fields.forEach(function(id) {
+                const input = document.getElementById(id);
+                input.addEventListener('input', function () {
+                    if (input.classList.contains('is-invalid')) {
+                        input.classList.remove('is-invalid');
+                        const feedback = input.parentElement.querySelector('.invalid-feedback');
+                        if (feedback) {
+                            feedback.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+        </script>
 </main>
 @endsection

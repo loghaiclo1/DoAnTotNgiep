@@ -14,6 +14,12 @@
     <div class="alert alert-danger">{{ implode(', ', $errors->all()) }}</div>
 @endif
 
+
+<div class="alert alert-info">
+    <strong>Lưu ý:</strong> Khi bạn chọn sách, hệ thống sẽ tự động điền giá nhập và giá bán hiện tại vào ô tương ứng.
+    Bạn có thể chỉnh sửa nếu muốn cập nhật giá mới.
+</div>
+
 <form method="POST" action="{{ route('admin.phieunhap.store') }}">
     @csrf
     <div class="form-group">
@@ -33,52 +39,167 @@
             </tr>
         </thead>
         <tbody>
+            <!-- Dòng đầu tiên mặc định -->
             <tr>
                 <td>
-                    <select name="books[0][MaSach]" class="form-control" required>
+                    <select name="books[0][MaSach]" class="form-control select-book" required onchange="updateGiaCu(this)">
                         <option value="">-- Chọn sách --</option>
                         @foreach($books as $book)
-                            <option value="{{ $book->MaSach }}">{{ $book->TenSach }}</option>
+                            <option value="{{ $book->MaSach }}"
+                                    data-gianhap="{{ $book->GiaNhap ?? 0 }}"
+                                    data-giaban="{{ $book->GiaBan ?? 0 }}">
+                                {{ $book->TenSach }}
+                            </option>
                         @endforeach
                     </select>
+                    <small class="text-muted gia-cu">
+                        Giá nhập hiện tại: <span class="gia-nhap-cu">-</span>,
+                        Giá bán hiện tại: <span class="gia-ban-cu">-</span>
+                    </small>
                 </td>
                 <td><input type="number" name="books[0][SoLuong]" class="form-control" min="1" required></td>
-                <td><input type="number" name="books[0][DonGia]" class="form-control" min="1000" required></td>
-                <td><input type="number" name="books[0][GiaBan]" class="form-control" min="1000" required></td>
-
+                <td><input type="number" name="books[0][DonGia]" class="form-control" min="1000"></td>
+                <td><input type="number" name="books[0][GiaBan]" class="form-control" min="1000"></td>
+                <td></td>
             </tr>
         </tbody>
     </table>
 
     <button class="btn btn-primary">Lưu phiếu nhập</button>
 </form>
+
+<!-- Template cho dòng mới -->
+<template id="book-row-template">
+    <tr>
+        <td>
+            <select name="__name__" class="form-control select-book" required onchange="updateGiaCu(this)">
+                <option value="">-- Chọn sách --</option>
+                @foreach($books as $book)
+                    <option value="{{ $book->MaSach }}"
+                            data-gianhap="{{ $book->GiaNhap ?? 0 }}"
+                            data-giaban="{{ $book->GiaBan ?? 0 }}">
+                        {{ $book->TenSach }}
+                    </option>
+                @endforeach
+            </select>
+            <small class="text-muted gia-cu">
+                Giá nhập hiện tại: <span class="gia-nhap-cu">-</span>,
+                Giá bán hiện tại: <span class="gia-ban-cu">-</span>
+            </small>
+        </td>
+        <td><input type="number" name="__soluong__" class="form-control" min="1" required></td>
+        <td><input type="number" name="__dongia__" class="form-control" min="1000"></td>
+        <td><input type="number" name="__giaban__" class="form-control" min="1000"></td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">×</button></td>
+    </tr>
+</template>
 @stop
 
+@push('css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .gia-cu {
+        font-size: 12px;
+        display: block;
+        margin-top: 5px;
+    }
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+    .select2-container {
+        width: 100% !important;
+    }
+</style>
+@endpush
+
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     let index = 1;
+
     function addRow() {
-    const row = `
-        <tr>
-            <td>
-                <select name="books[${index}][MaSach]" class="form-control" required>
-                    <option value="">-- Chọn sách --</option>
-                    @foreach($books as $book)
-                        <option value="{{ $book->MaSach }}">{{ $book->TenSach }}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td><input type="number" name="books[${index}][SoLuong]" class="form-control" min="1" required></td>
-            <td><input type="number" name="books[${index}][DonGia]" class="form-control" min="1000" required></td>
-            <td><input type="number" name="books[${index}][GiaBan]" class="form-control" min="1000" required></td>
-            <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">×</button></td>
-        </tr>
-    `;
-    document.querySelector('#books-table tbody').insertAdjacentHTML('beforeend', row);
-    index++;
-}
+        const template = document.getElementById('book-row-template');
+        const clone = template.content.cloneNode(true);
+
+        // Cập nhật name
+        clone.querySelectorAll('select, input').forEach(el => {
+            if (el.name?.includes('__name__')) el.name = `books[${index}][MaSach]`;
+            if (el.name?.includes('__soluong__')) el.name = `books[${index}][SoLuong]`;
+            if (el.name?.includes('__dongia__')) el.name = `books[${index}][DonGia]`;
+            if (el.name?.includes('__giaban__')) el.name = `books[${index}][GiaBan]`;
+        });
+
+        document.querySelector('#books-table tbody').appendChild(clone);
+        $('.select-book').select2();
+        index++;
+
+        refreshBookOptions();
+    }
+
     function removeRow(btn) {
         btn.closest('tr').remove();
+        refreshBookOptions();
     }
+
+    function updateGiaCu(selectEl) {
+        const selectedOption = selectEl.options[selectEl.selectedIndex];
+        const giaNhap = selectedOption.getAttribute('data-gianhap') || 0;
+        const giaBan = selectedOption.getAttribute('data-giaban') || 0;
+
+        const row = selectEl.closest('tr');
+        row.querySelector('.gia-nhap-cu').textContent = Number(giaNhap).toLocaleString() + '₫';
+        row.querySelector('.gia-ban-cu').textContent = Number(giaBan).toLocaleString() + '₫';
+
+        row.querySelector('input[name*="[DonGia]"]').value = giaNhap;
+        row.querySelector('input[name*="[GiaBan]"]').value = giaBan;
+
+        refreshBookOptions();
+    }
+
+    function refreshBookOptions() {
+        const selectedValues = Array.from(document.querySelectorAll('.select-book'))
+            .map(select => select.value)
+            .filter(val => val); // loại bỏ rỗng
+
+        document.querySelectorAll('.select-book').forEach(select => {
+            const currentValue = select.value;
+            Array.from(select.options).forEach(option => {
+                if (!option.value) return; // bỏ option mặc định
+                if (option.value !== currentValue && selectedValues.includes(option.value)) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+        });
+
+        $('.select-book').select2(); // cần re-init select2 để reflect disabled
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $('.select-book').select2();
+
+        document.querySelector('form').addEventListener('submit', function () {
+            const rows = document.querySelectorAll('#books-table tbody tr');
+            rows.forEach(row => {
+                const select = row.querySelector('select.select-book');
+                const selectedOption = select.options[select.selectedIndex];
+
+                const giaNhapCu = selectedOption.getAttribute('data-gianhap') || 0;
+                const giaBanCu = selectedOption.getAttribute('data-giaban') || 0;
+
+                const inputDonGia = row.querySelector('input[name*="[DonGia]"]');
+                const inputGiaBan = row.querySelector('input[name*="[GiaBan]"]');
+
+                if (!inputDonGia.value) inputDonGia.value = giaNhapCu;
+                if (!inputGiaBan.value) inputGiaBan.value = giaBanCu;
+            });
+        });
+    });
 </script>
+
 @endpush

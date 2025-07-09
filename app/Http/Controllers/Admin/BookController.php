@@ -90,7 +90,12 @@ class BookController extends Controller
             'HinhAnh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'MoTa' => 'nullable|string',
         ]);
-
+        if ($data['GiaBan'] < $data['GiaNhap']) {
+            return back()
+                ->withInput()
+                ->withErrors(['GiaBan' => 'Giá bán không được nhỏ hơn giá nhập.'])
+                ->with('old_modal', 'add');
+        }
         if ($request->hasFile('HinhAnh')) {
             $file = $request->file('HinhAnh');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -99,6 +104,7 @@ class BookController extends Controller
         }
 
         $data['slug'] = Str::slug($data['TenSach']);
+        $data['TrangThai'] = 1;
         Book::create($data);
 
         return redirect()->route('admin.books.index')->with('success', 'Thêm sách thành công!');
@@ -119,7 +125,12 @@ class BookController extends Controller
             'HinhAnh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'MoTa' => 'nullable|string',
         ]);
-
+        if ($data['GiaBan'] < $data['GiaNhap']) {
+            return back()
+                ->withInput()
+                ->withErrors(['GiaBan' => 'Giá bán không được nhỏ hơn giá nhập.'])
+                ->with('old_modal', 'edit_' . $book->MaSach);
+        }
         if ($request->hasFile('HinhAnh')) {
             $file = $request->file('HinhAnh');
             $filename = time() . '_' . $file->getClientOriginalName();

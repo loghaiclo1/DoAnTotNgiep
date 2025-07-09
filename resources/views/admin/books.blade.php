@@ -262,3 +262,13 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 @endpush
+@push('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if(session('old_modal'))
+            const modalId = @json(session('old_modal')) === 'add' ? '#modalAdd' : '#modalEdit' + @json(session('old_modal')).replace('edit_', '');
+            $(modalId).modal('show');
+        @endif
+    });
+</script>
+@endpush

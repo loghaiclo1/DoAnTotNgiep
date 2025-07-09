@@ -149,6 +149,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
+    Route::get('/admin/orders/{mahoadon}/pdf', [OrderController::class, 'exportPdf'])->name('orders.exportPdf');
+    Route::get('/admin/orders/{mahoadon}/pdf/view', [OrderController::class, 'viewPdf'])->name('orders.viewPdf');
 
     // Chỉ superadmin mới được quản lý tài khoản
     Route::middleware(['is_superadmin'])->group(function () {

@@ -8,7 +8,7 @@ use App\Models\Hoadon;
 use App\Events\OrderStatusUpdated;
 use Termwind\Components\Hr;
 use Illuminate\Support\Facades\DB;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -167,5 +167,36 @@ class OrderController extends Controller
         }
 
         return response($html);
+    }
+
+    public function exportPdf($mahoadon)
+    {
+        $donhang = HoaDon::with(['khachhang', 'chitiethoadon.sach'])
+                    ->where('MaHoaDon', $mahoadon)
+                    ->firstOrFail();
+
+        $pdf = Pdf::loadView('admin.orders.invoice-pdf', compact('donhang'));
+
+        // Tên file tùy ý
+        $fileName = 'hoadon_' . $donhang->MaHoaDon . '.pdf';
+
+        // Trả về file PDF để tải luôn
+        return $pdf->download($fileName);
+    }
+    public function viewPdf($mahoadon)
+    {
+        $donhang = HoaDon::with(['khachhang', 'chitiethoadon.sach'])
+                    ->where('MaHoaDon', $mahoadon)
+                    ->firstOrFail();
+
+        $pdf = Pdf::loadView('admin.orders.invoice-pdf', compact('donhang'));
+
+        return $pdf->stream('hoadon_' . $donhang->MaHoaDon . '.pdf', [
+            'Attachment' => false
+        ]);
+    }
+    public function showPdfPage($mahoadon)
+    {
+        return view('admin.orders.pdf-view', compact('mahoadon'));
     }
 }

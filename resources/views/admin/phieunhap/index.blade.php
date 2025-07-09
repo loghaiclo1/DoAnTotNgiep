@@ -17,7 +17,15 @@
         </div>
     @endif
 
-
+    <form method="GET" class="mb-3">
+        <div class="input-group" style="max-width: 400px;">
+            <input type="text" name="keyword" class="form-control" placeholder="Tìm theo mã phiếu, ghi chú, người nhập..." value="{{ request('keyword') }}">
+            <button type="submit" class="btn btn-primary">Tìm</button>
+            @if(request('keyword'))
+                <a href="{{ route('admin.phieunhap.index') }}" class="btn btn-secondary">Xóa</a>
+            @endif
+        </div>
+    </form>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -43,5 +51,11 @@
                 </tr>
             @endforeach
         </tbody>
+        <div class="mt-3 d-flex justify-content-center">
+            {{ $phieuNhaps->appends(request()->query())->onEachSide(1)->links('vendor.pagination.bootstrap-4') }}
+        </div>
+        <div class="text-muted mb-2">
+            Hiển thị từ {{ $phieuNhaps->firstItem() }} đến {{ $phieuNhaps->lastItem() }} trong tổng số {{ $phieuNhaps->total() }} kết quả
+        </div>
     </table>
 @stop
