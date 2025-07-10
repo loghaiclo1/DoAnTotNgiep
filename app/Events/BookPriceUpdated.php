@@ -34,7 +34,6 @@ class BookPriceUpdated implements ShouldBroadcastNow
         ]);
     }
 
-    // ✅ PHẢI CÓ method broadcastOn
     public function broadcastOn()
     {
         return new Channel('books');

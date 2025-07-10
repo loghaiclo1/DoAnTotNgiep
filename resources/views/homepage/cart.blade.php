@@ -17,7 +17,16 @@
                 </nav>
             </div>
         </div><!-- End Page Title -->
-
+        <div id="custom-toast" style="
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    "></div>
         <!-- Cart Section -->
         <section id="cart" class="cart section">
             <div class="container" data-aos="fade-up" data-aos-delay="100">
