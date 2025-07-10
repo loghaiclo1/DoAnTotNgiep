@@ -85,14 +85,19 @@
 
             <!-- Account -->
             <div class="dropdown account-dropdown">
-              <button class="header-action-btn" data-bs-toggle="dropdown" style="display: flex; flex-direction: column; margin-top: 23px;">
-                <i class="bi bi-person"></i>
-                   @auth
-                   <span class="ms-2 d-none d-md-inline" style="font-size: 14px;">
-                    {{ Auth::user()->Ho }} {{ Auth::user()->Ten }}
-                </span>
-                 @endauth
-              </button>
+                <button class="header-action-btn" data-bs-toggle="dropdown" style="display: flex; flex-direction: column; margin-top: 23px;">
+                  <i class="bi bi-person"></i>
+                  @auth
+                      <span class="ms-2 d-none d-md-inline" style="font-size: 14px;">
+                          {{ Auth::user()->Ho }} {{ Auth::user()->Ten }}
+                      </span>
+                  @else
+                      <!-- Placeholder để giữ chiều cao -->
+                      <span class="ms-2 d-none d-md-inline" style="font-size: 14px; visibility: hidden;">
+                          Họ tên người dùng
+                      </span>
+                  @endauth
+                </button>
 
               <div class="dropdown-menu">
                   @auth

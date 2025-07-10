@@ -263,12 +263,13 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 @endpush
 @push('js')
+@if(session('old_modal') && !$errors->has('GiaBan'))
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        @if(session('old_modal'))
-            const modalId = @json(session('old_modal')) === 'add' ? '#modalAdd' : '#modalEdit' + @json(session('old_modal')).replace('edit_', '');
-            $(modalId).modal('show');
-        @endif
+        const oldModal = @json(session('old_modal'));
+        const modalId = oldModal === 'add' ? '#modalAdd' : '#modalEdit' + oldModal.replace('edit_', '');
+        $(modalId).modal('show');
     });
 </script>
+@endif
 @endpush
