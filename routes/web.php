@@ -19,7 +19,7 @@ use App\Http\Controllers\Home\{
     VNPayController,
     KhuyenMaiController,
     AddressController,
-    ReviewController
+    ReviewController,
 };
 use App\Http\Controllers\Auth\{
     ForgotPasswordController,
@@ -33,9 +33,15 @@ use App\Http\Controllers\Admin\{
     BookController as AdminBookController,
     OrderController,
     ContactController as AdminContactController,
-    DanhGiaController
+    DanhGiaController,
+    TacGiaController,
+    NhaXuatBanController,
+    DonViPhatHanhController
 };
 use App\Http\Middleware\CheckPermissionByRoute;
+use App\Models\DonViPhatHanh;
+use App\Models\NhaXuatBan;
+
 // Trang chủ
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -55,7 +61,7 @@ Route::get('/orders/{id}/tracking-html', [OrderController::class, 'trackingHtml'
 
 // Giỏ hàng
 Route::prefix('cart')->name('cart.')->group(function () {
-    Route::get('/total-quantity', fn () => response()->json(['total_quantity' => session('cart_total_quantity', 0)]));
+    Route::get('/total-quantity', fn() => response()->json(['total_quantity' => session('cart_total_quantity', 0)]));
     Route::get('/quantity', [CartController::class, 'getCartQuantity']);
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add', [CartController::class, 'add'])->name('add');
@@ -82,7 +88,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/my-reviews/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
     // Route::get('/my-reviews/create', [ReviewController::class, 'create'])->name('review.create');
     Route::post('/my-reviews', [ReviewController::class, 'store'])->name('review.store');
-
 });
 
 // Auth
@@ -149,7 +154,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
     Route::get('/admin/orders/{mahoadon}/pdf', [OrderController::class, 'exportPdf'])->name('orders.exportPdf');
     Route::get('/admin/orders/{mahoadon}/pdf/view', [OrderController::class, 'viewPdf'])->name('orders.viewPdf');
-   Route::post('permissions', [\App\Http\Controllers\Admin\PermissionController::class, 'store'])->name('permissions.store');
+    Route::post('permissions', [\App\Http\Controllers\Admin\PermissionController::class, 'store'])->name('permissions.store');
     Route::delete('permissions/{id}', [\App\Http\Controllers\Admin\PermissionController::class, 'destroy'])->name('permissions.destroy');
     // Chỉ superadmin mới được quản lý tài khoản
     Route::middleware(['is_superadmin'])->group(function () {
@@ -158,10 +163,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
         Route::put('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'update'])->name('accounts.update');
         Route::put('/accounts/{id}/toggle', [\App\Http\Controllers\Admin\AccountController::class, 'toggle'])->name('accounts.toggle');
         // Giao diện phân quyền người dùng
-Route::get('/accounts/{id}/permissions', [\App\Http\Controllers\Admin\UserPermissionController::class, 'edit'])->name('accounts.permissions.edit');
-Route::put('/accounts/{id}/permissions', [\App\Http\Controllers\Admin\UserPermissionController::class, 'update'])->name('accounts.permissions.update');
-
+        Route::get('/accounts/{id}/permissions', [\App\Http\Controllers\Admin\UserPermissionController::class, 'edit'])->name('accounts.permissions.edit');
+        Route::put('/accounts/{id}/permissions', [\App\Http\Controllers\Admin\UserPermissionController::class, 'update'])->name('accounts.permissions.update');
     });
+
+   Route::resource('tacgia', TacGiaController::class);
+   Route::resource('nhaxuatban', NhaXuatBanController::class);
+   Route::resource('donviphathanh', DonViPhatHanhController::class);
+
 });
 
 Route::get('/account/order-status/{id}', [AccountController::class, 'getOrderStatus'])->name('account.order-status');

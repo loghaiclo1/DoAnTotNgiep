@@ -322,6 +322,21 @@ return [
             'icon' => 'fas fa-book',
         ],
         [
+            'text' => 'Tác giả',
+            'url'  => 'admin/tacgia',
+            'icon' => 'fas fa-pen-nib',
+        ],
+        [
+            'text' => 'Nhà xuất bản',
+            'url'  => 'admin/nhaxuatban',
+            'icon' => 'fas fa-university',
+        ],
+        [
+            'text' => 'Đơn vị phát hành',
+            'url'  => 'admin/donviphat',
+            'icon' => 'fas fa-building',
+        ],
+        [
             'text' => 'Đánh giá',
             'url'  => 'admin/reviews',
             'icon' => 'fas fa-star',
@@ -334,7 +349,7 @@ return [
         [
             'text' => 'Footer',
             'url'  => 'admin/footer',
-            'icon' => 'fas fa-shoe-prints', 
+            'icon' => 'fas fa-shoe-prints',
         ],
         [
             'text' => 'Phiếu nhập',

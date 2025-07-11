@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class DonViPhatHanh extends Model
+{
+    protected $table = 'donviphathanh'; // Tên bảng đúng trong CSDL của bạn
+    protected $primaryKey = 'MaDVPH'; // Khóa chính không phải "id"
+    public $timestamps = true; // Bảng của bạn có `created_at`, `updated_at`
+    protected $fillable = [
+        'TenDVPH',
+        'DiaChi',
+        'DienThoai',
+        'Email',
+        'image',
+        'slug',
+    ];
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'sach_donviphathanh', 'MaDVPH', 'MaSach');
+    }
+    public function nhaxuatban()
+    {
+        return $this->belongsToMany(NhaXuatBan::class, 'nhaxuatban_donviphathanh', 'MaDVPH', 'MaNXB');
+    }
+}
