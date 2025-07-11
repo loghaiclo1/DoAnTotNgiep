@@ -8,27 +8,22 @@
 @endsection
 
 @section('content')
-    {{-- Thông báo khi lưu thành công --}}
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-1"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
-        </div>
-    @endif
+    {{-- Thông báo --}}
+    @foreach (['success', 'error'] as $msg)
+        @if (session($msg))
+            <div class="alert alert-{{ $msg == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-{{ $msg == 'success' ? 'check' : 'exclamation' }}-circle me-1"></i> {{ session($msg) }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+            </div>
+        @endif
+    @endforeach
 
-    {{-- Thông báo lỗi --}}
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-1"></i> {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
-        </div>
-    @endif
     <div class="mb-3">
         <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách tài khoản
         </a>
     </div>
-    {{-- Form phân quyền --}}
+
     @if (!$user->isSuperAdmin())
         <form method="POST" action="{{ route('admin.accounts.permissions.update', $user->MaKhachHang) }}">
             @csrf
@@ -43,29 +38,26 @@
                     @if ($permissions->isEmpty())
                         <p class="text-muted">Chưa có quyền nào được tạo trong hệ thống.</p>
                     @else
+                        <div class="form-check mb-3">
+                            <input type="checkbox" id="selectAll" class="form-check-input">
+                            <label for="selectAll" class="form-check-label fw-bold text-primary">
+                                Chọn tất cả quyền
+                            </label>
+                        </div>
+
                         <div class="row">
-
-
-                            @foreach ($permissions->filter(fn($p) => $p->name !== 'full access') as $permission)
+                            @foreach ($permissions->sortBy('name')->filter(fn($p) => $p->name !== 'full access') as $permission)
                                 <div class="col-md-4 mb-2">
-                                    <div class="form-check">
+                                    <div class="form-check" title="{{ $permission->description ?? '' }}">
                                         <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"
                                                id="perm_{{ $permission->id }}" class="form-check-input"
                                                {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                                         <label for="perm_{{ $permission->id }}" class="form-check-label">
-                                            {{ ucfirst($permission->name) }}
+                                            {{ $permission->label_vi ?? ucfirst($permission->name) }}
                                         </label>
                                     </div>
                                 </div>
                             @endforeach
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input type="checkbox" id="selectAll" class="form-check-input">
-                                    <label for="selectAll" class="form-check-label fw-bold text-primary">
-                                         Chọn tất cả quyền
-                                    </label>
-                                </div>
-                            </div>
                         </div>
                     @endif
                 </div>
@@ -86,7 +78,6 @@
         </div>
     @endif
 
-    {{-- Hướng dẫn sử dụng --}}
     <div class="alert alert-info mt-4">
         <h5><i class="fas fa-info-circle me-1"></i> Hướng dẫn</h5>
         <ul class="mb-1">
@@ -97,17 +88,17 @@
         </ul>
     </div>
 
-    {{-- SuperAdmin mới được thêm / xóa quyền --}}
-    @if (auth()->user()->isSuperAdmin())
+{{--
+    @if (auth()->user()->isSuperAdmin() && app()->environment('local'))
         <hr>
         <h4>Thêm quyền mới</h4>
         <form action="{{ route('admin.permissions.store') }}" method="POST" class="mb-4 d-flex" style="gap: 10px;">
             @csrf
-            <input type="text" name="name" class="form-control" placeholder="Tên quyền mới (vd: create books)" required>
+            <input type="text" name="name" class="form-control" placeholder="Tên quyền (vd: create books)" required>
             <button type="submit" class="btn btn-success">Thêm</button>
         </form>
 
-        <h5>Danh sách quyền hiện có (có thể xóa):</h5>
+        <h5>Danh sách quyền hiện có:</h5>
         <ul class="list-group mb-3">
             @foreach ($permissions as $permission)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -121,8 +112,9 @@
                 </li>
             @endforeach
         </ul>
-    @endif
+    @endif --}}
 @endsection
+
 @section('js')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -136,14 +128,13 @@
                 });
             });
 
-            // Sync trạng thái checkbox "Chọn tất cả" nếu đã check hết
             const updateSelectAllState = () => {
                 const allChecked = Array.from(permissionCheckboxes).every(cb => cb.checked);
                 selectAllCheckbox.checked = allChecked;
             };
 
             permissionCheckboxes.forEach(cb => cb.addEventListener('change', updateSelectAllState));
-            updateSelectAllState(); // gọi lúc đầu để sync trạng thái nếu đã cấp đủ
+            updateSelectAllState();
         }
     });
 </script>

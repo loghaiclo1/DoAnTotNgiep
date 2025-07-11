@@ -31,7 +31,6 @@ class CheckPermissionByRoute
             'admin.books.destroy'       => 'delete books',
             'admin.books.restore'       => 'restore books',
             'admin.books.forceDelete'   => 'force delete books',
-
             // Category
             'admin.categories.store'    => 'create categories',
             'admin.categories.update'   => 'edit categories',
