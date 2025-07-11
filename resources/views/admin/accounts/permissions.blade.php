@@ -23,7 +23,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
         </div>
     @endif
-
+    <div class="mb-3">
+        <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách tài khoản
+        </a>
+    </div>
     {{-- Form phân quyền --}}
     @if (!$user->isSuperAdmin())
         <form method="POST" action="{{ route('admin.accounts.permissions.update', $user->MaKhachHang) }}">
@@ -42,7 +46,7 @@
                         <div class="row">
 
 
-                            @foreach ($permissions as $permission)
+                            @foreach ($permissions->filter(fn($p) => $p->name !== 'full access') as $permission)
                                 <div class="col-md-4 mb-2">
                                     <div class="form-check">
                                         <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"

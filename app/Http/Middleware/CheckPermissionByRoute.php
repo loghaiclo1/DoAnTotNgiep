@@ -13,14 +13,15 @@ class CheckPermissionByRoute
 
     public function handle(Request $request, Closure $next)
     {
+
         $user = Auth::user();
         if (!$user) {
             abort(403);
         }
+        if ($user->isSuperAdmin() || $user->hasPermissionTo('full access')) {
+            return $next($request);
+        }
 
-    if ($user->isSuperAdmin()) {
-        return $next($request);
-    }
 
         // Ánh xạ tên route → quyền cần có
         $permissionsMap = [
