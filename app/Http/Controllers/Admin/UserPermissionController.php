@@ -21,6 +21,6 @@ class UserPermissionController extends Controller
     {
         $user = KhachHang::findOrFail($id);
         $user->syncPermissions($request->input('permissions', []));
-        return redirect()->route('admin.accounts.index')->with('success', 'Cập nhật quyền thành công!');
+        return back()->with('success', 'Cập nhật quyền thành công!');
     }
 }

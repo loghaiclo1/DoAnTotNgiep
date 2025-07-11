@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         $query = $request->input('query');
@@ -168,7 +168,8 @@ class BookController extends Controller
             'quantity' => $book->SoLuong
         ]);
 
-        return redirect()->route('admin.books.index')->with('success', 'Cập nhật sách thành công!');
+        return back()->with('success', 'Cập nhật sách thành công!');
+
     }
 
 

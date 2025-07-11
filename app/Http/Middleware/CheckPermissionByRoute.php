@@ -18,6 +18,10 @@ class CheckPermissionByRoute
             abort(403);
         }
 
+    if ($user->isSuperAdmin()) {
+        return $next($request);
+    }
+
         // Ánh xạ tên route → quyền cần có
         $permissionsMap = [
             // Book
