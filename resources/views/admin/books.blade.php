@@ -179,10 +179,10 @@
                     <button onclick="return confirm('Khôi phục sách này?')" class="btn btn-sm btn-success">Kích hoạt</button>
                 </form>
             @endif
-            <form action="{{ route('admin.books.forceDelete', $book->MaSach) }}" method="POST" style="display:inline;">
+            {{-- <form action="{{ route('admin.books.forceDelete', $book->MaSach) }}" method="POST" style="display:inline;">
                 @csrf @method('DELETE')
                 <button onclick="return confirm('Bạn có chắc muốn XÓA VĨNH VIỄN sách này không?')" class="btn btn-sm btn-danger">Xóa</button>
-            </form>
+            </form> --}}
             </td>
 
 

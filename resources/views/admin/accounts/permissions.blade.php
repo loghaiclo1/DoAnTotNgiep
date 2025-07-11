@@ -8,64 +8,76 @@
 @endsection
 
 @section('content')
-    {{-- Thông báo khi lưu thành công --}}
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-1"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
-        </div>
-    @endif
-
-    {{-- Thông báo lỗi --}}
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-1"></i> {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
-        </div>
-    @endif
-
-    {{-- Form phân quyền --}}
-    <form method="POST" action="{{ route('admin.accounts.permissions.update', $user->MaKhachHang) }}">
-        @csrf
-        @method('PUT')
-
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-info text-white">
-                <i class="fas fa-user-shield me-1"></i> Danh sách quyền có thể gán
+    {{-- Thông báo --}}
+    @foreach (['success', 'error'] as $msg)
+        @if (session($msg))
+            <div class="alert alert-{{ $msg == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-{{ $msg == 'success' ? 'check' : 'exclamation' }}-circle me-1"></i> {{ session($msg) }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
             </div>
-            <div class="card-body">
-                @if ($permissions->isEmpty())
-                    <p class="text-muted">Chưa có quyền nào được tạo trong hệ thống.</p>
-                @else
-                    <div class="row">
-                        @foreach ($permissions as $permission)
-                            <div class="col-md-4 mb-2">
-                                <div class="form-check">
-                                    <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"
-                                           id="perm_{{ $permission->id }}" class="form-check-input"
-                                           {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}>
-                                    <label for="perm_{{ $permission->id }}" class="form-check-label">
-                                        {{ ucfirst($permission->name) }}
-                                    </label>
+        @endif
+    @endforeach
+
+    <div class="mb-3">
+        <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách tài khoản
+        </a>
+    </div>
+
+    @if (!$user->isSuperAdmin())
+        <form method="POST" action="{{ route('admin.accounts.permissions.update', $user->MaKhachHang) }}">
+            @csrf
+            @method('PUT')
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-user-shield me-1"></i> Danh sách quyền có thể gán
+                </div>
+
+                <div class="card-body">
+                    @if ($permissions->isEmpty())
+                        <p class="text-muted">Chưa có quyền nào được tạo trong hệ thống.</p>
+                    @else
+                        <div class="form-check mb-3">
+                            <input type="checkbox" id="selectAll" class="form-check-input">
+                            <label for="selectAll" class="form-check-label fw-bold text-primary">
+                                Chọn tất cả quyền
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            @foreach ($permissions->sortBy('name')->filter(fn($p) => $p->name !== 'full access') as $permission)
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check" title="{{ $permission->description ?? '' }}">
+                                        <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"
+                                               id="perm_{{ $permission->id }}" class="form-check-input"
+                                               {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+                                        <label for="perm_{{ $permission->id }}" class="form-check-label">
+                                            {{ $permission->label_vi ?? ucfirst($permission->name) }}
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             </div>
-        </div>
 
-        <div class="d-flex justify-content-between">
-            <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Quay lại
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save me-1"></i> Lưu quyền
-            </button>
+            <div class="d-flex justify-content-between">
+                <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Lưu quyền
+                </button>
+            </div>
+        </form>
+    @else
+        <div class="alert alert-success">
+            <i class="fas fa-crown me-1"></i> Người dùng này là <strong>Super Admin</strong> và có toàn quyền hệ thống mặc định.
         </div>
-    </form>
+    @endif
 
-    {{-- Hướng dẫn sử dụng --}}
     <div class="alert alert-info mt-4">
         <h5><i class="fas fa-info-circle me-1"></i> Hướng dẫn</h5>
         <ul class="mb-1">
@@ -75,28 +87,55 @@
             <li>Quyền chỉ có hiệu lực sau khi bạn nhấn <strong>"Lưu quyền"</strong>.</li>
         </ul>
     </div>
-    @if (auth()->user()->isSuperAdmin())
-    <hr>
-    <h4>Thêm quyền mới</h4>
-    <form action="{{ route('admin.permissions.store') }}" method="POST" class="mb-4 d-flex" style="gap: 10px;">
-        @csrf
-        <input type="text" name="name" class="form-control" placeholder="Tên quyền mới (vd: them sach)" required>
-        <button type="submit" class="btn btn-success">Thêm</button>
-    </form>
 
-    <h5>Danh sách quyền hiện có (có thể xóa):</h5>
-    <ul class="list-group mb-3">
-        @foreach ($permissions as $permission)
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ $permission->name }}
-                <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST"
-                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa quyền này không?')">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-sm btn-outline-danger">Xóa</button>
-                </form>
-            </li>
-        @endforeach
-    </ul>
-@endif
+{{--
+    @if (auth()->user()->isSuperAdmin() && app()->environment('local'))
+        <hr>
+        <h4>Thêm quyền mới</h4>
+        <form action="{{ route('admin.permissions.store') }}" method="POST" class="mb-4 d-flex" style="gap: 10px;">
+            @csrf
+            <input type="text" name="name" class="form-control" placeholder="Tên quyền (vd: create books)" required>
+            <button type="submit" class="btn btn-success">Thêm</button>
+        </form>
+
+        <h5>Danh sách quyền hiện có:</h5>
+        <ul class="list-group mb-3">
+            @foreach ($permissions as $permission)
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ $permission->name }}
+                    <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST"
+                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa quyền này không?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-sm btn-outline-danger">Xóa</button>
+                    </form>
+                </li>
+            @endforeach
+        </ul>
+    @endif --}}
+@endsection
+
+@section('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                permissionCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+
+            const updateSelectAllState = () => {
+                const allChecked = Array.from(permissionCheckboxes).every(cb => cb.checked);
+                selectAllCheckbox.checked = allChecked;
+            };
+
+            permissionCheckboxes.forEach(cb => cb.addEventListener('change', updateSelectAllState));
+            updateSelectAllState();
+        }
+    });
+</script>
 @endsection

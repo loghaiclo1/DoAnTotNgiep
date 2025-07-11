@@ -12,6 +12,12 @@ class UserPermissionController extends Controller
     public function edit($id)
     {
         $user = KhachHang::findOrFail($id);
+
+
+        if ($user->role === 'user') {
+            return redirect()->route('admin.accounts.index')->with('error', 'Không thể phân quyền cho tài khoản người dùng thường.');
+        }
+
         $permissions = Permission::all();
 
         return view('admin.accounts.permissions', compact('user', 'permissions'));
@@ -20,7 +26,14 @@ class UserPermissionController extends Controller
     public function update(Request $request, $id)
     {
         $user = KhachHang::findOrFail($id);
+
+
+        if ($user->role === 'user') {
+            return redirect()->route('admin.accounts.index')->with('error', 'Không thể cập nhật quyền cho tài khoản người dùng thường.');
+        }
+
         $user->syncPermissions($request->input('permissions', []));
-        return redirect()->route('admin.accounts.index')->with('success', 'Cập nhật quyền thành công!');
+
+        return back()->with('success', 'Cập nhật quyền thành công!');
     }
 }

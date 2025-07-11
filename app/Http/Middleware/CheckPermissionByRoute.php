@@ -13,10 +13,15 @@ class CheckPermissionByRoute
 
     public function handle(Request $request, Closure $next)
     {
+
         $user = Auth::user();
         if (!$user) {
             abort(403);
         }
+        if ($user->isSuperAdmin() || $user->hasPermissionTo('full access')) {
+            return $next($request);
+        }
+
 
         // Ánh xạ tên route → quyền cần có
         $permissionsMap = [
@@ -26,7 +31,6 @@ class CheckPermissionByRoute
             'admin.books.destroy'       => 'delete books',
             'admin.books.restore'       => 'restore books',
             'admin.books.forceDelete'   => 'force delete books',
-
             // Category
             'admin.categories.store'    => 'create categories',
             'admin.categories.update'   => 'edit categories',
