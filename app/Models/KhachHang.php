@@ -7,10 +7,10 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use App\Notifications\ResetPasswordNotification;
-
+use Spatie\Permission\Traits\HasRoles;
 class KhachHang extends Authenticatable implements CanResetPassword
 {
-    use Notifiable, CanResetPasswordTrait;
+    use Notifiable, CanResetPasswordTrait, HasRoles;
     protected $table = 'khachhang';
     protected $primaryKey = 'MaKhachHang';
 

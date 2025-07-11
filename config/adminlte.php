@@ -332,14 +332,9 @@ return [
             'icon' => 'fas fa-list',
         ],
         [
-            'text' => 'Hỗ trợ',
-            'url'  => 'admin/contacts',
-            'icon' => 'fas fa-envelope',
-        ],
-        [
             'text' => 'Footer',
             'url'  => 'admin/footer',
-            'icon' => 'fas fa-shoe-prints', // Hoặc chọn icon khác như 'fas fa-link'
+            'icon' => 'fas fa-shoe-prints', 
         ],
         [
             'text' => 'Phiếu nhập',

@@ -100,6 +100,15 @@
                         : 'Không xác định');
             @endphp
         </p>
+        <p><strong>Tình trạng thanh toán:</strong>
+            @if ($donhang->PT_ThanhToan == 2)
+                Đã thanh toán
+            @elseif ($donhang->PT_ThanhToan == 1 && $donhang->TrangThai == 'Hoàn tất')
+                Đã thanh toán
+            @else
+                Chưa thanh toán
+            @endif
+        </p>
     </div>
 
     <p style="text-align: center; margin-top: 50px;">
