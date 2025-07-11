@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
+    
     public function index(Request $request)
     {
         $query = $request->input('query');

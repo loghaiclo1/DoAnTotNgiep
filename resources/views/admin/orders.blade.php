@@ -72,9 +72,11 @@
                 <tr>
                     <th style="min-width: 150px;">Mã đơn hàng</th>
                     <th>Khách hàng</th>
+                    <th>SĐT</th>
                     <th>Ngày đặt</th>
                     <th>Tổng tiền</th>
                     <th>Phương thức thanh toán</th>
+                    <th>Thanh toán</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                     <th>Biên lai</th>
@@ -86,6 +88,7 @@
                         <tr>
                             <td>#ORD-{{ $order->NgayLap->format('Y') }}-{{ $order->MaHoaDon }}</td>
                             <td>{{ $order->khachhang ? $order->khachhang->Ho . ' ' . $order->khachhang->Ten : 'Không có' }}</td>
+                            <td>{{ $order->SoDienThoai ?? 'N/A' }}</td>
                             <td>{{ $order->NgayLap ? $order->NgayLap->format('d/m/Y H:i') : 'N/A' }}</td>
                             <td>{{ number_format($order->TongTien) }}₫</td>
                             <td>
@@ -98,6 +101,16 @@
                                 @endphp
                             </td>
                             <td>
+                                @if ($order->PT_ThanhToan == 2)
+                                    <span class="badge bg-success">Đã thanh toán</span>
+                                @elseif ($order->PT_ThanhToan == 1 && $order->TrangThai == 'Hoàn tất')
+                                    <span class="badge bg-success">Đã thanh toán</span>
+                                @else
+                                    <span class="badge bg-secondary">Chưa thanh toán</span>
+                                @endif
+                            </td>
+                            <td>
+
                                 <form method="POST" action="{{ route('admin.orders.update', $order->MaHoaDon) }}" class="update-status-form">
                                     @csrf
                                     @method('PUT')

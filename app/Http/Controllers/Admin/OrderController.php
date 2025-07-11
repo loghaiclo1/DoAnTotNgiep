@@ -9,7 +9,7 @@ use App\Events\OrderStatusUpdated;
 use Termwind\Components\Hr;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Support\Facades\Gate;
 class OrderController extends Controller
 {
     public function index(Request $request)
@@ -28,8 +28,10 @@ class OrderController extends Controller
                 $query->where('MaHoaDon', 'like', "%{$searchClean}%")
                     ->orWhereHas('khachhang', function ($q) use ($search) {
                         $q->whereRaw("LOWER(CONCAT(Ho, ' ', Ten)) LIKE ?", ['%' . strtolower($search) . '%'])
-                            ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%']);
+                            ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%'])
+                            ->orWhere('SoDienThoai', 'like', "%{$search}%");
                     });
+
             }
         }
 
@@ -64,6 +66,9 @@ class OrderController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->can('update order status')) {
+            abort(403, 'Bạn không có quyền cập nhật trạng thái đơn hàng.');
+        }
         $donhang = Hoadon::where('MaHoaDon', $id)->firstOrFail();
 
         $trangThaiHienTai = $donhang->TrangThai;

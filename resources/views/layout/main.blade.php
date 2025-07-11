@@ -255,7 +255,7 @@
                 </div><!-- End Products Mega Menu 2 Desktop View -->
               </li><!-- End Products Mega Menu 2 -->
 
-              <li><a href=" {{ url('/contact') }} " class=" {{ request()->is('contact') ? 'active' : '' }} ">Hỗ trợ</a></li>
+        
             </ul>
           </nav>
         </div>

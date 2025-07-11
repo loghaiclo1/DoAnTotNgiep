@@ -35,7 +35,7 @@ use App\Http\Controllers\Admin\{
     ContactController as AdminContactController,
     DanhGiaController
 };
-
+use App\Http\Middleware\CheckPermissionByRoute;
 // Trang chủ
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -50,8 +50,7 @@ Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('produc
 Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
 
 // Liên hệ
-Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
 Route::get('/orders/{id}/tracking-html', [OrderController::class, 'trackingHtml']);
 
 // Giỏ hàng
@@ -123,7 +122,7 @@ Route::post('/khuyenmai/apply', [KhuyenMaiController::class, 'apply'])->name('kh
 Route::post('/khuyenmai/remove', [KhuyenMaiController::class, 'remove'])->name('khuyenmai.remove');
 
 // Admin
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPermissionByRoute::class])->group(function () {
     Route::get('footer', [App\Http\Controllers\Admin\FooterController::class, 'index'])->name('footer.index');
     Route::get('footer/{id}/edit', [App\Http\Controllers\Admin\FooterController::class, 'edit'])->name('footer.edit');
     Route::put('footer/{id}', [App\Http\Controllers\Admin\FooterController::class, 'update'])->name('footer.update');
@@ -143,21 +142,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
     Route::delete('books/{id}', [AdminBookController::class, 'destroy'])->name('books.destroy');
     Route::post('books/{id}/restore', [AdminBookController::class, 'restore'])->name('books.restore');
     Route::delete('/admin/books/{id}/force-delete', [AdminBookController::class, 'forceDelete'])->name('books.forceDelete');
-    Route::get('contacts', [AdminContactController::class, 'index'])->name('contacts');
-    Route::put('contacts/{id}/update-status', [AdminContactController::class, 'updateStatus'])->name('contacts.updateStatus');
+
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
     Route::get('/admin/orders/{mahoadon}/pdf', [OrderController::class, 'exportPdf'])->name('orders.exportPdf');
     Route::get('/admin/orders/{mahoadon}/pdf/view', [OrderController::class, 'viewPdf'])->name('orders.viewPdf');
-
+   Route::post('permissions', [\App\Http\Controllers\Admin\PermissionController::class, 'store'])->name('permissions.store');
+    Route::delete('permissions/{id}', [\App\Http\Controllers\Admin\PermissionController::class, 'destroy'])->name('permissions.destroy');
     // Chỉ superadmin mới được quản lý tài khoản
     Route::middleware(['is_superadmin'])->group(function () {
         Route::get('/accounts', [\App\Http\Controllers\Admin\AccountController::class, 'index'])->name('accounts.index');
         Route::get('/accounts/{id}/edit', [\App\Http\Controllers\Admin\AccountController::class, 'edit'])->name('accounts.edit');
         Route::put('/accounts/{id}', [\App\Http\Controllers\Admin\AccountController::class, 'update'])->name('accounts.update');
         Route::put('/accounts/{id}/toggle', [\App\Http\Controllers\Admin\AccountController::class, 'toggle'])->name('accounts.toggle');
+        // Giao diện phân quyền người dùng
+Route::get('/accounts/{id}/permissions', [\App\Http\Controllers\Admin\UserPermissionController::class, 'edit'])->name('accounts.permissions.edit');
+Route::put('/accounts/{id}/permissions', [\App\Http\Controllers\Admin\UserPermissionController::class, 'update'])->name('accounts.permissions.update');
+
     });
 });
 
