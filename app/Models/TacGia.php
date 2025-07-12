@@ -12,6 +12,7 @@ class TacGia extends Model
 
     protected $fillable = [
         'TenTacGia',
+        'gioi_tinh',
         'nam_sinh',
         'que_quan_id',
         'ghi_chu',

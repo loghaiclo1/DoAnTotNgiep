@@ -123,12 +123,10 @@ class TacGiaController extends Controller
             'nam_sinh' => [
                 'nullable',
                 'integer',
-                'between:' . ($currentYear - 100) . ',' . ($currentYear - 20),
+                'between:1000, 2010',
             ],
             'que_quan_id' => 'nullable|exists:phuongxa,id',
             'ghi_chu' => 'nullable|string',
-        ], [
-            'nam_sinh.between' => 'Năm sinh phải từ ' . ($currentYear - 100) . ' đến ' . ($currentYear - 20) . '.',
         ]);
 
         if ($validator->fails()) {

@@ -10,9 +10,18 @@
     <div class="card">
         <div class="card-body">
             <p><strong>Mã tác giả:</strong> {{ $tacgia->MaTacGia }}</p>
+            <p><strong>Giới tính:</strong> {{ $tacgia->gioi_tinh }}</p>
             <p><strong>Năm sinh:</strong> {{ $tacgia->nam_sinh ?? 'Chưa cập nhật' }}</p>
-            <p><strong>Quê quán:</strong> {{ optional($tacgia->que_quan)->ten ?? 'Chưa cập nhật' }}</p>
-            <p><strong>Ghi chú:</strong> {{ $tacgia->ghi_chu ?? '—' }}</p>
+            <p><strong>Quê quán:</strong>
+                @if ($tacgia->xa)
+                    {{ $tacgia->xa->ten }},
+                    {{ optional($tacgia->xa->quanHuyen)->ten }},
+                    {{ optional(optional($tacgia->xa->quanHuyen)->tinhThanh)->ten }}
+                @else
+                    Chưa cập nhật
+                @endif
+            </p>
+            <p><strong>Ghi chú:</strong> {{ $tacgia->ghi_chu ?? 'Không có' }}</p>
         </div>
     </div>
     <a href="{{ route('admin.tacgia.index') }}" class="btn btn-secondary mt-3">
