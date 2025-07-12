@@ -31,15 +31,20 @@
 
 <div class="infoTacGiaBox mb-3" id="infoBox{{ $book->MaSach }}">
     <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="infoNamSinh{{ $book->MaSach }}">Năm sinh</label>
-            <input type="text" id="infoNamSinh{{ $book->MaSach }}" class="form-control" readonly>
-        </div>
-        <div class="form-group col-md-6">
-            <label for="infoQueQuan{{ $book->MaSach }}">Quê quán</label>
-            <input type="text" id="infoQueQuan{{ $book->MaSach }}" class="form-control" readonly>
-        </div>
+    <div class="form-group col-md-4">
+        <label for="infoNamSinh{{ $book->MaSach }}">Năm sinh</label>
+        <input type="text" id="infoNamSinh{{ $book->MaSach }}" class="form-control" readonly>
     </div>
+    <div class="form-group col-md-4">
+        <label for="infoGioiTinh{{ $book->MaSach }}">Giới tính</label>
+        <input type="text" id="infoGioiTinh{{ $book->MaSach }}" class="form-control" readonly>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="infoQueQuan{{ $book->MaSach }}">Quê quán</label>
+        <input type="text" id="infoQueQuan{{ $book->MaSach }}" class="form-control" readonly>
+    </div>
+</div>
+
     <div class="form-group">
         <label for="infoGhiChu{{ $book->MaSach }}">Ghi chú</label>
         <input type="text" id="infoGhiChu{{ $book->MaSach }}" class="form-control" readonly>
@@ -146,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const bookId = select.getAttribute('data-target');
 
         const infoBox = document.getElementById('infoBox' + bookId);
+        const infoSex = document.getElementById('infoGioiTinh' + bookId);
         const infoNam = document.getElementById('infoNamSinh' + bookId);
         const infoQue = document.getElementById('infoQueQuan' + bookId);
         const infoChu = document.getElementById('infoGhiChu' + bookId);
@@ -175,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     const tg = data.tacgia;
                     infoNam.value = tg.nam_sinh || '';
+                    infoSex.value = tg.gioi_tinh;
                     infoQue.value = tg.que_quan_text || '';
                     infoChu.value = tg.ghi_chu || '';
                     infoBox.style.display = 'block';

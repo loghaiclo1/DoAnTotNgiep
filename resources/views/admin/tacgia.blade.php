@@ -74,12 +74,12 @@
                             <td>{{ $tacgia->nam_sinh ?? 'Chưa cập nhật' }}</td>
                             <td>
                                 @if ($tacgia->xa)
-        {{ $tacgia->xa->ten }},
-        {{ optional($tacgia->xa->quanHuyen)->ten }},
-        {{ optional(optional($tacgia->xa->quanHuyen)->tinhThanh)->ten }}
-    @else
-        Chưa cập nhật
-    @endif
+                                    {{ $tacgia->xa->ten }},
+                                    {{ optional($tacgia->xa->quanHuyen)->ten }},
+                                    {{ optional(optional($tacgia->xa->quanHuyen)->tinhThanh)->ten }}
+                                @else
+                                    Chưa cập nhật
+                                @endif
 
                             </td>
                             <td>{{ $tacgia->sach->count() }}</td>
@@ -181,10 +181,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ghi_chu">Thông tin thêm về tác giả <small class="text-muted">(không bắt buộc)</small></label>
-                            <textarea name="ghi_chu" id="ghi_chu" class="form-control" rows="4" placeholder="Nhập tiểu sử, thành tựu hoặc mô tả khác...">{{ old('ghi_chu', $tacgia->ghi_chu ?? '') }}</textarea>
+                            <label for="ghi_chu">Thông tin thêm về tác giả <small class="text-muted">(không bắt
+                                    buộc)</small></label>
+                            <textarea name="ghi_chu" id="ghi_chu" class="form-control" rows="4"
+                                placeholder="Nhập tiểu sử, thành tựu hoặc mô tả khác...">{{ old('ghi_chu', $tacgia->ghi_chu ?? '') }}</textarea>
                         </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -261,8 +262,10 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Ghi chú</label>
-                            <textarea name="ghi_chu" id="editGhiChu" class="form-control"></textarea>
+                            <label for="ghi_chu">Thông tin thêm về tác giả <small class="text-muted">(không bắt
+                                    buộc)</small></label>
+                            <textarea name="ghi_chu" id="editGhiChu" class="form-control"
+                                placeholder="Nhập tiểu sử, thành tựu hoặc mô tả khác..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -277,7 +280,7 @@
 
 @section('js')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
                 fetch(`/api/quan-huyen/${provinceId}`)
                     .then(response => response.json())
@@ -332,12 +335,12 @@
             }
 
             // Sự kiện chọn Tỉnh (Thêm tác giả)
-            document.getElementById('tinh')?.addEventListener('change', function () {
+            document.getElementById('tinh')?.addEventListener('change', function() {
                 loadDistricts(this.value, 'quanhuyen');
             });
 
             // Sự kiện chọn Quận/Huyện (Thêm tác giả)
-            document.getElementById('quanhuyen')?.addEventListener('change', function () {
+            document.getElementById('quanhuyen')?.addEventListener('change', function() {
                 loadWards(this.value, 'que_quan_id');
             });
 
@@ -380,197 +383,198 @@
                     })
                     .catch(err => console.error('Lỗi khi load địa chỉ mặc định:', err));
             @endif
-            });
-    </script>
-
-    
-@if ($errors->any() && !session('edit_open'))
-    <script>
-        $(document).ready(function () {
-            $('#modalCreateTacGia').modal('show');
         });
     </script>
-@endif
 
-@if (session('edit_open') && old('que_quan_id'))
-    <script>
-        $(document).ready(function () {
-            const xaId = {{ old('que_quan_id') }};
 
-            // Mở lại modal sửa
-            $('#modalEditTacGia').modal('show');
-
-            // Gọi API để lấy tỉnh/huyện từ phường xã
-            fetch(`/api/get-diachi-from-xa/${xaId}`)
-                .then(response => response.json())
-                .then(res => {
-                    if (res.success) {
-                        const {
-                            tinh,
-                            huyen,
-                            xa
-                        } = res;
-
-                        document.getElementById('edit_tinh').value = tinh.id;
-
-                        // Load quận/huyện
-                        fetch(`/api/quan-huyen/${tinh.id}`)
-                            .then(response => response.json())
-                            .then(quans => {
-                                const districtSelect = document.getElementById('edit_quanhuyen');
-                                districtSelect.innerHTML =
-                                    '<option value="">-- Chọn quận/huyện --</option>';
-                                quans.forEach(q => {
-                                    districtSelect.innerHTML +=
-                                        `<option value="${q.id}" ${q.id == huyen.id ? 'selected' : ''}>${q.ten}</option>`;
-                                });
-
-                                // Load phường/xã
-                                return fetch(`/api/phuong-xa/${huyen.id}`);
-                            })
-                            .then(response => response.json())
-                            .then(xas => {
-                                const wardSelect = document.getElementById('edit_que_quan_id');
-                                wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
-                                xas.forEach(x => {
-                                    wardSelect.innerHTML +=
-                                        `<option value="${x.id}" ${x.id == xa.id ? 'selected' : ''}>${x.ten}</option>`;
-                                });
-                            });
-                    }
-                })
-                .catch(err => console.error('Lỗi khi load địa chỉ trong modal sửa:', err));
-        });
-    </script>
-@endif
-
-<script>
-    // Sự kiện chọn tỉnh trong modal sửa
-document.getElementById('edit_tinh')?.addEventListener('change', function () {
-    fetch(`/api/quan-huyen/${this.value}`)
-        .then(response => response.json())
-        .then(data => {
-            const districtSelect = document.getElementById('edit_quanhuyen');
-            districtSelect.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
-            data.forEach(item => {
-                districtSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
+    @if ($errors->any() && !session('edit_open'))
+        <script>
+            $(document).ready(function() {
+                $('#modalCreateTacGia').modal('show');
             });
+        </script>
+    @endif
 
-            // Reset phường/xã
-            document.getElementById('edit_que_quan_id').innerHTML = '<option value="">-- Chọn phường/xã --</option>';
-        });
-});
+    @if (session('edit_open') && old('que_quan_id'))
+        <script>
+            $(document).ready(function() {
+                const xaId = {{ old('que_quan_id') }};
 
-// Sự kiện chọn quận/huyện trong modal sửa
-document.getElementById('edit_quanhuyen')?.addEventListener('change', function () {
-    fetch(`/api/phuong-xa/${this.value}`)
-        .then(response => response.json())
-        .then(data => {
-            const wardSelect = document.getElementById('edit_que_quan_id');
-            wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
-            data.forEach(item => {
-                wardSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
-            });
-        });
-});
+                // Mở lại modal sửa
+                $('#modalEditTacGia').modal('show');
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const editButtons = document.querySelectorAll('.btn-edit');
+                // Gọi API để lấy tỉnh/huyện từ phường xã
+                fetch(`/api/get-diachi-from-xa/${xaId}`)
+                    .then(response => response.json())
+                    .then(res => {
+                        if (res.success) {
+                            const {
+                                tinh,
+                                huyen,
+                                xa
+                            } = res;
 
-        editButtons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const id = this.dataset.id;
+                            document.getElementById('edit_tinh').value = tinh.id;
 
-                fetch(`/admin/tacgia/${id}/edit`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            const tacgia = data.tacgia;
-
-                            // Set action form update
-                            const form = document.getElementById('formEditTacGia');
-                            form.action = `/admin/tacgia/${id}`;
-
-                            // Gán giá trị vào input
-                            document.getElementById('editTenTacGia').value = tacgia
-                                .TenTacGia;
-                            document.getElementById('editNamSinh').value = tacgia
-                                .nam_sinh || '';
-                            document.getElementById('editGhiChu').value = tacgia.ghi_chu ||
-                                '';
-                            document.getElementById('editGioiTinh').value = tacgia
-                                .gioi_tinh || '';
-
-
-                            // Load địa chỉ
-                            if (tacgia.que_quan_id) {
-                                fetch(`/api/get-diachi-from-xa/${tacgia.que_quan_id}`)
-                                    .then(response => response.json())
-                                    .then(res => {
-                                        if (res.success) {
-                                            const {
-                                                tinh,
-                                                huyen,
-                                                xa
-                                            } = res;
-
-                                            document.getElementById('edit_tinh').value =
-                                                tinh.id;
-
-                                            // Load quận/huyện
-                                            fetch(`/api/quan-huyen/${tinh.id}`)
-                                                .then(response => response.json())
-                                                .then(quans => {
-                                                    const districtSelect = document
-                                                        .getElementById(
-                                                            'edit_quanhuyen');
-                                                    districtSelect.innerHTML =
-                                                        '<option value="">-- Chọn quận/huyện --</option>';
-                                                    quans.forEach(q => {
-                                                        districtSelect
-                                                            .innerHTML +=
-                                                            `<option value="${q.id}" ${q.id == huyen.id ? 'selected' : ''}>${q.ten}</option>`;
-                                                    });
-
-                                                    // Load phường/xã
-                                                    return fetch(
-                                                        `/api/phuong-xa/${huyen.id}`
-                                                    );
-                                                })
-                                                .then(response => response.json())
-                                                .then(xas => {
-                                                    const wardSelect = document
-                                                        .getElementById(
-                                                            'edit_que_quan_id');
-                                                    wardSelect.innerHTML =
-                                                        '<option value="">-- Chọn phường/xã --</option>';
-                                                    xas.forEach(x => {
-                                                        wardSelect
-                                                            .innerHTML +=
-                                                            `<option value="${x.id}" ${x.id == xa.id ? 'selected' : ''}>${x.ten}</option>`;
-                                                    });
-                                                });
-                                        }
+                            // Load quận/huyện
+                            fetch(`/api/quan-huyen/${tinh.id}`)
+                                .then(response => response.json())
+                                .then(quans => {
+                                    const districtSelect = document.getElementById('edit_quanhuyen');
+                                    districtSelect.innerHTML =
+                                        '<option value="">-- Chọn quận/huyện --</option>';
+                                    quans.forEach(q => {
+                                        districtSelect.innerHTML +=
+                                            `<option value="${q.id}" ${q.id == huyen.id ? 'selected' : ''}>${q.ten}</option>`;
                                     });
-                            } else {
-                                document.getElementById('edit_tinh').value = '';
-                                document.getElementById('edit_quanhuyen').innerHTML =
-                                    '<option value="">-- Chọn quận/huyện --</option>';
-                                document.getElementById('edit_que_quan_id').innerHTML =
-                                    '<option value="">-- Chọn phường/xã --</option>';
-                            }
 
-                            $('#modalEditTacGia').modal('show');
-                        } else {
-                            alert('Không tìm thấy tác giả');
+                                    // Load phường/xã
+                                    return fetch(`/api/phuong-xa/${huyen.id}`);
+                                })
+                                .then(response => response.json())
+                                .then(xas => {
+                                    const wardSelect = document.getElementById('edit_que_quan_id');
+                                    wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                                    xas.forEach(x => {
+                                        wardSelect.innerHTML +=
+                                            `<option value="${x.id}" ${x.id == xa.id ? 'selected' : ''}>${x.ten}</option>`;
+                                    });
+                                });
                         }
                     })
-                    .catch(err => {
-                        console.error('Lỗi khi lấy dữ liệu tác giả:', err);
-                        alert('Lỗi khi tải dữ liệu tác giả');
+                    .catch(err => console.error('Lỗi khi load địa chỉ trong modal sửa:', err));
+            });
+        </script>
+    @endif
+
+    <script>
+        // Sự kiện chọn tỉnh trong modal sửa
+        document.getElementById('edit_tinh')?.addEventListener('change', function() {
+            fetch(`/api/quan-huyen/${this.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    const districtSelect = document.getElementById('edit_quanhuyen');
+                    districtSelect.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+                    data.forEach(item => {
+                        districtSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
                     });
+
+                    // Reset phường/xã
+                    document.getElementById('edit_que_quan_id').innerHTML =
+                        '<option value="">-- Chọn phường/xã --</option>';
+                });
+        });
+
+        // Sự kiện chọn quận/huyện trong modal sửa
+        document.getElementById('edit_quanhuyen')?.addEventListener('change', function() {
+            fetch(`/api/phuong-xa/${this.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    const wardSelect = document.getElementById('edit_que_quan_id');
+                    wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                    data.forEach(item => {
+                        wardSelect.innerHTML += `<option value="${item.id}">${item.ten}</option>`;
+                    });
+                });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.btn-edit');
+
+            editButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+
+                    fetch(`/admin/tacgia/${id}/edit`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                const tacgia = data.tacgia;
+
+                                // Set action form update
+                                const form = document.getElementById('formEditTacGia');
+                                form.action = `/admin/tacgia/${id}`;
+
+                                // Gán giá trị vào input
+                                document.getElementById('editTenTacGia').value = tacgia
+                                    .TenTacGia;
+                                document.getElementById('editNamSinh').value = tacgia
+                                    .nam_sinh || '';
+                                document.getElementById('editGhiChu').value = tacgia.ghi_chu ||
+                                    '';
+                                document.getElementById('editGioiTinh').value = tacgia
+                                    .gioi_tinh || '';
+
+
+                                // Load địa chỉ
+                                if (tacgia.que_quan_id) {
+                                    fetch(`/api/get-diachi-from-xa/${tacgia.que_quan_id}`)
+                                        .then(response => response.json())
+                                        .then(res => {
+                                            if (res.success) {
+                                                const {
+                                                    tinh,
+                                                    huyen,
+                                                    xa
+                                                } = res;
+
+                                                document.getElementById('edit_tinh').value =
+                                                    tinh.id;
+
+                                                // Load quận/huyện
+                                                fetch(`/api/quan-huyen/${tinh.id}`)
+                                                    .then(response => response.json())
+                                                    .then(quans => {
+                                                        const districtSelect = document
+                                                            .getElementById(
+                                                                'edit_quanhuyen');
+                                                        districtSelect.innerHTML =
+                                                            '<option value="">-- Chọn quận/huyện --</option>';
+                                                        quans.forEach(q => {
+                                                            districtSelect
+                                                                .innerHTML +=
+                                                                `<option value="${q.id}" ${q.id == huyen.id ? 'selected' : ''}>${q.ten}</option>`;
+                                                        });
+
+                                                        // Load phường/xã
+                                                        return fetch(
+                                                            `/api/phuong-xa/${huyen.id}`
+                                                        );
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(xas => {
+                                                        const wardSelect = document
+                                                            .getElementById(
+                                                                'edit_que_quan_id');
+                                                        wardSelect.innerHTML =
+                                                            '<option value="">-- Chọn phường/xã --</option>';
+                                                        xas.forEach(x => {
+                                                            wardSelect
+                                                                .innerHTML +=
+                                                                `<option value="${x.id}" ${x.id == xa.id ? 'selected' : ''}>${x.ten}</option>`;
+                                                        });
+                                                    });
+                                            }
+                                        });
+                                } else {
+                                    document.getElementById('edit_tinh').value = '';
+                                    document.getElementById('edit_quanhuyen').innerHTML =
+                                        '<option value="">-- Chọn quận/huyện --</option>';
+                                    document.getElementById('edit_que_quan_id').innerHTML =
+                                        '<option value="">-- Chọn phường/xã --</option>';
+                                }
+
+                                $('#modalEditTacGia').modal('show');
+                            } else {
+                                alert('Không tìm thấy tác giả');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Lỗi khi lấy dữ liệu tác giả:', err);
+                            alert('Lỗi khi tải dữ liệu tác giả');
+                        });
+                });
             });
         });
-    });
-</script>
+    </script>
 @endsection

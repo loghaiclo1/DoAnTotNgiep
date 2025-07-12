@@ -27,11 +27,15 @@
 
 <div class="infoTacGiaBox mb-3" id="infoBox">
     <div class="form-row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
             <label for="infoNamSinh">Năm sinh</label>
             <input type="text" id="infoNamSinh" class="form-control" readonly>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
+    <label for="infoGioiTinh">Giới tính</label>
+    <input type="text" id="infoGioiTinh" class="form-control" readonly>
+</div>
+        <div class="form-group col-md-4">
             <label for="infoQueQuan">Quê quán</label>
             <input type="text" id="infoQueQuan" class="form-control" readonly>
         </div>
@@ -130,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const select = document.getElementById('MaTacGiaAdd');
     const infoBox = document.querySelector('.infoTacGiaBox');
     const infoNam = document.getElementById('infoNamSinh');
+    const infoSex = document.getElementById('infoGioiTinh');
     const infoQue = document.getElementById('infoQueQuan');
     const infoChu = document.getElementById('infoGhiChu');
 
@@ -158,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.success) {
                 const tg = data.tacgia;
                 infoNam.value = tg.nam_sinh || '';
+                infoSex.value = tg.gioi_tinh;
                 infoQue.value = tg.que_quan_text || '';
                 infoChu.value = tg.ghi_chu || '';
                 infoBox.style.display = 'flex';
