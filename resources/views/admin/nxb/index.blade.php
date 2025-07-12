@@ -65,13 +65,5 @@
         </tbody>
     </table>
 
-    <div class="mt-3 d-flex justify-content-center">
-        {{ $nxb->appends(request()->all())->onEachSide(1)->links('vendor.pagination.bootstrap-4') }}
-
-    </div>
-
-    <div class="text-muted mb-2">
-        Hiển thị từ {{ $nxb->firstItem() }} đến {{ $nxb->lastItem() }} trong tổng số {{ $nxb->total() }} kết quả
-    </div>
 @endsection
 

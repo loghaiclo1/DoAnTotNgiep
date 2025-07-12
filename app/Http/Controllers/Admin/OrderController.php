@@ -38,7 +38,20 @@ class OrderController extends Controller
         if ($status = $request->input('status')) {
             $query->where('TrangThai', $status);
         }
-
+        if ($request->filled('payment_status')) {
+            if ($request->payment_status == 'paid') {
+                $query->where(function ($q) {
+                    $q->where('PT_ThanhToan', 2)
+                      ->orWhere(function ($q2) {
+                          $q2->where('PT_ThanhToan', 1)->where('TrangThai', 'Hoàn tất');
+                      });
+                });
+            } elseif ($request->payment_status == 'unpaid') {
+                $query->where(function ($q) {
+                    $q->where('PT_ThanhToan', 1)->where('TrangThai', '!=', 'Hoàn tất');
+                });
+            }
+        }
         $sort = $request->input('sort');
         if ($sort === 'date_asc') {
             $query->orderBy('NgayLap', 'asc');

@@ -25,10 +25,8 @@ class NhaXuatBanController extends Controller
         }
 
         $nxb = $query->orderBy('created_at', 'desc')->paginate(10);
-
         return view('admin.nxb.index', compact('nxb'));
     }
-
 
     public function create()
     {
@@ -38,18 +36,19 @@ class NhaXuatBanController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'TenNXB' => 'required|string|max:255|unique:nhaxuatban,TenNXB',
-            'DiaChi' => 'required|string|max:255',
-            'DienThoai' => 'required|regex:/^[0-9\-\+\(\)\s]+$/|max:20',
-            'Email' => 'required|email|max:255',
-            'Website' => 'required|url|max:255',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'TenNXB'    => 'required|string|max:255|unique:nhaxuatban,TenNXB',
+            'DiaChi'    => 'required|string|max:255',
+            'DienThoai' => 'required|regex:/^[0-9\-\+\(\)\s]+$/|max:20|unique:nhaxuatban,DienThoai',
+            'Email'     => 'required|email|max:255|unique:nhaxuatban,Email',
+            'Website'   => 'required|url|max:255|unique:nhaxuatban,Website',
+            'image'     => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ], [
-            'TenNXB.unique' => 'Tên nhà xuất bản đã tồn tại.',
-            'DienThoai.regex' => 'Số điện thoại không hợp lệ.',
+            'TenNXB.unique'     => 'Tên nhà xuất bản đã tồn tại.',
+            'Email.unique'      => 'Email đã tồn tại ở nhà xuất bản khác.',
+            'Website.unique'    => 'Website đã tồn tại ở nhà xuất bản khác.',
+            'DienThoai.unique'  => 'Số điện thoại đã tồn tại ở nhà xuất bản khác.',
+            'DienThoai.regex'   => 'Số điện thoại không hợp lệ. Chỉ chấp nhận số.',
         ]);
-
-
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('nxb', 'public');
@@ -72,17 +71,19 @@ class NhaXuatBanController extends Controller
         $nxb = NhaXuatBan::findOrFail($id);
 
         $data = $request->validate([
-            'TenNXB' => 'required|string|max:255|unique:nhaxuatban,TenNXB,' . $id . ',MaNXB',
-            'DiaChi' => 'required|string|max:255',
-            'DienThoai' => 'required|regex:/^[0-9\-\+\(\)\s]+$/|max:20',
-            'Email' => 'required|email|max:255',
-            'Website' => 'required|url|max:255',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'TenNXB'    => 'required|string|max:255|unique:nhaxuatban,TenNXB,' . $id . ',MaNXB',
+            'DiaChi'    => 'required|string|max:255',
+            'DienThoai' => 'required|regex:/^[0-9\-\+\(\)\s]+$/|max:20|unique:nhaxuatban,DienThoai,' . $id . ',MaNXB',
+            'Email'     => 'required|email|max:255|unique:nhaxuatban,Email,' . $id . ',MaNXB',
+            'Website'   => 'required|url|max:255|unique:nhaxuatban,Website,' . $id . ',MaNXB',
+            'image'     => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ], [
-            'TenNXB.unique' => 'Tên nhà xuất bản đã tồn tại.',
-            'DienThoai.regex' => 'Số điện thoại không hợp lệ. Chỉ chấp nhận số và các ký tự như +, -, ().',
+            'TenNXB.unique'     => 'Tên nhà xuất bản đã tồn tại.',
+            'Email.unique'      => 'Email đã tồn tại ở nhà xuất bản khác.',
+            'Website.unique'    => 'Website đã tồn tại ở nhà xuất bản khác.',
+            'DienThoai.unique'  => 'Số điện thoại đã tồn tại ở nhà xuất bản khác.',
+            'DienThoai.regex'   => 'Số điện thoại không hợp lệ. Chỉ chấp nhận số.',
         ]);
-
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('nxb', 'public');
