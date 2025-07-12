@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TacGia;
+use App\Models\PhuongXa;
+use App\Models\TinhThanh;
+use App\Models\QuanHuyen;
 
 class TacGiaController extends Controller
 {
@@ -17,7 +20,11 @@ class TacGiaController extends Controller
         }
 
         $tacgias = $query->orderByDesc('created_at')->paginate(10);
-        return view('admin.tacgia', compact('tacgias'));
+        $phuongxas = PhuongXa::orderBy('ten')->get();
+        $tinhs = TinhThanh::orderBy('ten')->get();
+        $quanhuyens = QuanHuyen::orderBy('ten')->get();
+
+        return view('admin.tacgia', compact('tacgias', 'phuongxas', 'tinhs', 'quanhuyens'));
     }
 
     public function create()
@@ -27,34 +34,144 @@ class TacGiaController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['TenTacGia' => 'required|string|max:255']);
-        TacGia::create($request->only('TenTacGia'));
+        if ($request->isQuick) {
+            $validated = $request->validate([
+                'TenTacGia' => 'required|string|max:255',
+                'nam_sinh' => 'required|integer|between:1000,2010',
+            ]);
+
+            $tacgia = TacGia::create([
+                'TenTacGia' => $validated['TenTacGia'],
+                'nam_sinh' => $validated['nam_sinh'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'tacgia' => $tacgia
+            ]);
+        }
+
+        $request->validate([
+            'TenTacGia' => 'required|string|max:255',
+            'nam_sinh' => [
+                'nullable',
+                'integer',
+                'between:1000,2010',
+            ],
+            'que_quan_id' => 'nullable|exists:phuongxa,id',
+            'ghi_chu' => 'nullable|string',
+        ], [
+            'nam_sinh.between' => 'Năm sinh phải từ 1000 đến 2010',
+        ]);
+
+        TacGia::create($request->only('TenTacGia', 'nam_sinh', 'que_quan_id', 'ghi_chu'));
 
         return redirect()->route('admin.tacgia.index')->with('success', 'Thêm tác giả thành công!');
     }
 
+    public function getDiaChiFromXa($id)
+    {
+        $xa = PhuongXa::with('quanHuyen.tinhThanh')->find($id);
+
+        if (!$xa || !$xa->quanHuyen || !$xa->quanHuyen->tinhThanh) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy địa chỉ']);
+        }
+
+        return response()->json([
+            'success' => true,
+            'xa' => [
+                'id' => $xa->id,
+                'ten' => $xa->ten
+            ],
+            'huyen' => [
+                'id' => $xa->quanHuyen->id,
+                'ten' => $xa->quanHuyen->ten
+            ],
+            'tinh' => [
+                'id' => $xa->quanHuyen->tinhThanh->id,
+                'ten' => $xa->quanHuyen->tinhThanh->ten
+            ]
+        ]);
+    }
+
     public function edit($id)
     {
-        $tacgia = TacGia::findOrFail($id);
-        return view('admin.tacgia.edit', compact('tacgia'));
+        $tacgia = TacGia::find($id);
+
+        if (!$tacgia) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy tác giả']);
+        }
+
+        $xa = optional($tacgia->xa)->ten;
+        $huyen = optional($tacgia->xa->quanHuyen ?? null)->ten;
+        $tinh = optional($tacgia->xa->quanHuyen->tinhThanh ?? null)->ten;
+
+        $tacgia->que_quan_text = collect([$xa, $huyen, $tinh])->filter()->implode(', ') ?: 'Chưa có';
+
+        return response()->json([
+            'success' => true,
+            'tacgia' => $tacgia
+        ]);
     }
+
 
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'TenTacGia' => 'required|string|max:255'
-    ]);
+    {
+        $currentYear = now()->year;
+        $validator = \Validator::make($request->all(), [
+            'TenTacGia' => 'required|string|max:255',
+            'nam_sinh' => [
+                'nullable',
+                'integer',
+                'between:' . ($currentYear - 100) . ',' . ($currentYear - 20),
+            ],
+            'que_quan_id' => 'nullable|exists:phuongxa,id',
+            'ghi_chu' => 'nullable|string',
+        ], [
+            'nam_sinh.between' => 'Năm sinh phải từ ' . ($currentYear - 100) . ' đến ' . ($currentYear - 20) . '.',
+        ]);
 
-    $tacgia = TacGia::findOrFail($id);
-    $tacgia->update(['TenTacGia' => $request->TenTacGia]);
+        if ($validator->fails()) {
+            $editData = (object) $request->only(['TenTacGia', 'nam_sinh', 'que_quan_id', 'ghi_chu']);
+            $editData->MaTacGia = $id;
 
-    if ($request->ajax()) {
-        return response()->json(['success' => true, 'message' => 'Cập nhật thành công!']);
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('edit_open', $id)
+                ->with('edit_data', $editData);
+        }
+
+        $tacgia = TacGia::findOrFail($id);
+        $tacgia->update($request->only('TenTacGia', 'nam_sinh', 'que_quan_id', 'ghi_chu'));
+
+        return redirect()->route('admin.tacgia.index')
+            ->with('success', 'Cập nhật tác giả thành công!');
     }
 
-    return redirect()->route('admin.tacgia.index')->with('success', 'Cập nhật tác giả thành công!');
-}
+    public function quickAdd(Request $request)
+    {
+        $request->validate([
+            'TenTacGia' => 'required|string|max:255',
+            'NamSinh' => 'required|integer|min:1920|max:' . (date('Y') - 20),
+        ]);
 
+        $tacgia = TacGia::create([
+            'TenTacGia' => $request->TenTacGia,
+            'nam_sinh' => $request->NamSinh,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'tacgia' => [
+                'MaTacGia' => $tacgia->MaTacGia,
+                'TenTacGia' => $tacgia->TenTacGia,
+                'nam_sinh' => $tacgia->nam_sinh,
+                'ghi_chu' => $tacgia->ghi_chu,
+                'que_quan_text' => optional($tacgia->quequan)->ten,
+            ]
+        ]);
+    }
 
     public function destroy($id)
     {
@@ -62,8 +179,15 @@ class TacGiaController extends Controller
         return redirect()->route('admin.tacgia.index')->with('success', 'Xóa tác giả thành công!');
     }
     public function show($id)
-{
-    $tacgia = TacGia::findOrFail($id);
-    return response()->json($tacgia);
-}
+    {
+        $tacgia = TacGia::findOrFail($id);
+        return response()->json($tacgia);
+    }
+    public function books($id)
+    {
+        $tacgia = TacGia::with('sach')->findOrFail($id);
+        $books = $tacgia->sach()->where('TrangThai', 1)->paginate(10);
+
+        return view('admin.tacgia.books', compact('tacgia', 'books'));
+    }
 }

@@ -168,6 +168,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     });
 
    Route::resource('tacgia', TacGiaController::class);
+   Route::get('tacgia/{id}/books', [TacGiaController::class, 'books'])->name('tacgia.books');
+   Route::post('tacgia/quick-add', [TacGiaController::class, 'quickAdd'])->name('tacgia.quick_add');
+
    Route::resource('nhaxuatban', NhaXuatBanController::class);
    Route::resource('donviphathanh', DonViPhatHanhController::class);
 

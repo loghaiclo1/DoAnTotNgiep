@@ -1,194 +1,491 @@
-    @extends('adminlte::page')
+@extends('adminlte::page')
 
-    @section('title', 'Quản lý Tác giả')
+@section('title', 'Quản lý Tác giả')
 
-    @section('content_header')
-        <h1>Danh sách tác giả</h1>
-    @endsection
+@section('content_header')
+    <h1>Quản lý tác giả</h1>
+@endsection
 
-    @section('content')
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-            @csrf
-        </form>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        {{-- Form lọc --}}
-        <form method="GET" class="mb-4">
-            <div class="row g-2 align-items-center">
-                <div class="col-md-4">
-                    <input type="text" name="q" value="{{ request('q') }}" class="form-control"
-                        placeholder="Tìm theo tên tác giả">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-filter"></i> Lọc
-                    </button>
-                </div>
-                <div class="col-md-2">
-                    <a href="{{ route('admin.tacgia.index') }}" class="btn btn-secondary w-100">
-                        <i class="fas fa-redo-alt"></i> Reset
-                    </a>
-                </div>
-                <div class="col-md-4 text-end">
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalCreateTacGia">
-                        <i class="fas fa-plus"></i> Thêm tác giả
-                    </button>
-
-                </div>
-            </div>
-        </form>
-
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h3 class="card-title mb-0">Danh sách tác giả</h3>
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-bordered table-hover m-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên tác giả</th>
-                            <th>Ngày tạo</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($tacgias as $tacgia)
-                            <tr>
-                                <td>{{ $tacgia->MaTacGia }}</td>
-                                <td>{{ $tacgia->TenTacGia }}</td>
-                                <td>{{ $tacgia->created_at ? $tacgia->created_at->format('d/m/Y H:i') : '—' }}</td>
-                                <td>
-                                    <button type="button"
-    class="btn btn-sm btn-outline-primary btn-edit"
-    data-id="{{ $tacgia->MaTacGia }}">
-    Sửa
-</button>
-
-                                    <form action="{{ route('admin.tacgia.destroy', $tacgia->MaTacGia) }}" method="POST"
-                                        class="d-inline"
-                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa tác giả này không?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            Xóa
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center">Không có tác giả nào.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="text-muted mb-2">
-                Hiển thị từ {{ $tacgias->firstItem() }} đến {{ $tacgias->lastItem() }} trong tổng số {{ $tacgias->total() }}
-                kết quả
-            </div>
-
-            <div class="card-footer" style="display: flex; justify-content: center;">
-                {{ $tacgias->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
-            </div>
+@section('content')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Đóng">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-        <!-- Modal thêm tác giả -->
-        <div class="modal fade" id="modalCreateTacGia" tabindex="-1" aria-labelledby="modalCreateTacGiaLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <form action="{{ route('admin.tacgia.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-content">
-                        <div class="modal-header bg-success text-white">
-                            <h5 class="modal-title" id="modalCreateTacGiaLabel">Thêm tác giả mới</h5>
-<button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
-    <span aria-hidden="true">&times;</span>
-</button>                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="TenTacGia" class="form-label">Tên tác giả</label>
-                                <input type="text" name="TenTacGia" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-success">Thêm</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!-- Modal sửa tác giả -->
-<div class="modal fade" id="modalEditTacGia" tabindex="-1" aria-labelledby="modalEditTacGiaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="formEditTacGia" method="POST">
-            @csrf
-            @method('PUT')
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalEditTacGiaLabel">Chỉnh sửa tác giả</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="MaTacGia" id="editMaTacGia">
-                    <div class="mb-3">
-                        <label for="editTenTacGia" class="form-label">Tên tác giả</label>
-                        <input type="text" name="TenTacGia" id="editTenTacGia" class="form-control" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    @endsection
-@section('js')
-    @if ($errors->any())
-        <script>
-            $(document).ready(function () {
-                $('#modalCreateTacGia').modal('show');
-            });
-        </script>
     @endif
-    <script>
-    $(document).ready(function () {
-        // Bấm nút Sửa
-        $('.btn-edit').click(function () {
-            let id = $(this).data('id');
 
-            $.get('/admin/tacgia/' + id, function (data) {
-                $('#editMaTacGia').val(data.MaTacGia);
-                $('#editTenTacGia').val(data.TenTacGia);
-                $('#formEditTacGia').attr('action', '/admin/tacgia/' + id);
-                $('#modalEditTacGia').modal('show');
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Đóng">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
+    <form method="GET" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="q" value="{{ request('q') }}" class="form-control"
+                    placeholder="Tìm theo tên tác giả">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i> Lọc</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ route('admin.tacgia.index') }}" class="btn btn-secondary w-100"><i class="fas fa-redo-alt"></i>
+                    Reset</a>
+            </div>
+            <div class="col-md-4 text-right">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalCreateTacGia">
+                    <i class="fas fa-plus"></i> Thêm tác giả
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title mb-0">Danh sách tác giả</h3>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã tác giả</th>
+                        <th>Tên tác giả</th>
+                        <th>Năm sinh</th>
+                        <th>Quê quán</th>
+                        <th>Số sách</th>
+                        <th>Ghi chú</th>
+                        <th>Ngày tạo</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($tacgias as $tacgia)
+                        <tr>
+                            <td>{{ $tacgia->MaTacGia }}</td>
+                            <td>{{ $tacgia->TenTacGia }}</td>
+                            <td>{{ $tacgia->nam_sinh ?? 'Chưa cập nhật' }}</td>
+                            <td>{{ optional($tacgia->quequan)->ten ?? 'Chưa cập nhật' }}</td>
+                            <td>{{ $tacgia->sach->count() }}</td>
+                            <td>{{ $tacgia->ghi_chu ?? 'Không có' }}</td>
+                            <td>{{ $tacgia->created_at ? $tacgia->created_at->format('d/m/Y H:i') : 'Không có' }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-edit"
+                                    data-id="{{ $tacgia->MaTacGia }}">
+                                    Sửa
+                                </button>
+                                <form action="{{ route('admin.tacgia.destroy', $tacgia->MaTacGia) }}" method="POST"
+                                    class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                                </form>
+                                <a href="{{ route('admin.tacgia.books', $tacgia->MaTacGia) }}"
+                                    class="btn btn-sm btn-outline-info">
+                                    Xem tác phẩm
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center">Không có tác giả nào.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex justify-content-center">
+            {{ $tacgias->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+        </div>
+    </div>
+
+    {{-- Modal thêm --}}
+    <div class="modal fade" id="modalCreateTacGia" tabindex="-1" role="dialog" aria-labelledby="modalCreateTacGiaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form action="{{ route('admin.tacgia.store') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Thêm tác giả</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @if ($errors->any() && !session('edit_open'))
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <div class="form-group">
+                            <label>Tên tác giả</label>
+                            <input type="text" name="TenTacGia" value="{{ old('TenTacGia') }}" class="form-control"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Năm sinh</label>
+                            <input type="number" name="nam_sinh" value="{{ old('nam_sinh') }}" class="form-control"
+                                min="1000" max="2010">
+                        </div>
+                        <div class="form-group">
+                            <label>Tỉnh</label>
+                            <select id="tinh" class="form-control">
+                                <option value="">-- Chọn tỉnh --</option>
+                                @foreach ($tinhs as $tinh)
+                                    <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quận/Huyện</label>
+                            <select id="quanhuyen" class="form-control">
+                                <option value="">-- Chọn quận/huyện --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Phường/Xã</label>
+                            <select name="que_quan_id" id="que_quan_id" class="form-control">
+                                <option value="">-- Chọn phường/xã --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ghi chú</label>
+                            <textarea name="ghi_chu" class="form-control">{{ old('ghi_chu') }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-success">Thêm</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal sửa --}}
+    <div class="modal fade" id="modalEditTacGia" tabindex="-1" role="dialog" aria-labelledby="modalEditTacGiaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form id="formEditTacGia" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Sửa tác giả</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @if ($errors->any() && session('edit_open'))
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        <div class="form-group">
+                            <label>Tên tác giả</label>
+                            <input type="text" name="TenTacGia" id="editTenTacGia" class="form-control"
+                                value="{{ old('TenTacGia') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Năm sinh</label>
+                            <input type="number" name="nam_sinh" id="editNamSinh" class="form-control"
+                                value="{{ old('nam_sinh') }}" min="1000" max="2010">
+                        </div>
+                        <div class="form-group">
+                            <label>Tỉnh</label>
+                            <select id="edit_tinh" class="form-control">
+                                <option value="">-- Chọn tỉnh --</option>
+                                @foreach ($tinhs as $tinh)
+                                    <option value="{{ $tinh->id }}">{{ $tinh->ten }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quận/Huyện</label>
+                            <select id="edit_quanhuyen" class="form-control">
+                                <option value="">-- Chọn quận/huyện --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Phường/Xã</label>
+                            <select name="que_quan_id" id="edit_que_quan_id" class="form-control">
+                                <option value="">-- Chọn phường/xã --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ghi chú</label>
+                            <textarea name="ghi_chu" id="editGhiChu" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
+
+@section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function loadDistricts(provinceId, districtSelectId, resetWard = true, selectedId = null) {
+                fetch(`/api/quan-huyen/${provinceId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const districtSelect = document.getElementById(districtSelectId);
+                        districtSelect.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+                        data.forEach(item => {
+                            districtSelect.innerHTML +=
+                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+                        });
+
+                        if (resetWard) {
+                            const wardSelect = document.getElementById(districtSelectId.replace('quanhuyen',
+                                'que_quan_id'));
+                            if (wardSelect) wardSelect.innerHTML =
+                                '<option value="">-- Chọn phường/xã --</option>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Lỗi tải Quận/Huyện:', err);
+                        Toastify({
+                            text: "Không thể tải danh sách Quận/Huyện. Vui lòng thử lại!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "#dc3545",
+                        }).showToast();
+                    });
+            }
+
+            function loadWards(districtId, wardSelectId, selectedId = null) {
+                fetch(`/api/phuong-xa/${districtId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const wardSelect = document.getElementById(wardSelectId);
+                        wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                        data.forEach(item => {
+                            wardSelect.innerHTML +=
+                                `<option value="${item.id}" ${selectedId == item.id ? 'selected' : ''}>${item.ten}</option>`;
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Lỗi tải Phường/Xã:', err);
+                        Toastify({
+                            text: "Không thể tải danh sách Phường/Xã. Vui lòng thử lại!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "#dc3545",
+                        }).showToast();
+                    });
+            }
+
+            // Sự kiện chọn Tỉnh (Thêm tác giả)
+            document.getElementById('tinh')?.addEventListener('change', function() {
+                loadDistricts(this.value, 'quanhuyen');
+            });
+
+            // Sự kiện chọn Quận/Huyện (Thêm tác giả)
+            document.getElementById('quanhuyen')?.addEventListener('change', function() {
+                loadWards(this.value, 'que_quan_id');
+            });
+
+            // Nếu có lỗi validation → mở lại modal thêm và load địa chỉ tương ứng
+            @if ($errors->any() && !session('edit_open') && old('que_quan_id'))
+                const xaId = {{ old('que_quan_id') }};
+                fetch(`/api/get-diachi-from-xa/${xaId}`)
+                    .then(response => response.json())
+                    .then(res => {
+                        if (res.success) {
+                            const {
+                                tinh,
+                                huyen,
+                                xa
+                            } = res;
+                            document.getElementById('tinh').value = tinh.id;
+                            return fetch(`/api/quan-huyen/${tinh.id}`)
+                                .then(response => response.json())
+                                .then(quans => {
+                                    const districtSelect = document.getElementById('quanhuyen');
+                                    districtSelect.innerHTML =
+                                        '<option value="">-- Chọn quận/huyện --</option>';
+                                    quans.forEach(q => {
+                                        districtSelect.innerHTML +=
+                                            `<option value="${q.id}" ${q.id == huyen.id ? 'selected' : ''}>${q.ten}</option>`;
+                                    });
+
+                                    return fetch(`/api/phuong-xa/${huyen.id}`);
+                                })
+                                .then(response => response.json())
+                                .then(xas => {
+                                    const wardSelect = document.getElementById('que_quan_id');
+                                    wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                                    xas.forEach(x => {
+                                        wardSelect.innerHTML +=
+                                            `<option value="${x.id}" ${x.id == xa.id ? 'selected' : ''}>${x.ten}</option>`;
+                                    });
+                                });
+                        }
+                    })
+                    .catch(err => console.error('Lỗi khi load địa chỉ mặc định:', err));
+            @endif
+        });
+    </script>
+@endsection
+
+@if ($errors->any() && !session('edit_open'))
+    <script>
+        $(document).ready(function() {
+            $('#modalCreateTacGia').modal('show');
+        });
+    </script>
+@endif
+
+@if (session('edit_open') && old('que_quan_id'))
+    <script>
+        $(document).ready(function() {
+            const xaId = {{ old('que_quan_id') }};
+
+            // Mở lại modal sửa
+            $('#modalEditTacGia').modal('show');
+
+            // Gọi API để lấy tỉnh/huyện từ phường xã
+            fetch(`/api/get-diachi-from-xa/${xaId}`)
+                .then(response => response.json())
+                .then(res => {
+                    if (res.success) {
+                        const {
+                            tinh,
+                            huyen,
+                            xa
+                        } = res;
+
+                        document.getElementById('edit_tinh').value = tinh.id;
+
+                        // Load quận/huyện
+                        fetch(`/api/quan-huyen/${tinh.id}`)
+                            .then(response => response.json())
+                            .then(quans => {
+                                const districtSelect = document.getElementById('edit_quanhuyen');
+                                districtSelect.innerHTML =
+                                '<option value="">-- Chọn quận/huyện --</option>';
+                                quans.forEach(q => {
+                                    districtSelect.innerHTML +=
+                                        `<option value="${q.id}" ${q.id == huyen.id ? 'selected' : ''}>${q.ten}</option>`;
+                                });
+
+                                // Load phường/xã
+                                return fetch(`/api/phuong-xa/${huyen.id}`);
+                            })
+                            .then(response => response.json())
+                            .then(xas => {
+                                const wardSelect = document.getElementById('edit_que_quan_id');
+                                wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                                xas.forEach(x => {
+                                    wardSelect.innerHTML +=
+                                        `<option value="${x.id}" ${x.id == xa.id ? 'selected' : ''}>${x.ten}</option>`;
+                                });
+                            });
+                    }
+                })
+                .catch(err => console.error('Lỗi khi load địa chỉ trong modal sửa:', err));
+        });
+    </script>
+@endif
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.btn-edit');
+
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const id = this.dataset.id;
+
+                fetch(`/admin/tacgia/${id}/edit`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            const tacgia = data.tacgia;
+
+                            // Set action form update
+                            const form = document.getElementById('formEditTacGia');
+                            form.action = `/admin/tacgia/${id}`;
+
+                            // Gán giá trị vào input
+                            document.getElementById('editTenTacGia').value = tacgia.TenTacGia;
+                            document.getElementById('editNamSinh').value = tacgia.nam_sinh || '';
+                            document.getElementById('editGhiChu').value = tacgia.ghi_chu || '';
+
+                            // Load địa chỉ
+                            if (tacgia.que_quan_id) {
+                                fetch(`/api/get-diachi-from-xa/${tacgia.que_quan_id}`)
+                                    .then(response => response.json())
+                                    .then(res => {
+                                        if (res.success) {
+                                            const { tinh, huyen, xa } = res;
+
+                                            document.getElementById('edit_tinh').value = tinh.id;
+
+                                            // Load quận/huyện
+                                            fetch(`/api/quan-huyen/${tinh.id}`)
+                                                .then(response => response.json())
+                                                .then(quans => {
+                                                    const districtSelect = document.getElementById('edit_quanhuyen');
+                                                    districtSelect.innerHTML =
+                                                        '<option value="">-- Chọn quận/huyện --</option>';
+                                                    quans.forEach(q => {
+                                                        districtSelect.innerHTML +=
+                                                            `<option value="${q.id}" ${q.id == huyen.id ? 'selected' : ''}>${q.ten}</option>`;
+                                                    });
+
+                                                    // Load phường/xã
+                                                    return fetch(`/api/phuong-xa/${huyen.id}`);
+                                                })
+                                                .then(response => response.json())
+                                                .then(xas => {
+                                                    const wardSelect = document.getElementById('edit_que_quan_id');
+                                                    wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                                                    xas.forEach(x => {
+                                                        wardSelect.innerHTML +=
+                                                            `<option value="${x.id}" ${x.id == xa.id ? 'selected' : ''}>${x.ten}</option>`;
+                                                    });
+                                                });
+                                        }
+                                    });
+                            } else {
+                                document.getElementById('edit_tinh').value = '';
+                                document.getElementById('edit_quanhuyen').innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+                                document.getElementById('edit_que_quan_id').innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                            }
+
+                            $('#modalEditTacGia').modal('show');
+                        } else {
+                            alert('Không tìm thấy tác giả');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Lỗi khi lấy dữ liệu tác giả:', err);
+                        alert('Lỗi khi tải dữ liệu tác giả');
+                    });
             });
         });
     });
 </script>
-@endsection
-

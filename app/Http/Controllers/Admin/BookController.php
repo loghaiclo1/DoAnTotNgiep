@@ -7,10 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Support\Str;
+use App\Models\TacGia;
+use App\Models\NhaXuatBan;
+use App\Models\DonViPhatHanh;
+
 
 class BookController extends Controller
 {
-
     public function index(Request $request)
     {
         $query = $request->input('query');
@@ -20,6 +23,10 @@ class BookController extends Controller
         $categoryIds = (array) $request->input('category_id', []);
         $years = (array) $request->input('NamXuatBan', []);
         $statuses = (array) $request->input('TrangThai', []);
+
+        $tacgias = TacGia::all();
+        $nxb = NhaXuatBan::all();
+        $donviphathanh = DonViPhatHanh::all();
 
         $books = Book::with('category')
             ->when($query, function ($q) use ($query) {
@@ -75,14 +82,15 @@ class BookController extends Controller
         $categories = Category::all();
         $years = Book::selectRaw('DISTINCT NamXuatBan')->orderBy('NamXuatBan', 'desc')->pluck('NamXuatBan');
 
-        return view('admin.books', compact('books', 'categories', 'query', 'sort', 'direction', 'categoryIds', 'years', 'statuses'));
+        return view('admin.books', compact('books', 'categories', 'query', 'sort', 'direction', 'categoryIds', 'years', 'statuses', 'tacgias', 'nxb', 'donviphathanh'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
             'TenSach' => 'required|string|max:255|unique:sach,TenSach',
-
+            'MaTacGia' => 'required|exists:tacgia,MaTacGia',
+            'MaNXB' => 'required|exists:nhaxuatban,MaNXB',
             'GiaNhap' => 'required|numeric|min:1000',
             'GiaBan' => 'required|numeric|min:1000',
             'SoLuong' => 'required|integer|min:0',
@@ -110,7 +118,6 @@ class BookController extends Controller
 
         return redirect()->route('admin.books.index')->with('success', 'Thêm sách thành công!');
     }
-
 
     public function update(Request $request, $id)
     {
@@ -171,7 +178,6 @@ class BookController extends Controller
         return back()->with('success', 'Cập nhật sách thành công!');
 
     }
-
 
     public function destroy($id)
     {
