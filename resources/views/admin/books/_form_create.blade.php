@@ -12,11 +12,11 @@
     <div class="input-group">
         <select name="MaTacGia" id="MaTacGiaAdd" class="form-control MaTacGiaSelect" required>
             <option value="">-- Chọn tác giả --</option>
-            @foreach($tacgias as $tg)
-            <option value="{{ $tg->MaTacGia }}" {{ old('MaTacGia') == $tg->MaTacGia ? 'selected' : '' }}>
-                {{ $tg->TenTacGia ?? 'Chưa rõ' }}
-            </option>
-        @endforeach
+            @foreach ($tacgias as $tg)
+                <option value="{{ $tg->MaTacGia }}" {{ old('MaTacGia') == $tg->MaTacGia ? 'selected' : '' }}>
+                    {{ $tg->TenTacGia ?? 'Chưa rõ' }}
+                </option>
+            @endforeach
         </select>
         <div class="input-group-append">
             <button type="button" class="btn btn-outline-primary btnAddTacGia">Thêm tác giả mới</button>
@@ -158,14 +158,12 @@
             async function loadTacGiaInfo(id) {
                 if (!id) {
                     infoBox.style.display = 'none';
-                    infoNam.value = infoQue.value = infoChu.value = '';
+                    infoNam.value = infoSex.value = infoQue.value = infoChu.value = '';
                     return;
                 }
 
                 // Hủy request trước (nếu có)
-                if (currentRequest) {
-                    currentRequest.abort();
-                }
+                if (currentRequest) currentRequest.abort();
 
                 try {
                     currentRequest = new AbortController();
@@ -199,6 +197,12 @@
             if (select.value) {
                 loadTacGiaInfo(select.value);
             }
+
+            $('#modalCreateBook').on('shown.bs.modal', function() {
+                if (select && select.value) {
+                    loadTacGiaInfo(select.value);
+                }
+            });
         });
     </script>
 @endpush
