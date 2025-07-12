@@ -14,76 +14,83 @@ use App\Models\DonViPhatHanh;
 
 class BookController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = $request->input('query');
-        $sort = $request->input('sort', 'MaSach'); // mặc định sort theo id
-        $direction = $request->input('direction', 'desc'); // mặc định mới nhất
 
-        $categoryIds = (array) $request->input('category_id', []);
-        $years = (array) $request->input('NamXuatBan', []);
-        $statuses = (array) $request->input('TrangThai', []);
+        public function index(Request $request)
+        {
+            $query = $request->input('query');
+            $sort = $request->input('sort', 'MaSach'); // mặc định sort theo id
+            $direction = $request->input('direction', 'desc'); // mặc định mới nhất
 
-        $tacgias = TacGia::all();
-        $nxb = NhaXuatBan::all();
-        $donviphathanh = DonViPhatHanh::all();
+            $categoryIds = (array) $request->input('category_id', []);
+            $years = (array) $request->input('NamXuatBan', []);
+            $statuses = (array) $request->input('TrangThai', []);
 
-        $books = Book::with('category')
-            ->when($query, function ($q) use ($query) {
-                $nonAccentQuery = $this->removeAccents($query);
-                $cleanedQuery = preg_replace('/[^0-9]/', '', $query); // loại bỏ ký tự không phải số
+            $tacgias = TacGia::all();
+            $nxb = NhaXuatBan::all();
+            $donviphathanh = DonViPhatHanh::all();
 
-                $q->where(function ($q2) use ($query, $nonAccentQuery, $cleanedQuery) {
-                    // Tìm theo tên sách hoặc mô tả gần đúng
-                    $q2->where('TenSach', 'LIKE', "%$query%")
+            $books = Book::with('category', 'nxb', 'tacgia')
+                ->when($query, function ($q) use ($query) {
+                    $nonAccentQuery = $this->removeAccents($query);
+                    $cleanedQuery = preg_replace('/[^0-9]/', '', $query); // loại bỏ ký tự không phải số
+
+                    $q->where(function ($q2) use ($query, $nonAccentQuery, $cleanedQuery) {
+                        // Tìm theo tên sách hoặc mô tả gần đúng
+                        $q2->where('TenSach', 'LIKE', "%$query%")
                         ->orWhere('MoTa', 'LIKE', "%$query%")
+                        ->orWhereHas('tacgia', function ($sub) use ($query) {
+                            $sub->where('TenTacGia', 'LIKE', "%$query%");
+                        })
+                        ->orWhereHas('nxb', function ($sub) use ($query) {
+                            $sub->where('TenNXB', 'LIKE', "%$query%");
+                        })
                         ->orWhereRaw("LOWER(REPLACE(REPLACE(REPLACE(TenSach, 'đ', 'd'), 'Đ', 'D'), ' ', '')) LIKE ?", [
                             '%' . str_replace(' ', '', strtolower($nonAccentQuery)) . '%'
                         ]);
 
-                    // Tìm theo giá nếu người dùng nhập số
-                    if (is_numeric($cleanedQuery)) {
-                        $q2->orWhere('GiaBan', (int) $cleanedQuery);
-                    }
-                });
-            })
-            ->when(!empty($categoryIds), function ($q) use ($categoryIds) {
-                $q->whereIn('category_id', $categoryIds);
-            })
-            ->when(!empty($years), function ($q) use ($years) {
-                $q->whereIn('NamXuatBan', $years);
-            })
-            ->when(!empty($statuses), function ($q) use ($statuses) {
-                $q->where(function ($query) use ($statuses) {
-                    foreach ($statuses as $status) {
-                        switch ($status) {
-                            case 'in_stock':
-                                $query->orWhere('SoLuong', '>', 0);
-                                break;
-                            case 'out_of_stock':
-                                $query->orWhere('SoLuong', '=', 0);
-                                break;
-                            case 'active':
-                                $query->orWhere('TrangThai', 1);
-                                break;
-                            case 'hidden':
-                                $query->orWhere('TrangThai', 0);
-                                break;
+                        // Tìm theo giá nếu người dùng nhập số
+                        if (is_numeric($cleanedQuery)) {
+                            $q2->orWhere('GiaBan', (int) $cleanedQuery);
                         }
-                    }
-                });
-            })
-            ->when(in_array($sort, ['MaSach', 'GiaBan', 'SoLuong', 'created_at', 'LuotMua', 'NamXuatBan']), function ($q) use ($sort, $direction) {
-                $q->orderBy($sort, $direction);
-            })
-            ->paginate(10)
-            ->appends($request->all());
+                    });
+                })
+                ->when(!empty($categoryIds), function ($q) use ($categoryIds) {
+                    $q->whereIn('category_id', $categoryIds);
+                })
+                ->when(!empty($years), function ($q) use ($years) {
+                    $q->whereIn('NamXuatBan', $years);
+                })
+                ->when(!empty($statuses), function ($q) use ($statuses) {
+                    $q->where(function ($query) use ($statuses) {
+                        foreach ($statuses as $status) {
+                            switch ($status) {
+                                case 'in_stock':
+                                    $query->orWhere('SoLuong', '>', 0);
+                                    break;
+                                case 'out_of_stock':
+                                    $query->orWhere('SoLuong', '=', 0);
+                                    break;
+                                case 'active':
+                                    $query->orWhere('TrangThai', 1);
+                                    break;
+                                case 'hidden':
+                                    $query->orWhere('TrangThai', 0);
+                                    break;
+                            }
+                        }
+                    });
+                })
+                ->when(in_array($sort, ['MaSach', 'GiaBan', 'SoLuong', 'created_at', 'LuotMua', 'NamXuatBan']), function ($q) use ($sort, $direction) {
+                    $q->orderBy($sort, $direction);
+                })
+                ->paginate(10)
+                ->appends($request->all());
 
-        $categories = Category::all();
-        $years = Book::selectRaw('DISTINCT NamXuatBan')->orderBy('NamXuatBan', 'desc')->pluck('NamXuatBan');
+            $categories = Category::all();
+            $years = Book::selectRaw('DISTINCT NamXuatBan')->orderBy('NamXuatBan', 'desc')->pluck('NamXuatBan');
 
-        return view('admin.books', compact('books', 'categories', 'query', 'sort', 'direction', 'categoryIds', 'years', 'statuses', 'tacgias', 'nxb', 'donviphathanh'));
-    }
+            return view('admin.books', compact('books', 'categories', 'query', 'sort', 'direction', 'categoryIds', 'years', 'statuses', 'tacgias', 'nxb', 'donviphathanh'));
+        }
 
     public function store(Request $request)
     {

@@ -106,19 +106,22 @@ class BookController extends Controller
 
             if (!empty($searchTerms)) {
                 $queryBuilder = Book::query()
-                    ->select([
-                        'MaSach',
-                        'TenSach',
-                        'MoTa',
-                        'NamXuatBan',
-                        'GiaBan',
-                        'GiaNhap',
-                        'SoLuong',
-                        'LuotMua',
-                        'HinhAnh',
-                        'slug'
-                    ])
-                    ->where('TrangThai', 1);
+                ->select([
+                    'MaSach',
+                    'TenSach',
+                    'MoTa',
+                    'NamXuatBan',
+                    'GiaBan',
+                    'GiaNhap',
+                    'SoLuong',
+                    'LuotMua',
+                    'HinhAnh',
+                    'slug',
+                    'MaTacGia',
+                    'MaNXB',
+                ])
+                ->with(['tacgia', 'nxb', 'dvph'])
+                ->where('TrangThai', 1);
 
                 if ($matchLuotBan !== null) {
                     // Nếu nhập kiểu "10 lượt bán"
@@ -135,11 +138,29 @@ class BookController extends Controller
                     $queryBuilder->where(function ($q) use ($searchTerms, $nonAccentQuery) {
                         $q->where(function ($q2) use ($searchTerms) {
                             $q2->where('TenSach', 'LIKE', "%{$searchTerms}%")
-                               ->orWhere('MoTa', 'LIKE', "%{$searchTerms}%");
+                            ->orWhere('MoTa', 'LIKE', "%{$searchTerms}%")
+                            ->orWhereHas('tacgia', function ($sub) use ($searchTerms) {
+                                $sub->where('TenTacGia', 'LIKE', "%{$searchTerms}%");
+                            })
+                            ->orWhereHas('nxb', function ($sub) use ($searchTerms) {
+                                $sub->where('TenNXB', 'LIKE', "%{$searchTerms}%");
+                            })
+                            ->orWhereHas('dvph', function ($sub) use ($searchTerms) {
+                                $sub->where('TenDVPH', 'LIKE', "%{$searchTerms}%");
+                            });
                         })
                         ->orWhere(function ($q3) use ($nonAccentQuery) {
                             $q3->whereRaw("LOWER(REPLACE(TenSach, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"])
-                               ->orWhereRaw("LOWER(REPLACE(MoTa, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
+                            ->orWhereRaw("LOWER(REPLACE(MoTa, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"])
+                            ->orWhereHas('tacgia', function ($sub) use ($nonAccentQuery) {
+                                $sub->whereRaw("LOWER(REPLACE(TenTacGia, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
+                            })
+                            ->orWhereHas('nxb', function ($sub) use ($nonAccentQuery) {
+                                $sub->whereRaw("LOWER(REPLACE(TenNXB, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
+                            })
+                            ->orWhereHas('dvph', function ($sub) use ($nonAccentQuery) {
+                                $sub->whereRaw("LOWER(REPLACE(TenDVPH, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
+                            });
                         });
                     });
                 }
