@@ -19,7 +19,7 @@
             <option value="">-- Chọn tác giả --</option>
             @foreach($tacgias as $tg)
             <option value="{{ $tg->MaTacGia }}" {{ old('MaTacGia') == $tg->MaTacGia ? 'selected' : '' }}>
-                {{ $tg->TenTacGia }} - sinh năm {{ $tg->nam_sinh ?? 'Chưa rõ' }}
+                {{ $tg->TenTacGia  ?? 'Chưa rõ' }}
             </option>
         @endforeach
         </select>

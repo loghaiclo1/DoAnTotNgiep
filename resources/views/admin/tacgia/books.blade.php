@@ -27,6 +27,29 @@
     <a href="{{ route('admin.tacgia.index') }}" class="btn btn-secondary mt-3">
         <i class="fas fa-arrow-left"></i> Quay lại
     </a>
+    <form method="GET" class="row g-3 align-items-center p-3">
+        <div class="col-auto">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Tìm tên sách...">
+        </div>
+        <div class="col-auto">
+            <select name="status" class="form-select">
+                <option value="">-- Trạng thái --</option>
+                <option value="con" {{ request('status') == 'con' ? 'selected' : '' }}>Còn hàng</option>
+                <option value="het" {{ request('status') == 'het' ? 'selected' : '' }}>Hết hàng</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+        </div>
+        <div class="col-auto">
+            <a href="{{ route('admin.tacgia.show', $tacgia->MaTacGia) }}" class="btn btn-secondary">
+                <i class="fas fa-redo"></i> Đặt lại
+            </a>
+        </div>
+    </form>
+
     <h4 class="mt-4">Danh sách tác phẩm</h4>
     <div class="card">
         <div class="card-body p-0">
