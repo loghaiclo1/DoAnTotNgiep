@@ -42,9 +42,13 @@
                         <td>{{ $dv->DienThoai }}</td>
                         <td>{{ $dv->DiaChi }}</td>
                         <td>
-                            @if($dv->image)
-                                <img src="{{ asset('storage/' . $dv->image) }}" width="60">
-                            @endif
+                            <td>
+                                @if ($dv->image)
+                                    <img src="{{ asset('storage/' . $dv->image) }}" alt="Ảnh" width="60">
+                                @else
+                                    <span class="text-muted">Không có ảnh</span>
+                                @endif
+                            </td>
                         </td>
                         <td>
                             <a href="{{ route('admin.donviphathanh.edit', $dv->MaDVPH) }}" class="btn btn-sm btn-info">Sửa</a>

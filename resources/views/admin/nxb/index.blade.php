@@ -40,6 +40,7 @@
                 <th>Điện thoại</th>
                 <th>Website</th>
                 <th>Slug</th>
+                <th>Ảnh</th>
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -53,6 +54,13 @@
                     <td><a href="{{ $item->Website }}" target="_blank">{{ $item->Website }}</a></td>
                     <td>{{ $item->slug }}</td>
                     <td>
+                        @if ($item->image)
+                            <img src="{{ asset('storage/' . $item->image) }}" alt="Ảnh" width="60">
+                        @else
+                            <span class="text-muted">Không có ảnh</span>
+                        @endif
+                    </td>
+                    <td>
                         <a href="{{ route('admin.nxb.edit', $item->MaNXB) }}" class="btn btn-sm btn-primary">Sửa</a>
                         <form action="{{ route('admin.nxb.destroy', $item->MaNXB) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Xác nhận xóa?')">
                             @csrf
@@ -65,5 +73,13 @@
         </tbody>
     </table>
 
+    <div class="mt-3 d-flex justify-content-center">
+        {{ $nxb->appends(request()->all())->onEachSide(1)->links('vendor.pagination.bootstrap-4') }}
+
+    </div>
+
+    <div class="text-muted mb-2">
+        Hiển thị từ {{ $nxb->firstItem() }} đến {{ $nxb->lastItem() }} trong tổng số {{ $nxb->total() }} kết quả
+    </div>
 @endsection
 
