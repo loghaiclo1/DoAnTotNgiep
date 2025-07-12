@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class DonViPhatHanh extends Model
 {
-    protected $table = 'donviphathanh'; // Tên bảng đúng trong CSDL của bạn
-    protected $primaryKey = 'MaDVPH'; // Khóa chính không phải "id"
-    public $timestamps = true; // Bảng của bạn có `created_at`, `updated_at`
+    protected $table = 'donviphathanh';
+    protected $primaryKey = 'MaDVPH'; 
+    public $timestamps = true;
     protected $fillable = [
         'TenDVPH',
         'DiaChi',

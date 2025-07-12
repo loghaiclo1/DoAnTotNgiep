@@ -147,6 +147,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::delete('books/{id}', [AdminBookController::class, 'destroy'])->name('books.destroy');
     Route::post('books/{id}/restore', [AdminBookController::class, 'restore'])->name('books.restore');
     Route::delete('/admin/books/{id}/force-delete', [AdminBookController::class, 'forceDelete'])->name('books.forceDelete');
+    Route::resource('nxb', \App\Http\Controllers\Admin\NhaXuatBanController::class)->parameters(['nxb' => 'MaNXB']);
+    Route::resource('admin/donviphathanh', DonViPhatHanhController::class)->names('admin.donviphathanh');
 
     Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');

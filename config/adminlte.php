@@ -333,7 +333,7 @@ return [
         ],
         [
             'text' => 'Đơn vị phát hành',
-            'url'  => 'admin/donviphat',
+            'url'  => 'admin/donviphathanh',
             'icon' => 'fas fa-building',
         ],
         [

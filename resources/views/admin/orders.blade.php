@@ -16,55 +16,50 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    <form method="GET" class="form-filter d-flex flex-wrap align-items-center mb-3" style="gap: 10px;">
 
-    <form method="GET" class="form-filter row align-items-center g-2 mb-3">
         {{-- Tìm kiếm --}}
-        <div class="col-md-6">
-            <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên khách hàng..."
-                value="{{ request('keyword') }}">
-        </div>
+        <input type="text" name="keyword" class="form-control me-2" placeholder="Tìm theo tên khách hàng..." style="flex :0.5"
+            value="{{ request('keyword') }}">
 
-        <div style="width: 50%; display: flex; justify-content: space-around;">
-            {{-- Số đơn/trang --}}
-            <div class="col-md-2">
-                <select name="per_page" class="form-select">
-                    @foreach ([5, 10, 20, 50, 100] as $perPage)
-                        <option value="{{ $perPage }}" {{ request('per_page', 10) == $perPage ? 'selected' : '' }}>
-                            {{ $perPage }} đơn/trang
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+        {{-- Sắp xếp --}}
+        <select name="sort" class="form-select me-2" style="width: 150px;">
+            <option value="date_desc" {{ request('sort') == 'date_desc' ? 'selected' : '' }}>Mới nhất</option>
+            <option value="date_asc" {{ request('sort') == 'date_asc' ? 'selected' : '' }}>Cũ nhất</option>
+            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Tiền cao → thấp</option>
+            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Tiền thấp → cao</option>
+        </select>
 
-            {{-- Trạng thái --}}
-            <div class="col-md-2">
-                <select name="status" class="form-select">
-                    <option value="">-- Tất cả trạng thái --</option>
-                    @foreach (['Đang chờ', 'Đã xác nhận', 'Đang giao hàng', 'Hoàn tất', 'Hủy đơn'] as $tt)
-                        <option value="{{ $tt }}" {{ request('status') == $tt ? 'selected' : '' }}>
-                            {{ $tt }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+        {{-- Số đơn/trang --}}
+        <select name="per_page" class="form-select me-2" style="width: 140px;">
+            @foreach ([5, 10, 20, 50, 100] as $perPage)
+                <option value="{{ $perPage }}" {{ request('per_page', 10) == $perPage ? 'selected' : '' }}>
+                    {{ $perPage }} đơn/trang
+                </option>
+            @endforeach
+        </select>
 
-            {{-- Sort + Lọc --}}
-            <div class="col-md-2 d-flex gap-2">
-                <select name="sort" class="form-select me-2">
-                    <option value="date_desc" {{ request('sort') == 'date_desc' ? 'selected' : '' }}>Mới nhất</option>
-                    <option value="date_asc" {{ request('sort') == 'date_asc' ? 'selected' : '' }}>Cũ nhất</option>
-                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Tiền cao → thấp
-                    </option>
-                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Tiền thấp → cao
-                    </option>
-                </select>
-            </div>
-            <div>
-                <button class="btn btn-primary">Lọc</button>
-            </div>
+        {{-- Trạng thái --}}
+        <select name="status" class="form-select me-2" style="width: 200px;">
+            <option value="">-- Tất cả trạng thái --</option>
+            @foreach (['Đang chờ', 'Đã xác nhận', 'Đang giao hàng', 'Hoàn tất', 'Hủy đơn'] as $tt)
+                <option value="{{ $tt }}" {{ request('status') == $tt ? 'selected' : '' }}>
+                    {{ $tt }}
+                </option>
+            @endforeach
+        </select>
 
-        </div>
+        {{-- Thanh toán --}}
+        <select name="payment_status" class="form-select me-2" style="width: 160px;">
+            <option value="">-- Tất cả thanh toán --</option>
+            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Đã thanh toán</option>
+            <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Chưa thanh toán</option>
+        </select>
+
+        {{-- Nút lọc --}}
+        <button class="btn btn-primary">Lọc</button>
     </form>
+
 
     <div class="table-responsive" style="max-height: 650px; overflow-y: auto;">
         <table class="table table-bordered table-hover mb-0">

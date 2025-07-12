@@ -14,7 +14,7 @@ class HomeController extends Controller
     {
         $featuredBooks = $this->getFeaturedBooks();
         $demDMcha = $this->getCategoryParentWithBookCount();
-        $books = $this->getRandomBooks();
+        $books = $this->getNewBooks();
         $sachbanchay = $this->getBestSellerBooks();
         $filterCategories = $this->getFilterCategories($books);
         $dmCap2 = $this->getDmCap2();
@@ -60,16 +60,16 @@ class HomeController extends Controller
         });
     }
 
-    private function getRandomBooks()
+    private function getNewBooks()
     {
         return Book::with('category')
             ->where('TrangThai', 1)
-            ->where('SoLuong', '>', 0) //  lọc sách còn hàng
-            ->inRandomOrder()
+            ->where('SoLuong', '>', 0)
+            ->orderByDesc('created_at') // Ưu tiên sách mới nhất
+            ->orderByDesc('MaSach')     // Nếu thời gian bằng nhau thì lấy sách có MaSach lớn hơn
             ->take(8)
             ->get();
     }
-
     private function getBestSellerBooks()
     {
         return Book::where('TrangThai', 1)
