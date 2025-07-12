@@ -195,7 +195,7 @@
                                                         </div>
                                                         <div class="specs-row">
                                                             <div class="specs-label">Nhà xuất bản</div>
-                                                            <div class="specs-value">{{ $book->nxb->TenNXB ?? 'Đang cập nhật' }}</div>
+                                                            <div class="specs-value">{{ $book->nhaxuatban->TenNXB ?? 'Đang cập nhật' }}</div>
                                                         </div>
                                                         <div class="specs-row">
                                                             <div class="specs-label">Đơn vị phát hành</div>

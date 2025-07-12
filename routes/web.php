@@ -150,9 +150,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::resource('nxb', \App\Http\Controllers\Admin\NhaXuatBanController::class)->parameters(['nxb' => 'MaNXB']);
     Route::resource('admin/donviphathanh', DonViPhatHanhController::class)->names('admin.donviphathanh');
 
-    Route::resource('phieunhap', PhieuNhapController::class)->only(['index', 'create', 'store', 'show']);
+
+    Route::get('phieunhap', [PhieuNhapController::class, 'index'])->name('phieunhap.index');
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
-    Route::post('phieunhap/store', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
+    Route::post('phieunhap', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
+    Route::get('phieunhap/{id}', [PhieuNhapController::class, 'show'])->name('phieunhap.show');
+    Route::get('phieunhap/{id}/edit', [PhieuNhapController::class, 'edit'])->name('phieunhap.edit');
+    Route::put('phieunhap/{id}', [PhieuNhapController::class, 'update'])->name('phieunhap.update');
+    Route::delete('phieunhap/{id}', [PhieuNhapController::class, 'destroy'])->name('phieunhap.destroy');
+
+
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
     Route::get('/admin/orders/{mahoadon}/pdf', [OrderController::class, 'exportPdf'])->name('orders.exportPdf');
     Route::get('/admin/orders/{mahoadon}/pdf/view', [OrderController::class, 'viewPdf'])->name('orders.viewPdf');

@@ -18,6 +18,8 @@
         @endif
     @endforeach
 
+
+
     <div class="mb-3">
         <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách tài khoản
@@ -45,29 +47,56 @@
                             </label>
                         </div>
 
-                        <div class="row">
-                            @foreach ($permissions->sortBy('name')->filter(fn($p) => $p->name !== 'full access') as $permission)
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-check" title="{{ $permission->description ?? '' }}">
-                                        <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"
-                                               id="perm_{{ $permission->id }}" class="form-check-input"
-                                               {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}>
-                                        <label for="perm_{{ $permission->id }}" class="form-check-label">
-                                            {{ $permission->label_vi ?? ucfirst($permission->name) }}
-                                        </label>
-                                    </div>
+                        @php
+                            $translatedGroups = [
+                                'books' => 'Sách',
+                                'categories' => 'Danh mục',
+                                'dvph' => 'Đơn vị phát hành',
+                                'nxb' => 'Nhà xuất bản',
+                                'phieunhaps' => 'Phiếu nhập',
+                                'tacgia' => 'Tác giả',
+                                'orders' => 'Đơn hàng',
+                            ];
+
+                            $grouped = $permissions
+                                ->filter(fn($p) => $p->name !== 'full access')
+                                ->sortBy('name')
+                                ->groupBy(function ($perm) {
+                                    $parts = explode(' ', $perm->name);
+                                    return $parts[1] ?? 'khác';
+                                });
+                        @endphp
+
+                        @foreach ($grouped as $group => $groupPermissions)
+                            <div class="mb-3 border rounded p-2">
+                                <div class="fw-bold text-info mb-2 text-uppercase">
+                                    {{ $translatedGroups[$group] ?? ucfirst($group) }}
                                 </div>
-                            @endforeach
-                        </div>
+                                <div class="row">
+                                    @foreach ($groupPermissions as $permission)
+                                        <div class="col-sm-6 col-md-4 col-lg-2 mb-1">
+                                            <div class="form-check" title="{{ $permission->description ?? '' }}">
+                                                <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"
+                                                       id="perm_{{ $permission->id }}" class="form-check-input"
+                                                       {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+                                                <label for="perm_{{ $permission->id }}" class="form-check-label">
+                                                    {{ config('permissions_vi.' . $permission->name, ucfirst($permission->name)) }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
                     @endif
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between">
-                <a href="{{ route('admin.accounts.index') }}" class="btn btn-secondary">
+            <div class="text-center mt-4">
+                <a href="{{ route('admin.accounts.index') }}" class="btn btn-outline-secondary me-3">
                     <i class="fas fa-arrow-left me-1"></i> Quay lại
                 </a>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary px-4">
                     <i class="fas fa-save me-1"></i> Lưu quyền
                 </button>
             </div>
@@ -77,8 +106,7 @@
             <i class="fas fa-crown me-1"></i> Người dùng này là <strong>Super Admin</strong> và có toàn quyền hệ thống mặc định.
         </div>
     @endif
-
-    <div class="alert alert-info mt-4">
+    <div class="alert alert-info">
         <h5><i class="fas fa-info-circle me-1"></i> Hướng dẫn</h5>
         <ul class="mb-1">
             <li>Mỗi quyền tương ứng với một chức năng trong hệ thống (VD: thêm sách, xóa sách,...)</li>
@@ -87,55 +115,46 @@
             <li>Quyền chỉ có hiệu lực sau khi bạn nhấn <strong>"Lưu quyền"</strong>.</li>
         </ul>
     </div>
+@endsection
 
-{{--
-    @if (auth()->user()->isSuperAdmin() && app()->environment('local'))
-        <hr>
-        <h4>Thêm quyền mới</h4>
-        <form action="{{ route('admin.permissions.store') }}" method="POST" class="mb-4 d-flex" style="gap: 10px;">
-            @csrf
-            <input type="text" name="name" class="form-control" placeholder="Tên quyền (vd: create books)" required>
-            <button type="submit" class="btn btn-success">Thêm</button>
-        </form>
+@section('css')
+    <style>
+        .form-check-label {
+            font-size: 0.75rem;
+        }
 
-        <h5>Danh sách quyền hiện có:</h5>
-        <ul class="list-group mb-3">
-            @foreach ($permissions as $permission)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ $permission->name }}
-                    <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST"
-                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa quyền này không?')">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-outline-danger">Xóa</button>
-                    </form>
-                </li>
-            @endforeach
-        </ul>
-    @endif --}}
+        .form-check-input {
+            transform: scale(0.75);
+            margin-right: 5px;
+        }
+
+        .form-check {
+            margin-bottom: 2px;
+        }
+    </style>
 @endsection
 
 @section('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectAllCheckbox = document.getElementById('selectAll');
-        const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const permissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
 
-        if (selectAllCheckbox) {
-            selectAllCheckbox.addEventListener('change', function () {
-                permissionCheckboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function () {
+                    permissionCheckboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
                 });
-            });
 
-            const updateSelectAllState = () => {
-                const allChecked = Array.from(permissionCheckboxes).every(cb => cb.checked);
-                selectAllCheckbox.checked = allChecked;
-            };
+                const updateSelectAllState = () => {
+                    const allChecked = Array.from(permissionCheckboxes).every(cb => cb.checked);
+                    selectAllCheckbox.checked = allChecked;
+                };
 
-            permissionCheckboxes.forEach(cb => cb.addEventListener('change', updateSelectAllState));
-            updateSelectAllState();
-        }
-    });
-</script>
+                permissionCheckboxes.forEach(cb => cb.addEventListener('change', updateSelectAllState));
+                updateSelectAllState();
+            }
+        });
+    </script>
 @endsection

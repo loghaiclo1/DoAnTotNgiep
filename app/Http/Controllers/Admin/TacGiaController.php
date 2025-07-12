@@ -13,10 +13,26 @@ class TacGiaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TacGia::query();
+        $query = TacGia::with('xa.quanHuyen.tinhThanh');
 
         if ($request->filled('q')) {
-            $query->where('TenTacGia', 'like', '%' . $request->q . '%');
+            $keyword = $request->q;
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('TenTacGia', 'like', '%' . $keyword . '%')
+                  ->orWhere('nam_sinh', 'like', '%' . $keyword . '%')
+                  ->orWhere('gioi_tinh', 'like', '%' . $keyword . '%')
+                  ->orWhere('ghi_chu', 'like', '%' . $keyword . '%')
+                  ->orWhereHas('xa', function ($subQ) use ($keyword) {
+                      $subQ->where('ten', 'like', '%' . $keyword . '%')
+                           ->orWhereHas('quanHuyen', function ($q2) use ($keyword) {
+                               $q2->where('ten', 'like', '%' . $keyword . '%')
+                                  ->orWhereHas('tinhThanh', function ($q3) use ($keyword) {
+                                      $q3->where('ten', 'like', '%' . $keyword . '%');
+                                  });
+                           });
+                  });
+            });
         }
 
         $tacgias = $query->orderByDesc('created_at')->paginate(10);
@@ -26,6 +42,7 @@ class TacGiaController extends Controller
 
         return view('admin.tacgia', compact('tacgias', 'phuongxas', 'tinhs', 'quanhuyens'));
     }
+
 
     public function create()
     {
@@ -181,11 +198,29 @@ class TacGiaController extends Controller
         $tacgia = TacGia::findOrFail($id);
         return response()->json($tacgia);
     }
-    public function books($id)
+    public function books($id, Request $request)
     {
         $tacgia = TacGia::with('sach')->findOrFail($id);
-        $books = $tacgia->sach()->where('TrangThai', 1)->paginate(10);
+
+        $booksQuery = $tacgia->sach()->with('category')->where('TrangThai', 1);
+
+        // Tìm kiếm theo tên sách
+        if ($request->filled('search')) {
+            $booksQuery->where('TenSach', 'like', '%' . $request->search . '%');
+        }
+
+        // Lọc theo trạng thái
+        if ($request->filled('status')) {
+            if ($request->status == 'con') {
+                $booksQuery->where('SoLuong', '>', 0);
+            } elseif ($request->status == 'het') {
+                $booksQuery->where('SoLuong', '=', 0);
+            }
+        }
+
+        $books = $booksQuery->paginate(10);
 
         return view('admin.tacgia.books', compact('tacgia', 'books'));
     }
+
 }

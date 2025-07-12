@@ -52,10 +52,7 @@ class Book extends Model
     {
         return $this->SoLuong >= $quantity;
     }
-    public function nxb()
-{
-    return $this->belongsTo(NhaXuatBan::class, 'MaNXB', 'MaNXB');
-}
+
 
     // Giảm số lượng tồn kho (dùng khi thanh toán)
     public function reduceStock($quantity)

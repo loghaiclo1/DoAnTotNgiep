@@ -45,16 +45,22 @@
                     <select name="books[0][MaSach]" class="form-control select-book" required onchange="updateGiaCu(this)">
                         <option value="">-- Chọn sách --</option>
                         @foreach($books as $book)
-                            <option value="{{ $book->MaSach }}"
-                                    data-gianhap="{{ $book->GiaNhap ?? 0 }}"
-                                    data-giaban="{{ $book->GiaBan ?? 0 }}">
-                                {{ $book->TenSach }}
-                            </option>
+                        <option value="{{ $book->MaSach }}"
+                            data-gianhap="{{ $book->GiaNhap ?? 0 }}"
+                            data-giaban="{{ $book->GiaBan ?? 0 }}"
+                            data-tacgia="{{ $book->tacgia->TenTacGia ?? 'Không rõ' }}"
+                            data-nxb="{{ $book->nhaxuatban->TenNXB ?? 'Không rõ' }}">
+                            {{ $book->TenSach }}
+                        </option>
                         @endforeach
                     </select>
                     <small class="text-muted gia-cu">
                         Giá nhập hiện tại: <span class="gia-nhap-cu">-</span>,
                         Giá bán hiện tại: <span class="gia-ban-cu">-</span>
+                    </small>
+                    <small class="text-muted tacgia-nxb">
+                        Tác giả: <span class="tac-gia">-</span>,
+                        NXB: <span class="nxb">-</span>
                     </small>
                 </td>
                 <td><input type="number" name="books[0][SoLuong]" class="form-control" min="1" required></td>
@@ -75,16 +81,22 @@
             <select name="__name__" class="form-control select-book" required onchange="updateGiaCu(this)">
                 <option value="">-- Chọn sách --</option>
                 @foreach($books as $book)
-                    <option value="{{ $book->MaSach }}"
-                            data-gianhap="{{ $book->GiaNhap ?? 0 }}"
-                            data-giaban="{{ $book->GiaBan ?? 0 }}">
-                        {{ $book->TenSach }}
-                    </option>
+                <option value="{{ $book->MaSach }}"
+                    data-gianhap="{{ $book->GiaNhap ?? 0 }}"
+                    data-giaban="{{ $book->GiaBan ?? 0 }}"
+                    data-tacgia="{{ $book->tacgia->TenTacGia ?? 'Không rõ' }}"
+                    data-nxb="{{ $book->nhaxuatban->TenNXB ?? 'Không rõ' }}">
+                    {{ $book->TenSach }}
+                </option>
                 @endforeach
             </select>
             <small class="text-muted gia-cu">
                 Giá nhập hiện tại: <span class="gia-nhap-cu">-</span>,
                 Giá bán hiện tại: <span class="gia-ban-cu">-</span>
+            </small>
+            <small class="text-muted tacgia-nxb">
+                Tác giả: <span class="tac-gia">-</span>,
+                NXB: <span class="nxb">-</span>
             </small>
         </td>
         <td><input type="number" name="__soluong__" class="form-control" min="1" required></td>
@@ -149,11 +161,13 @@
         const selectedOption = selectEl.options[selectEl.selectedIndex];
         const giaNhap = selectedOption.getAttribute('data-gianhap') || 0;
         const giaBan = selectedOption.getAttribute('data-giaban') || 0;
-
+        const tacGia = selectedOption.getAttribute('data-tacgia') || '-';
+        const nxb = selectedOption.getAttribute('data-nxb') || '-';
         const row = selectEl.closest('tr');
         row.querySelector('.gia-nhap-cu').textContent = Number(giaNhap).toLocaleString() + '₫';
         row.querySelector('.gia-ban-cu').textContent = Number(giaBan).toLocaleString() + '₫';
-
+row.querySelector('.tac-gia').textContent = tacGia;
+row.querySelector('.nxb').textContent = nxb;
         row.querySelector('input[name*="[DonGia]"]').value = giaNhap;
         row.querySelector('input[name*="[GiaBan]"]').value = giaBan;
 
@@ -199,7 +213,9 @@
                 if (!inputGiaBan.value) inputGiaBan.value = giaBanCu;
             });
         });
+        
     });
+
 </script>
 
 @endpush
