@@ -15,8 +15,9 @@ class Book extends Model
 
     protected $fillable = [
         'TenSach',
-        'MaTacGia', // Khóa ngoại đến tác giả
-        'MaNXB', // Khóa ngoại đến nhà xuất bản
+        'MaTacGia',
+        'MaNXB',
+        'MaDVPH',
         'category_id',
         'GiaNhap',
         'GiaBan',
@@ -42,9 +43,9 @@ class Book extends Model
     {
         return $this->belongsTo(NhaXuatBan::class, 'MaNXB');
     }
-    public function dvph()
+    public function donviphathanh()
     {
-        return $this->belongsToMany(DonViPhatHanh::class, 'sach_donviphathanh', 'MaSach', 'MaDVPH');
+        return $this->belongsTo(DonViPhatHanh::class, 'MaDVPH');
     }
     // Kiểm tra số lượng tồn kho
     public function hasEnoughStock($quantity)

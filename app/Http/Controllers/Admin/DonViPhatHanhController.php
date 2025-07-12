@@ -17,10 +17,10 @@ class DonViPhatHanhController extends Controller
             $keyword = $request->keyword;
             $query->where(function ($q) use ($keyword) {
                 $q->where('TenDVPH', 'like', "%$keyword%")
-                  ->orWhere('Email', 'like', "%$keyword%")
-                  ->orWhere('DienThoai', 'like', "%$keyword%")
-                  ->orWhere('DiaChi', 'like', "%$keyword%")
-                  ->orWhere('slug', 'like', "%$keyword%");
+                    ->orWhere('Email', 'like', "%$keyword%")
+                    ->orWhere('DienThoai', 'like', "%$keyword%")
+                    ->orWhere('DiaChi', 'like', "%$keyword%")
+                    ->orWhere('slug', 'like', "%$keyword%");
             });
         }
 
@@ -74,7 +74,7 @@ class DonViPhatHanhController extends Controller
             'DienThoai' => 'required|regex:/^[0-9\-\+\(\)\s]+$/|max:20|unique:donviphathanh,DienThoai,' . $id . ',MaDVPH',
             'Email' => 'required|email|max:255|unique:donviphathanh,Email,' . $id . ',MaDVPH',
             'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-        ],[
+        ], [
             'TenDVPH.unique' => 'Tên đơn vị phát hành đã tồn tại.',
             'Email.unique' => 'Email này đã được sử dụng bởi một đơn vị phát hành khác.',
             'DienThoai.unique' => 'Số điện thoại này đã được dùng bởi một đơn vị phát hành khác.',

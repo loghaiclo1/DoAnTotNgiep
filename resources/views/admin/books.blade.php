@@ -161,16 +161,12 @@
                     <td>{{ $book->tacgia->TenTacGia ?? 'Chưa cập nhật' }}</td>
                     <td>{{ $book->nxb->TenNXB ?? 'Chưa cập nhật' }}</td>
                     <td>
-                        @if (optional($book->donviphathanh)->isNotEmpty())
-                            <ul class="mb-0 pl-3">
-                                @foreach ($book->donviphathanh as $dv)
-                                    <li>{{ $dv->TenDVPH }}</li>
-                                @endforeach
-                            </ul>
-                        @else
-                            Không có
-                        @endif
-                    </td>
+    @if ($book->donviphathanh)
+        {{ $book->donviphathanh->TenDVPH }}
+    @else
+        Không có
+    @endif
+</td>
                     <td>{{ number_format($book->GiaNhap) }}₫</td>
                     <td>{{ number_format($book->GiaBan) }}₫</td>
                     <td>{{ $book->SoLuong }}</td>
