@@ -15,7 +15,7 @@
     <div class="input-group">
         <select name="MaTacGia" id="MaTacGiaEdit{{ $book->MaSach }}"
                 class="form-control MaTacGiaSelect"
-                data-target="infoBox{{ $book->MaSach }}" required>
+                data-target="{{ $book->MaSach }}" required>
             <option value="">-- Chọn tác giả --</option>
             @foreach($tacgias as $tg)
             <option value="{{ $tg->MaTacGia }}" {{ old('MaTacGia') == $tg->MaTacGia ? 'selected' : '' }}>
@@ -29,10 +29,21 @@
     </div>
 </div>
 
-<div class="infoTacGiaBox border p-3 mb-3" id="infoBox{{ $book->MaSach }}" style="display: none;">
-    <p><strong>Năm sinh:</strong> <span class="infoNamSinh"></span></p>
-    <p><strong>Quê quán:</strong> <span class="infoQueQuan"></span></p>
-    <p><strong>Ghi chú:</strong> <span class="infoGhiChu"></span></p>
+<div class="infoTacGiaBox mb-3" id="infoBox{{ $book->MaSach }}">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="infoNamSinh{{ $book->MaSach }}">Năm sinh</label>
+            <input type="text" id="infoNamSinh{{ $book->MaSach }}" class="form-control" readonly>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="infoQueQuan{{ $book->MaSach }}">Quê quán</label>
+            <input type="text" id="infoQueQuan{{ $book->MaSach }}" class="form-control" readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="infoGhiChu{{ $book->MaSach }}">Ghi chú</label>
+        <input type="text" id="infoGhiChu{{ $book->MaSach }}" class="form-control" readonly>
+    </div>
 </div>
 
 <div class="form-group">
@@ -50,23 +61,38 @@
 
 <div class="form-group">
     <label for="GiaNhapEdit{{ $book->MaSach }}">Giá nhập (₫)</label>
-    <input type="number" name="GiaNhap" id="GiaNhapEdit{{ $book->MaSach }}"
-        class="form-control" min="1000" step="1000"
-        value="{{ old('GiaNhap', $book->GiaNhap) }}" required>
+    <div class="input-group">
+        <input type="number" name="GiaNhap" id="GiaNhapEdit{{ $book->MaSach }}"
+            class="form-control" min="1000" step="1000"
+            value="{{ old('GiaNhap', $book->GiaNhap) }}" required>
+        <div class="input-group-append">
+            <span class="input-group-text">₫</span>
+        </div>
+    </div>
 </div>
 
 <div class="form-group">
     <label for="GiaBanEdit{{ $book->MaSach }}">Giá bán (₫)</label>
-    <input type="number" name="GiaBan" id="GiaBanEdit{{ $book->MaSach }}"
-        class="form-control" min="1000" step="1000"
-        value="{{ old('GiaBan', $book->GiaBan) }}" required>
+    <div class="input-group">
+        <input type="number" name="GiaBan" id="GiaBanEdit{{ $book->MaSach }}"
+            class="form-control" min="1000" step="1000"
+            value="{{ old('GiaBan', $book->GiaBan) }}" required>
+        <div class="input-group-append">
+            <span class="input-group-text">₫</span>
+        </div>
+    </div>
 </div>
 
 <div class="form-group">
-    <label for="SoLuongEdit{{ $book->MaSach }}">Số lượng</label>
-    <input type="number" name="SoLuong" id="SoLuongEdit{{ $book->MaSach }}"
-        class="form-control" min="0"
-        value="{{ old('SoLuong', $book->SoLuong) }}" required>
+    <label for="SoLuongEdit{{ $book->MaSach }}">Số lượng (cuốn)</label>
+    <div class="input-group">
+        <input type="number" name="SoLuong" id="SoLuongEdit{{ $book->MaSach }}"
+            class="form-control" min="0"
+            value="{{ old('SoLuong', $book->SoLuong) }}" required>
+        <div class="input-group-append">
+            <span class="input-group-text">cuốn</span>
+        </div>
+    </div>
 </div>
 
 <div class="form-group">
@@ -102,7 +128,8 @@
 
 <div class="form-group">
     <label for="HinhAnhEdit{{ $book->MaSach }}">Hình ảnh (jpg, jpeg, png, webp)</label>
-    <input type="file" name="HinhAnh" id="HinhAnhEdit{{ $book->MaSach }}" class="form-control-file" accept=".jpg,.jpeg,.png,.webp">
+    <input type="file" name="HinhAnh" id="HinhAnhEdit{{ $book->MaSach }}"
+        class="form-control-file" accept=".jpg,.jpeg,.png,.webp">
     @if($book->HinhAnh)
         <div class="mt-2">
             <img src="{{ asset('image/book/' . $book->HinhAnh) }}" alt="Hình hiện tại" width="100">
@@ -117,44 +144,60 @@ document.addEventListener('DOMContentLoaded', function () {
 
     selects.forEach(select => {
         const bookId = select.getAttribute('data-target');
-        const box = document.getElementById('infoBox' + bookId);
-        const infoNam = box.querySelector('.infoNamSinh');
-        const infoQue = box.querySelector('.infoQueQuan');
-        const infoChu = box.querySelector('.infoGhiChu');
+
+        const infoBox = document.getElementById('infoBox' + bookId);
+        const infoNam = document.getElementById('infoNamSinh' + bookId);
+        const infoQue = document.getElementById('infoQueQuan' + bookId);
+        const infoChu = document.getElementById('infoGhiChu' + bookId);
+
+        let currentRequest = null; // Dùng để hủy request cũ nếu đang gọi
 
         async function loadTacGiaInfo(id) {
             if (!id) {
-                box.style.display = 'none';
-                infoNam.textContent = infoQue.textContent = infoChu.textContent = '';
+                infoBox.style.display = 'none';
+                infoNam.value = infoQue.value = infoChu.value = '';
                 return;
             }
 
+            // Hủy request cũ nếu đang chờ
+            if (currentRequest) {
+                currentRequest.abort();
+            }
+
             try {
-                const res = await fetch(`/admin/tacgia/${id}/edit`);
-                const data = await res.json();
+                currentRequest = new AbortController();
+                const response = await fetch(`/admin/tacgia/${id}/edit`, {
+                    signal: currentRequest.signal
+                });
+
+                const data = await response.json();
 
                 if (data.success) {
                     const tg = data.tacgia;
-                    infoNam.textContent = tg.nam_sinh || '';
-                    infoQue.textContent = tg.que_quan_text || '';
-                    infoChu.textContent = tg.ghi_chu || '';
-                    box.style.display = 'block';
+                    infoNam.value = tg.nam_sinh || '';
+                    infoQue.value = tg.que_quan_text || '';
+                    infoChu.value = tg.ghi_chu || '';
+                    infoBox.style.display = 'block';
                 } else {
-                    box.style.display = 'none';
+                    infoBox.style.display = 'none';
                 }
-            } catch (e) {
-                box.style.display = 'none';
+            } catch (error) {
+                infoBox.style.display = 'none';
             }
         }
 
-        // Gọi khi đổi tác giả
-        select.addEventListener('change', () => loadTacGiaInfo(select.value));
+        // Khi người dùng thay đổi dropdown
+        select.addEventListener('change', function () {
+            loadTacGiaInfo(this.value);
+        });
 
-        // Gọi nếu có sẵn giá trị khi mở modal
-        if (select.value) {
+        // GỌI THỦ CÔNG khi mở modal chứa select này
+        const modal = select.closest('.modal');
+        if (modal && modal.classList.contains('show') && select.value) {
             loadTacGiaInfo(select.value);
         }
     });
 });
 </script>
 @endpush
+
