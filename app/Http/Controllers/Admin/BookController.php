@@ -29,7 +29,7 @@ class BookController extends Controller
             $nxb = NhaXuatBan::all();
             $donviphathanh = DonViPhatHanh::all();
 
-            $books = Book::with('category', 'nxb', 'tacgia')
+            $books = Book::with('category', 'nhaxuatban', 'tacgia')
                 ->when($query, function ($q) use ($query) {
                     $nonAccentQuery = $this->removeAccents($query);
                     $cleanedQuery = preg_replace('/[^0-9]/', '', $query); // loại bỏ ký tự không phải số
@@ -41,7 +41,7 @@ class BookController extends Controller
                         ->orWhereHas('tacgia', function ($sub) use ($query) {
                             $sub->where('TenTacGia', 'LIKE', "%$query%");
                         })
-                        ->orWhereHas('nxb', function ($sub) use ($query) {
+                        ->orWhereHas('nhaxuatban', function ($sub) use ($query) {
                             $sub->where('TenNXB', 'LIKE', "%$query%");
                         })
                         ->orWhereRaw("LOWER(REPLACE(REPLACE(REPLACE(TenSach, 'đ', 'd'), 'Đ', 'D'), ' ', '')) LIKE ?", [

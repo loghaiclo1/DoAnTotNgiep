@@ -46,7 +46,11 @@
                     </td>
                     <td>{{ $phieu->GhiChu }}</td>
                     <td>
-                        <a href="{{ route('admin.phieunhap.show', $phieu->MaPhieuNhap) }}" class="btn btn-info btn-sm">Chi tiết</a>
+
+                            <a href="{{ route('admin.phieunhap.show', $phieu->MaPhieuNhap) }}" class="btn btn-info btn-sm">Chi tiết</a>
+                            <a href="{{ route('admin.phieunhap.edit', $phieu->MaPhieuNhap) }}" class="btn btn-warning btn-sm">Sửa</a>
+        
+
                     </td>
                 </tr>
             @endforeach
