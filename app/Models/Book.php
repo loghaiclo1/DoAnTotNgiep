@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-    
+
     protected $table = 'sach'; // Tên bảng đúng trong CSDL của bạn
 
     protected $primaryKey = 'MaSach'; // Khóa chính không phải "id"
@@ -42,7 +42,7 @@ class Book extends Model
     {
         return $this->belongsTo(NhaXuatBan::class, 'MaNXB');
     }
-    public function donviphathanh()
+    public function dvph()
     {
         return $this->belongsToMany(DonViPhatHanh::class, 'sach_donviphathanh', 'MaSach', 'MaDVPH');
     }
@@ -51,6 +51,10 @@ class Book extends Model
     {
         return $this->SoLuong >= $quantity;
     }
+    public function nxb()
+{
+    return $this->belongsTo(NhaXuatBan::class, 'MaNXB', 'MaNXB');
+}
 
     // Giảm số lượng tồn kho (dùng khi thanh toán)
     public function reduceStock($quantity)

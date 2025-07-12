@@ -161,7 +161,7 @@
                     <td>{{ $book->tacgia->TenTacGia ?? 'Chưa cập nhật' }}</td>
                     <td>{{ $book->nxb->TenNXB ?? 'Chưa cập nhật' }}</td>
                     <td>
-                        @if ($book->donviphathanh->isNotEmpty())
+                        @if (optional($book->donviphathanh)->isNotEmpty())
                             <ul class="mb-0 pl-3">
                                 @foreach ($book->donviphathanh as $dv)
                                     <li>{{ $dv->TenDVPH }}</li>

@@ -190,9 +190,21 @@
                                                             <div class="specs-value">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</div>
                                                         </div>
                                                         <div class="specs-row">
-                                                            <div class="specs-label">Số lượng trong kho</div>
-                                                            <div class="specs-value book-stock-display" data-book-id="{{ $book->MaSach }}">
-                                                                {{ $book->SoLuong > 0 ? $book->SoLuong . ' cuốn' : 'Hết hàng' }}
+                                                            <div class="specs-label">Tác giả</div>
+                                                            <div class="specs-value">{{ $book->tacgia->TenTacGia ?? 'Đang cập nhật' }}</div>
+                                                        </div>
+                                                        <div class="specs-row">
+                                                            <div class="specs-label">Nhà xuất bản</div>
+                                                            <div class="specs-value">{{ $book->nxb->TenNXB ?? 'Đang cập nhật' }}</div>
+                                                        </div>
+                                                        <div class="specs-row">
+                                                            <div class="specs-label">Đơn vị phát hành</div>
+                                                            <div class="specs-value">
+                                                                @forelse ($book->dvph as $dv)
+                                                                    {{ $dv->TenDVPH }}@if (!$loop->last), @endif
+                                                                @empty
+                                                                    Đang cập nhật
+                                                                @endforelse
                                                             </div>
                                                         </div>
                                                     </div>
@@ -217,18 +229,18 @@
                                     @forelse ($relatedBooks as $related)
                                         <div class="col-md-3">
                                             <div class="card" style="border: none;">
-                                                <a href="{{ route('product.detail', $related->slug) }}" 
+                                                <a href="{{ route('product.detail', $related->slug) }}"
                                                 style="width: 100%; height: 255px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
-                                                    <img src="{{ asset('image/book/' . $related->HinhAnh) }}" 
-                                                        class="card-img-top" 
-                                                        alt="{{ $related->TenSach }}" 
+                                                    <img src="{{ asset('image/book/' . $related->HinhAnh) }}"
+                                                        class="card-img-top"
+                                                        alt="{{ $related->TenSach }}"
                                                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                                 </a>
                                                 <div class="card-body">
                                                     <h5 class="card-title fw-bold">
                                                         <a href="{{ route('product.detail', $related->TenSach) }}" style="color: #2d465e;">
                                                             {{$related->TenSach}}
-                                                        </a>    
+                                                        </a>
                                                     </h5>
                                                     <div style="display: flex; justify-content: space-between;">
                                                         <p class="card-text text-danger">{{ number_format($related->GiaBan) }}đ</p>

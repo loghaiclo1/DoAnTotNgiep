@@ -60,7 +60,7 @@
                         <th>Năm sinh</th>
                         <th>Quê quán</th>
                         <th>Số sách</th>
-                        <th>Ghi chú</th>
+                        <th>Thông tin thêm về tác giả</th>
                         <th>Ngày tạo</th>
                         <th>Hành động</th>
                     </tr>
@@ -181,9 +181,10 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Ghi chú</label>
-                            <textarea name="ghi_chu" class="form-control">{{ old('ghi_chu') }}</textarea>
+                            <label for="ghi_chu">Thông tin thêm về tác giả <small class="text-muted">(không bắt buộc)</small></label>
+                            <textarea name="ghi_chu" id="ghi_chu" class="form-control" rows="4" placeholder="Nhập tiểu sử, thành tựu hoặc mô tả khác...">{{ old('ghi_chu', $tacgia->ghi_chu ?? '') }}</textarea>
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>

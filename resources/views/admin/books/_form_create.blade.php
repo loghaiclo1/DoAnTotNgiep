@@ -14,10 +14,10 @@
         <select name="MaTacGia" id="MaTacGiaAdd" class="form-control MaTacGiaSelect" required>
             <option value="">-- Chọn tác giả --</option>
             @foreach($tacgias as $tg)
-                <option value="{{ $tg->MaTacGia }}" {{ old('MaTacGia') == $tg->MaTacGia ? 'selected' : '' }}>
-                    {{ $tg->TenTacGia }}
-                </option>
-            @endforeach
+            <option value="{{ $tg->MaTacGia }}" {{ old('MaTacGia') == $tg->MaTacGia ? 'selected' : '' }}>
+                {{ $tg->TenTacGia }} - sinh năm {{ $tg->nam_sinh ?? 'Chưa rõ' }}
+            </option>
+        @endforeach
         </select>
         <div class="input-group-append">
             <button type="button" class="btn btn-outline-primary btnAddTacGia">Thêm tác giả mới</button>
