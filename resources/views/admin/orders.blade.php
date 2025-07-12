@@ -19,7 +19,7 @@
     <form method="GET" class="form-filter d-flex flex-wrap align-items-center mb-3" style="gap: 10px;">
 
         {{-- Tìm kiếm --}}
-        <input type="text" name="keyword" class="form-control me-2" placeholder="Tìm theo tên khách hàng..." style="flex :0.5"
+        <input type="text" name="keyword" class="form-control me-2" placeholder="Tìm theo mã đơn hàng, tên khách hàng hoặc số điện thoại" style="flex :0.5"
             value="{{ request('keyword') }}">
 
         {{-- Sắp xếp --}}
@@ -96,7 +96,9 @@
                                 @endphp
                             </td>
                             <td>
-                                @if ($order->PT_ThanhToan == 2)
+                                @if ($order->TrangThai == 'Hủy đơn')
+                                    <span class="badge bg-danger">Đơn hàng đã hủy</span>
+                                @elseif ($order->PT_ThanhToan == 2)
                                     <span class="badge bg-success">Đã thanh toán</span>
                                 @elseif ($order->PT_ThanhToan == 1 && $order->TrangThai == 'Hoàn tất')
                                     <span class="badge bg-success">Đã thanh toán</span>

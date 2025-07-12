@@ -97,8 +97,13 @@ class OrderController extends Controller
 
         // Nếu admin chọn Hủy đơn, cho phép hủy ở bất kỳ bước nào
         if ($trangThaiMoi === 'Hủy đơn') {
-            if ($trangThaiHienTai === 'Hoàn tất') {
-                return redirect()->back()->with('error', 'Không thể hủy đơn hàng đã hoàn tất.');
+            if ($trangThaiHienTai === 'Hoàn tất' || $trangThaiHienTai === "Đang giao hàng") {
+                if ($trangThaiHienTai === 'Hoàn tất'){
+                    return redirect()->back()->with('error', 'Không thể hủy đơn hàng đã hoàn tất.');
+                }
+                else {
+                    return redirect()->back()->with('error', 'Không thể hủy đơn hàng đang giao.');
+                }
             }
             $donhang->TrangThai = $trangThaiMoi;
             $donhang->save();

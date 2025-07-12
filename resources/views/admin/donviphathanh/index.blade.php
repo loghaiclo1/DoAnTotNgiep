@@ -12,7 +12,7 @@
     @endif
 
     <a href="{{ route('admin.donviphathanh.create') }}" class="btn btn-primary mb-3">
-        <i class="fas fa-plus"></i> Thêm đơn vị
+        <i class="fas fa-plus"></i> Thêm đơn vị phát hành mới
     </a>
     <form action="{{ route('admin.donviphathanh.index') }}" method="GET" class="mb-3">
         <div class="input-group">
@@ -41,14 +41,13 @@
                         <td>{{ $dv->Email }}</td>
                         <td>{{ $dv->DienThoai }}</td>
                         <td>{{ $dv->DiaChi }}</td>
+                        
                         <td>
-                            <td>
-                                @if ($dv->image)
-                                    <img src="{{ asset('storage/' . $dv->image) }}" alt="Ảnh" width="60">
-                                @else
-                                    <span class="text-muted">Không có ảnh</span>
-                                @endif
-                            </td>
+                            @if ($dv->image)
+                                <img src="{{ asset('storage/' . $dv->image) }}" alt="Ảnh" width="60">
+                            @else
+                                <span class="text-muted">Không có ảnh</span>
+                            @endif
                         </td>
                         <td>
                             <a href="{{ route('admin.donviphathanh.edit', $dv->MaDVPH) }}" class="btn btn-sm btn-info">Sửa</a>
