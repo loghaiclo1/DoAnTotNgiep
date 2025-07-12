@@ -388,6 +388,8 @@ document.addEventListener('DOMContentLoaded', function () {
         $(modalId).modal('show');
     });
 </script>
+
+
 @endif
 @endpush
 

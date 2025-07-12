@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div class="infoTacGiaBox mb-3" style="display: none;">
+<div class="infoTacGiaBox mb-3" id="infoBox">
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="infoNamSinh">Năm sinh</label>
@@ -41,8 +41,6 @@
         <input type="text" id="infoGhiChu" class="form-control" readonly>
     </div>
 </div>
-
-
 
 <div class="form-group">
     <label for="MaNXB">Nhà xuất bản</label>

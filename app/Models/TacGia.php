@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Book;
+
 class TacGia extends Model
 {
     protected $table = 'tacgia';
@@ -27,12 +28,12 @@ class TacGia extends Model
         return $this->belongsTo(PhuongXa::class, 'que_quan_id');
     }
     public function huyen()
-{
-    return optional($this->xa)->quanHuyen;
-}
+    {
+        return optional($this->xa)->quanHuyen;
+    }
 
-public function tinh()
-{
-    return optional($this->xa)->quanHuyen ? $this->xa->quanHuyen->tinhThanh : null;
-}
+    public function tinh()
+    {
+        return optional($this->xa)->quanHuyen ? $this->xa->quanHuyen->tinhThanh : null;
+    }
 }
