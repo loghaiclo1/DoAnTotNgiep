@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Book;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class TacGia extends Model
 {
+    use SoftDeletes;
     protected $table = 'tacgia';
     protected $primaryKey = 'MaTacGia';
 

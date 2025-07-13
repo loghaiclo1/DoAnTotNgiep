@@ -35,25 +35,31 @@ class CheckPermissionByRoute
             // Đơn hàng
             'admin.orders.update'       => 'update order status',
 
-            // Phiếu nhập (không kiểm tra view)
+            // Phiếu nhập
             'admin.phieunhap.store'     => 'create phieunhaps',
             'admin.phieunhap.update'    => 'edit phieunhaps',
             'admin.phieunhap.destroy'   => 'delete phieunhaps',
 
-            // Nhà xuất bản
+            // Nhà xuất bản (NXB)
             'admin.nxb.store'           => 'create nxb',
             'admin.nxb.update'          => 'edit nxb',
             'admin.nxb.destroy'         => 'delete nxb',
+            'admin.nxb.hide'            => 'hide nxb',
+            'admin.nxb.restore'         => 'restore nxb',
 
-            // Đơn vị phát hành
-            'admin.donviphathanh.store'   => 'create dvph',
-            'admin.donviphathanh.update'  => 'edit dvph',
-            'admin.donviphathanh.destroy' => 'delete dvph',
+            // Đơn vị phát hành (DVPH)
+            'admin.donviphathanh.store'     => 'create dvph',
+            'admin.donviphathanh.update'    => 'edit dvph',
+            'admin.donviphathanh.destroy'   => 'delete dvph',
+            'admin.donviphathanh.hide'      => 'hide dvph',
+            'admin.donviphathanh.restore'   => 'restore dvph',
 
             // Tác giả
             'admin.tacgia.store'        => 'create tacgia',
             'admin.tacgia.update'       => 'edit tacgia',
-            'admin.tacgia.destroy'      => 'delete tacgia',
+
+            'admin.tacgia.destroy'         => 'hide tacgia',
+            'admin.tacgia.restore'      => 'restore tacgia',
         ];
 
         $routeName = $request->route()->getName();

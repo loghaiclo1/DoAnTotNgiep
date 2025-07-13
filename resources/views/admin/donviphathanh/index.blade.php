@@ -14,14 +14,22 @@
     <a href="{{ route('admin.donviphathanh.create') }}" class="btn btn-primary mb-3">
         <i class="fas fa-plus"></i> Thêm đơn vị phát hành mới
     </a>
-    <form action="{{ route('admin.donviphathanh.index') }}" method="GET" class="mb-3">
+    <form method="GET" action="{{ route('admin.donviphathanh.index') }}" class="mb-3">
         <div class="input-group">
-            <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm theo tên, email, điện thoại, địa chỉ..." value="{{ request('keyword') }}">
-            <div class="input-group-append">
-                <button class="btn btn-secondary" type="submit"><i class="fas fa-search"></i> Tìm</button>
-            </div>
+            <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm..." value="{{ request('keyword') }}">
+
+            <select name="status" class="form-select" style="max-width: 180px;">
+                <option value="">-- Tất cả trạng thái --</option>
+                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Đang hiển thị</option>
+                <option value="hidden" {{ request('status') == 'hidden' ? 'selected' : '' }}>Đã bị ẩn</option>
+            </select>
+
+            <button class="btn btn-secondary" type="submit">
+                <i class="fas fa-search"></i> Lọc
+            </button>
         </div>
     </form>
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead>
@@ -41,7 +49,7 @@
                         <td>{{ $dv->Email }}</td>
                         <td>{{ $dv->DienThoai }}</td>
                         <td>{{ $dv->DiaChi }}</td>
-                        
+
                         <td>
                             @if ($dv->image)
                                 <img src="{{ asset('storage/' . $dv->image) }}" alt="Ảnh" width="60">
@@ -50,14 +58,34 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.donviphathanh.edit', $dv->MaDVPH) }}" class="btn btn-sm btn-info">Sửa</a>
-                            <form action="{{ route('admin.donviphathanh.destroy', $dv->MaDVPH) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Xóa?')">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-sm btn-danger">Xóa</button>
-                            </form>
+
+                                <a href="{{ route('admin.donviphathanh.edit', $dv->MaDVPH) }}" class="btn btn-sm btn-info">Sửa</a>
+
+                                @if ($dv->trashed())
+                                    {{-- Đã bị ẩn → Hiện lại --}}
+                                    <form action="{{ route('admin.donviphathanh.restore', $dv->MaDVPH) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Khôi phục đơn vị phát hành này?')">
+                                        @csrf
+                                        <button class="btn btn-sm btn-success">Hiện lại</button>
+                                    </form>
+                                @else
+                                    {{-- Đang hiển thị → Ẩn --}}
+                                    <form action="{{ route('admin.donviphathanh.hide', $dv->MaDVPH) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Ẩn đơn vị phát hành này?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-warning">Ẩn</button>
+                                    </form>
+                                @endif
+
                         </td>
                     </tr>
                 @endforeach
+                @if ($hasHidden)
+    <tr>
+        <td colspan="6" class="text-muted text-center fst-italic bg-light">
+            Một số đơn vị phát hành đã bị ẩn và được hiển thị ở cuối danh sách.
+        </td>
+    </tr>
+@endif
             </tbody>
         </table>
     </div>

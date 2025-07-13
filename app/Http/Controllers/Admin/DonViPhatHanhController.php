@@ -11,23 +11,35 @@ class DonViPhatHanhController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DonViPhatHanh::query();
+        $status = $request->status;
 
-        if ($request->has('keyword') && $request->keyword != '') {
+        // Tạo query phù hợp trạng thái
+        if ($status === 'hidden') {
+            $query = DonViPhatHanh::onlyTrashed();
+        } elseif ($status === 'active') {
+            $query = DonViPhatHanh::withoutTrashed();
+        } else {
+            $query = DonViPhatHanh::withTrashed();
+        }
+
+        // Lọc theo keyword
+        if ($request->filled('keyword')) {
             $keyword = $request->keyword;
             $query->where(function ($q) use ($keyword) {
                 $q->where('TenDVPH', 'like', "%$keyword%")
-                    ->orWhere('Email', 'like', "%$keyword%")
-                    ->orWhere('DienThoai', 'like', "%$keyword%")
-                    ->orWhere('DiaChi', 'like', "%$keyword%")
-                    ->orWhere('slug', 'like', "%$keyword%");
+                  ->orWhere('Email', 'like', "%$keyword%")
+                  ->orWhere('DienThoai', 'like', "%$keyword%")
+                  ->orWhere('DiaChi', 'like', "%$keyword%");
             });
         }
 
-        $ds = $query->orderBy('created_at', 'desc')->paginate(10);
+        $ds = $query->orderByRaw('deleted_at IS NOT NULL')->orderBy('created_at', 'desc')->paginate(10);
+        $hasHidden = DonViPhatHanh::onlyTrashed()->exists();
 
-        return view('admin.donviphathanh.index', compact('ds'));
+        return view('admin.donviphathanh.index', compact('ds', 'hasHidden'));
     }
+
+
 
     public function create()
     {
@@ -90,12 +102,18 @@ class DonViPhatHanhController extends Controller
 
         return redirect()->route('admin.donviphathanh.index')->with('success', 'Cập nhật thành công!');
     }
-
-    public function destroy($id)
+    public function hide($id)
     {
         $dv = DonViPhatHanh::findOrFail($id);
-        $dv->delete();
-
-        return back()->with('success', 'Đã xóa đơn vị phát hành!');
+        $dv->delete(); // Gán deleted_at
+        return back()->with('success', 'Đơn vị phát hành đã được ẩn!');
     }
+
+    public function restore($id)
+    {
+        $dv = DonViPhatHanh::withTrashed()->findOrFail($id);
+        $dv->restore(); // Gỡ deleted_at
+        return back()->with('success', 'Đơn vị phát hành đã được hiển thị lại!');
+    }
+
 }

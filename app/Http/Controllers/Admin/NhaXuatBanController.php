@@ -11,9 +11,19 @@ class NhaXuatBanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = NhaXuatBan::query();
+        $status = $request->status;
 
-        if ($request->has('keyword') && $request->keyword != '') {
+        // Khởi tạo query dựa trên trạng thái
+        if ($status === 'hidden') {
+            $query = NhaXuatBan::onlyTrashed();
+        } elseif ($status === 'active') {
+            $query = NhaXuatBan::withoutTrashed();
+        } else {
+            $query = NhaXuatBan::withTrashed();
+        }
+
+        // Tìm kiếm theo từ khoá
+        if ($request->filled('keyword')) {
             $keyword = $request->keyword;
             $query->where(function ($q) use ($keyword) {
                 $q->where('TenNXB', 'like', "%$keyword%")
@@ -24,9 +34,15 @@ class NhaXuatBanController extends Controller
             });
         }
 
-        $nxb = $query->orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.nxb.index', compact('nxb'));
+        // Lấy danh sách
+        $nxb = $query->orderByRaw('deleted_at IS NOT NULL')->orderBy('created_at', 'desc')->paginate(10);
+
+        // Biến báo có bản ghi bị ẩn không
+        $hasHidden = NhaXuatBan::onlyTrashed()->exists();
+
+        return view('admin.nxb.index', compact('nxb', 'hasHidden'));
     }
+
 
     public function create()
     {
@@ -102,4 +118,18 @@ class NhaXuatBanController extends Controller
 
         return back()->with('success', 'Đã xóa nhà xuất bản!');
     }
+    public function hide($id)
+{
+    $nxb = NhaXuatBan::findOrFail($id);
+    $nxb->delete(); // Gán deleted_at
+    return back()->with('success', 'NXB đã được ẩn!');
+}
+
+public function restore($id)
+{
+    $nxb = NhaXuatBan::withTrashed()->findOrFail($id);
+    $nxb->restore(); // Gỡ deleted_at
+    return back()->with('success', 'NXB đã được hiển thị lại!');
+}
+
 }

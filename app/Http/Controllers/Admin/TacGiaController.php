@@ -13,8 +13,17 @@ class TacGiaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TacGia::with('xa.quanHuyen.tinhThanh');
-
+        $query = TacGia::withTrashed()
+        ->with('xa.quanHuyen.tinhThanh')
+        ->orderByRaw('CASE WHEN deleted_at IS NULL THEN 0 ELSE 1 END')
+        ->orderByDesc('created_at');
+        if ($request->filled('status')) {
+            if ($request->status === 'active') {
+                $query->whereNull('deleted_at');
+            } elseif ($request->status === 'trashed') {
+                $query->whereNotNull('deleted_at');
+            }
+        }
         if ($request->filled('q')) {
             $keyword = $request->q;
 
@@ -188,11 +197,7 @@ class TacGiaController extends Controller
         ]);
     }
 
-    public function destroy($id)
-    {
-        TacGia::findOrFail($id)->delete();
-        return redirect()->route('admin.tacgia.index')->with('success', 'Xóa tác giả thành công!');
-    }
+
     public function show($id)
     {
         $tacgia = TacGia::findOrFail($id);
@@ -222,5 +227,16 @@ class TacGiaController extends Controller
 
         return view('admin.tacgia.books', compact('tacgia', 'books'));
     }
+    public function restore($id)
+    {
+        $tacgia = TacGia::withTrashed()->findOrFail($id);
+        $tacgia->restore();
 
+        return redirect()->route('admin.tacgia.index')->with('success', 'Khôi phục tác giả thành công!');
+    }
+    public function destroy($id)
+    {
+        TacGia::findOrFail($id)->delete();
+        return redirect()->route('admin.tacgia.index')->with('success', 'Xóa tác giả thành công!');
+    }
 }

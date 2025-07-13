@@ -32,13 +32,20 @@
                     placeholder="Tìm theo tên tác giả">
             </div>
             <div class="col-md-2">
+                <select name="status" class="form-control">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Đang hiển thị</option>
+                    <option value="trashed" {{ request('status') == 'trashed' ? 'selected' : '' }}>Đã ẩn</option>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i> Lọc</button>
             </div>
             <div class="col-md-2">
                 <a href="{{ route('admin.tacgia.index') }}" class="btn btn-secondary w-100"><i class="fas fa-redo-alt"></i>
                     Reset</a>
             </div>
-            <div class="col-md-4 text-right">
+            <div class="col-md-2">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalCreateTacGia">
                     <i class="fas fa-plus"></i> Thêm tác giả
                 </button>
@@ -90,17 +97,27 @@
                                     data-id="{{ $tacgia->MaTacGia }}">
                                     Sửa
                                 </button>
-                                <form action="{{ route('admin.tacgia.destroy', $tacgia->MaTacGia) }}" method="POST"
-                                    class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
-                                </form>
-                                <a href="{{ route('admin.tacgia.books', $tacgia->MaTacGia) }}"
-                                    class="btn btn-sm btn-outline-info">
+
+                                @if ($tacgia->trashed())
+                                    <form action="{{ route('admin.tacgia.restore', $tacgia->MaTacGia) }}" method="POST" class="d-inline"
+                                        onsubmit="return confirm('Khôi phục tác giả này?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-success">Hiện lại</button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('admin.tacgia.destroy', $tacgia->MaTacGia) }}" method="POST" class="d-inline"
+                                        onsubmit="return confirm('Bạn có chắc chắn muốn ẩn tác giả này?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-warning">Ẩn</button>
+                                    </form>
+                                @endif
+
+                                <a href="{{ route('admin.tacgia.books', $tacgia->MaTacGia) }}" class="btn btn-sm btn-outline-info">
                                     Xem tác phẩm
                                 </a>
                             </td>
+
                         </tr>
                     @empty
                         <tr>

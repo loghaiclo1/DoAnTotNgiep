@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class DonViPhatHanh extends Model
 {
+
+    use SoftDeletes;
     protected $table = 'donviphathanh';
-    protected $primaryKey = 'MaDVPH'; 
+    protected $primaryKey = 'MaDVPH';
     public $timestamps = true;
     protected $fillable = [
         'TenDVPH',

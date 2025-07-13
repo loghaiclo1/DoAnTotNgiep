@@ -148,7 +148,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::post('books/{id}/restore', [AdminBookController::class, 'restore'])->name('books.restore');
     Route::delete('/admin/books/{id}/force-delete', [AdminBookController::class, 'forceDelete'])->name('books.forceDelete');
     Route::resource('nxb', \App\Http\Controllers\Admin\NhaXuatBanController::class)->parameters(['nxb' => 'MaNXB']);
+    Route::delete('nxb/{id}/hide', [NhaXuatBanController::class, 'hide'])->name('nxb.hide');
+    Route::post('nxb/{id}/restore', [NhaXuatBanController::class, 'restore'])->name('nxb.restore');
     Route::resource('admin/donviphathanh', DonViPhatHanhController::class)->names('admin.donviphathanh');
+    Route::delete('donviphathanh/{id}/hide', [DonViPhatHanhController::class, 'hide'])->name('donviphathanh.hide');
+    Route::post('donviphathanh/{id}/restore', [DonViPhatHanhController::class, 'restore'])->name('donviphathanh.restore');
+    Route::post('/tacgia/{id}/restore', [TacGiaController::class, 'restore'])->name('tacgia.restore');
+
 
 
     Route::get('phieunhap', [PhieuNhapController::class, 'index'])->name('phieunhap.index');
