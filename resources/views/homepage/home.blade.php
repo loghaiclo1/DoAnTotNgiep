@@ -146,7 +146,7 @@
             <div class="container aos-init" data-aos="fade-up" data-aos-delay="100">
                 <div class="row gy-4">
                     @foreach ($sachbanchay as $index => $book)
-                        <div class="col-md-6 col-lg-3 aos-init" data-aos="fade-up"
+                        <div class="col-6 col-md-4 col-lg-2 aos-init" data-aos="fade-up"
                             data-aos-delay="{{ 100 + $index * 50 }}">
                             <div class="product-card">
                                 <div class="product-image">
@@ -172,8 +172,8 @@
                                         <span><span class="book-quantity" hide></span></span hide>
                                     </div>
                                     @php
-                                        $average = number_format($book->avg_rating ?? 0, 1);
-                                        $reviewCount = $book->review_count ?? 0;
+                                        $average = number_format($book->reviews_avg_sosao ?? 0, 1);
+                                        $reviewCount = $book->reviews_count ?? 0;
 
                                         $fullStars = floor($average);
                                         $halfStar = ($average - $fullStars) >= 0.5;
@@ -227,8 +227,6 @@
 
 
         @include('homepage.partials.goi-y-sach', ['sachGoiY' => $sachGoiY])
-
-
                             <!-- Product List Section -->
         <section id="product-list" class="product-list section">
             <div class="container isotope-layout aos-init" data-aos="fade-up" data-aos-delay="100"
@@ -285,7 +283,7 @@
                                         <span><span class="book-quantity" data-book-id="{{ $book->MaSach }}"></span></span>
                                     </div>
                                     @php
-                                        $average = number_format($book->avg_rating ?? 0, 1);
+                                        $average = number_format($book->reviews_avg_sosao ?? 0, 1);
                                         $reviewCount = $book->reviews_count ?? 0;
 
                                         $fullStars = floor($average);

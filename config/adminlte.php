@@ -308,8 +308,17 @@ return [
         ],
         [
             'text' => 'Đơn hàng',
-            'url'  => 'admin/orders',
             'icon' => 'fas fa-shopping-cart',
+            'submenu' => [
+                [
+                    'text' => 'Tất cả đơn hàng',
+                    'url'  => 'admin/orders',
+                ],
+                [
+                    'text' => 'Yêu cầu huỷ đơn',
+                    'url'  => 'admin/orders/cancel-requests',
+                ],
+            ],
         ],
         [
             'text' => 'Tài khoản',

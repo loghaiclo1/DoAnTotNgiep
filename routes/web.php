@@ -20,13 +20,13 @@ use App\Http\Controllers\Home\{
     KhuyenMaiController,
     AddressController,
     ReviewController,
+    SuggestionController
 };
 use App\Http\Controllers\Auth\{
     ForgotPasswordController,
     ResetPasswordController,
     SocialController
 };
-use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\Admin\{
     DashboardController,
     PhieuNhapController,
@@ -58,6 +58,8 @@ Route::get('/goi-y-sach', [SuggestionController::class, 'getSuggestions'])->name
 // Liên hệ
 
 Route::get('/orders/{id}/tracking-html', [OrderController::class, 'trackingHtml']);
+
+Route::post('/orders/cancel', [AccountController::class, 'cancel'])->middleware('auth')->name('orders.cancel');
 
 // Giỏ hàng
 Route::prefix('cart')->name('cart.')->group(function () {
@@ -117,7 +119,6 @@ Route::get('/search-suggestions', [BookController::class, 'searchSuggestions']);
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-
 Route::post('/vnpay/create-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
 
 Route::get('/vnpay/return', [VNPayController::class, 'paymentReturn'])->name('vnpay.return');
@@ -138,6 +139,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+    Route::get('orders/cancel-requests', [OrderController::class, 'cancelRequests'])->name('orders.cancel-requests');
+    Route::post('orders/cancel-approve', [OrderController::class, 'cancelApprove'])->name('orders.cancel-approve');
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])->names('orders');
     Route::get('/reviews', [DanhGiaController::class, 'index'])->name('reviews.index');
     Route::post('/reviews/{id}/approve', [DanhGiaController::class, 'approve'])->name('reviews.approve');
@@ -156,9 +159,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::post('/tacgia/{id}/restore', [TacGiaController::class, 'restore'])->name('tacgia.restore');
     Route::get('/admin/dashboard/export', [DashboardController::class, 'exportPDF'])->name('dashboard.export');
 
-
-
-
     Route::get('phieunhap', [PhieuNhapController::class, 'index'])->name('phieunhap.index');
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
     Route::post('phieunhap', [PhieuNhapController::class, 'store'])->name('phieunhap.store');
@@ -167,12 +167,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::put('phieunhap/{id}', [PhieuNhapController::class, 'update'])->name('phieunhap.update');
     Route::delete('phieunhap/{id}', [PhieuNhapController::class, 'destroy'])->name('phieunhap.destroy');
 
-
     Route::resource('categories', App\Http\Controllers\Admin\DanhMucController::class);
-    Route::get('/admin/orders/{mahoadon}/pdf', [OrderController::class, 'exportPdf'])->name('orders.exportPdf');
-    Route::get('/admin/orders/{mahoadon}/pdf/view', [OrderController::class, 'viewPdf'])->name('orders.viewPdf');
+
+    Route::get('orders/{mahoadon}/pdf', [OrderController::class, 'exportPdf'])->name('orders.exportPdf');
+    Route::get('orders/{mahoadon}/pdf/view', [OrderController::class, 'viewPdf'])->name('orders.viewPdf');
+
     Route::post('permissions', [\App\Http\Controllers\Admin\PermissionController::class, 'store'])->name('permissions.store');
     Route::delete('permissions/{id}', [\App\Http\Controllers\Admin\PermissionController::class, 'destroy'])->name('permissions.destroy');
+
     // Chỉ superadmin mới được quản lý tài khoản
     Route::middleware(['is_superadmin'])->group(function () {
         Route::get('/accounts', [\App\Http\Controllers\Admin\AccountController::class, 'index'])->name('accounts.index');
@@ -184,13 +186,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
         Route::put('/accounts/{id}/permissions', [\App\Http\Controllers\Admin\UserPermissionController::class, 'update'])->name('accounts.permissions.update');
     });
 
-   Route::resource('tacgia', TacGiaController::class);
-   Route::get('tacgia/{id}/books', [TacGiaController::class, 'books'])->name('tacgia.books');
-   Route::post('tacgia/quick-add', [TacGiaController::class, 'quickAdd'])->name('tacgia.quick_add');
+    Route::resource('tacgia', TacGiaController::class);
+    Route::get('tacgia/{id}/books', [TacGiaController::class, 'books'])->name('tacgia.books');
+    Route::post('tacgia/quick-add', [TacGiaController::class, 'quickAdd'])->name('tacgia.quick_add');
 
-   Route::resource('nhaxuatban', NhaXuatBanController::class);
-   Route::resource('donviphathanh', DonViPhatHanhController::class);
-
+    Route::resource('nhaxuatban', NhaXuatBanController::class);
+    Route::resource('donviphathanh', DonViPhatHanhController::class);
 });
 
 Route::get('/account/order-status/{id}', [AccountController::class, 'getOrderStatus'])->name('account.order-status');

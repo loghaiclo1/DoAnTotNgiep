@@ -11,7 +11,7 @@ class Hoadon extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'MaKhachHang', 'NgayLap', 'TongTien', 'TrangThai', 'PT_ThanhToan', 'DiaChi', 'SoDienThoai', 'GhiChu',
+        'MaKhachHang', 'NgayLap', 'TongTien', 'TrangThai', 'LyDoHuy','PT_ThanhToan', 'DiaChi', 'SoDienThoai', 'GhiChu',
     ];
     protected $casts = [
         'NgayLap' => 'datetime',

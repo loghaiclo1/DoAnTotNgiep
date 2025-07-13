@@ -19,7 +19,8 @@
     <form method="GET" class="form-filter d-flex flex-wrap align-items-center mb-3" style="gap: 10px;">
 
         {{-- Tìm kiếm --}}
-        <input type="text" name="keyword" class="form-control me-2" placeholder="Tìm theo mã đơn hàng, tên khách hàng hoặc số điện thoại" style="flex :0.5"
+        <input type="text" name="keyword" class="form-control me-2"
+            placeholder="Tìm theo mã đơn hàng, tên khách hàng hoặc số điện thoại" style="flex :0.5"
             value="{{ request('keyword') }}">
 
         {{-- Sắp xếp --}}
@@ -78,66 +79,71 @@
                 </tr>
             </thead>
             <tbody>
-                <tbody>
-                    @forelse ($orders as $order)
-                        <tr>
-                            <td>#ORD-{{ $order->NgayLap->format('Y') }}-{{ $order->MaHoaDon }}</td>
-                            <td>{{ $order->khachhang ? $order->khachhang->Ho . ' ' . $order->khachhang->Ten : 'Không có' }}</td>
-                            <td>{{ $order->SoDienThoai ?? 'N/A' }}</td>
-                            <td>{{ $order->NgayLap ? $order->NgayLap->format('d/m/Y H:i') : 'N/A' }}</td>
-                            <td>{{ number_format($order->TongTien) }}₫</td>
-                            <td>
-                                @php
-                                    echo $order->PT_ThanhToan == 1
-                                        ? 'Thanh toán khi nhận hàng (COD)'
-                                        : ($order->PT_ThanhToan == 2
-                                            ? 'Thanh toán VNPay'
-                                            : 'Không xác định');
-                                @endphp
-                            </td>
-                            <td>
-                                @if ($order->TrangThai == 'Hủy đơn')
-                                    <span class="badge bg-danger">Đơn hàng đã hủy</span>
-                                @elseif ($order->PT_ThanhToan == 2)
-                                    <span class="badge bg-success">Đã thanh toán</span>
-                                @elseif ($order->PT_ThanhToan == 1 && $order->TrangThai == 'Hoàn tất')
-                                    <span class="badge bg-success">Đã thanh toán</span>
-                                @else
-                                    <span class="badge bg-secondary">Chưa thanh toán</span>
-                                @endif
-                            </td>
-                            <td>
+            <tbody>
+                @forelse ($orders as $order)
+                    <tr>
+                        <td>#ORD-{{ $order->NgayLap->format('Y') }}-{{ $order->MaHoaDon }}</td>
+                        <td>{{ $order->khachhang ? $order->khachhang->Ho . ' ' . $order->khachhang->Ten : 'Không có' }}
+                        </td>
+                        <td>{{ $order->SoDienThoai ?? 'N/A' }}</td>
+                        <td>{{ $order->NgayLap ? $order->NgayLap->format('d/m/Y H:i') : 'N/A' }}</td>
+                        <td>{{ number_format($order->TongTien) }}₫</td>
+                        <td>
+                            @php
+                                echo $order->PT_ThanhToan == 1
+                                    ? 'Thanh toán khi nhận hàng (COD)'
+                                    : ($order->PT_ThanhToan == 2
+                                        ? 'Thanh toán VNPay'
+                                        : 'Không xác định');
+                            @endphp
+                        </td>
+                        <td>
+                            @if ($order->TrangThai == 'Hủy đơn')
+                                <span class="badge bg-danger">Đơn hàng đã hủy</span>
+                            @elseif ($order->PT_ThanhToan == 2)
+                                <span class="badge bg-success">Đã thanh toán</span>
+                            @elseif ($order->PT_ThanhToan == 1 && $order->TrangThai == 'Hoàn tất')
+                                <span class="badge bg-success">Đã thanh toán</span>
+                            @else
+                                <span class="badge bg-secondary">Chưa thanh toán</span>
+                            @endif
+                        </td>
+                        <td>
 
-                                <form method="POST" action="{{ route('admin.orders.update', $order->MaHoaDon) }}" class="update-status-form">
-                                    @csrf
-                                    @method('PUT')
-                                    <select name="TrangThai" class="form-select form-select-sm">
-                                        @foreach (['Đang chờ', 'Đã xác nhận', 'Đang giao hàng', 'Hoàn tất', 'Hủy đơn'] as $tt)
-                                            <option value="{{ $tt }}" {{ $order->TrangThai == $tt ? 'selected' : '' }}>{{ $tt }}</option>
-                                        @endforeach
-                                    </select>
-                                </form>
-                            </td>
-                            <td>
-                                <a href="{{ route('admin.orders.show', $order->MaHoaDon) }}" class="btn btn-sm btn-info">
-                                    Chi tiết đơn hàng
-                                </a>
-                            </td>
-                            <td class="d-flex gap-1">
-                                <a href="{{ route('admin.orders.exportPdf', $order->MaHoaDon) }}" class="btn btn-sm btn-outline-secondary" target="_blank">
-                                    <i class="fas fa-file-download"></i> Tải PDF
-                                </a>
-                                <a href="{{ route('admin.orders.viewPdf', $order->MaHoaDon) }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                                    <i class="fas fa-eye"></i> Xem PDF
-                                </a>
-                            </td>
+                            <form method="POST" action="{{ route('admin.orders.update', $order->MaHoaDon) }}"
+                                class="update-status-form">
+                                @csrf
+                                @method('PUT')
+                                <select name="TrangThai" class="form-select form-select-sm">
+                                    @foreach (['Đang chờ', 'Đã xác nhận', 'Đang giao hàng', 'Hoàn tất', 'Hủy đơn'] as $tt)
+                                        <option value="{{ $tt }}"
+                                            {{ $order->TrangThai == $tt ? 'selected' : '' }}>{{ $tt }}</option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.orders.show', $order->MaHoaDon) }}" class="btn btn-sm btn-info">
+                                Chi tiết đơn hàng
+                            </a>
+                        </td>
+                        <td class="d-flex gap-1">
+                            <a href="{{ route('admin.orders.exportPdf', $order->MaHoaDon) }}"
+                                class="btn btn-sm btn-outline-secondary" target="_blank">
+                                <i class="fas fa-file-download"></i> Tải PDF
+                            </a>
+                            <a href="{{ route('admin.orders.viewPdf', $order->MaHoaDon) }}"
+                                class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="fas fa-eye"></i> Xem PDF
+                            </a>
+                        </td>
 
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center">Không tìm thấy tiêu chí phù hợp.</td>
-                        </tr>
-                    @endforelse
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="text-center">Không tìm thấy tiêu chí phù hợp.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

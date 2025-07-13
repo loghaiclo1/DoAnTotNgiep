@@ -244,5 +244,30 @@ class AccountController extends Controller
 
         return redirect()->back()->with('success', 'Cập nhật thông tin thành công!');
     }
+    public function cancel(Request $request)
+    {
+        $userId = Auth::id(); // Đây Intelephense hiểu được
+
+        $request->validate([
+            'order_id' => 'required|exists:hoadon,MaHoaDon',
+                'selected_reason' => 'required|string|max:255',
+
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        $order = Hoadon::where('MaHoaDon', $request->order_id)
+            ->where('MaKhachHang', $userId) // Đảm bảo chỉ huỷ đơn của mình
+            ->firstOrFail();
+
+        if (!in_array($order->TrangThai, ['Đang chờ', 'Đã xác nhận'])) {
+            return back()->with('error', 'Đơn hàng không thể huỷ ở trạng thái hiện tại.');
+        }
+
+        $order->TrangThai = 'Chờ duyệt hủy';
+$order->LyDoHuy = $request->reason ?: $request->selected_reason;
+        $order->save();
+
+        return back()->with('success', 'Yêu cầu đã được gửi. Vui lòng chờ xác nhận');
+    }
 
 }

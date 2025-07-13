@@ -53,7 +53,6 @@ class Book extends Model
         return $this->SoLuong >= $quantity;
     }
 
-
     // Giảm số lượng tồn kho (dùng khi thanh toán)
     public function reduceStock($quantity)
     {

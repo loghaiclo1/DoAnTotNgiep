@@ -120,7 +120,7 @@ class BookController extends Controller
                     'MaTacGia',
                     'MaNXB',
                 ])
-                ->with(['tacgia', 'nhaxuatban', 'dvph'])
+                ->with(['tacgia', 'nhaxuatban', 'donviphathanh'])
                 ->where('TrangThai', 1);
 
                 if ($matchLuotBan !== null) {
@@ -145,7 +145,7 @@ class BookController extends Controller
                             ->orWhereHas('nhaxuatban', function ($sub) use ($searchTerms) {
                                 $sub->where('TenNXB', 'LIKE', "%{$searchTerms}%");
                             })
-                            ->orWhereHas('dvph', function ($sub) use ($searchTerms) {
+                            ->orWhereHas('donviphathanh', function ($sub) use ($searchTerms) {
                                 $sub->where('TenDVPH', 'LIKE', "%{$searchTerms}%");
                             });
                         })
@@ -158,7 +158,7 @@ class BookController extends Controller
                             ->orWhereHas('nhaxuatban', function ($sub) use ($nonAccentQuery) {
                                 $sub->whereRaw("LOWER(REPLACE(TenNXB, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
                             })
-                            ->orWhereHas('dvph', function ($sub) use ($nonAccentQuery) {
+                            ->orWhereHas('donviphathanh', function ($sub) use ($nonAccentQuery) {
                                 $sub->whereRaw("LOWER(REPLACE(TenDVPH, 'đ', 'd')) LIKE ?", ["%{$nonAccentQuery}%"]);
                             });
                         });

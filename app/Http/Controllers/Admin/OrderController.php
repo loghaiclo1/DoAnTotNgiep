@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Hoadon;
 use App\Events\OrderStatusUpdated;
+use App\Notifications\ThongBaoHuyDon;
 use Termwind\Components\Hr;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Gate;
+
 class OrderController extends Controller
 {
     public function index(Request $request)
@@ -31,7 +33,6 @@ class OrderController extends Controller
                             ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%'])
                             ->orWhere('SoDienThoai', 'like', "%{$search}%");
                     });
-
             }
         }
 
@@ -42,9 +43,9 @@ class OrderController extends Controller
             if ($request->payment_status == 'paid') {
                 $query->where(function ($q) {
                     $q->where('PT_ThanhToan', 2)
-                      ->orWhere(function ($q2) {
-                          $q2->where('PT_ThanhToan', 1)->where('TrangThai', 'Hoàn tất');
-                      });
+                        ->orWhere(function ($q2) {
+                            $q2->where('PT_ThanhToan', 1)->where('TrangThai', 'Hoàn tất');
+                        });
                 });
             } elseif ($request->payment_status == 'unpaid') {
                 $query->where(function ($q) {
@@ -98,10 +99,9 @@ class OrderController extends Controller
         // Nếu admin chọn Hủy đơn, cho phép hủy ở bất kỳ bước nào
         if ($trangThaiMoi === 'Hủy đơn') {
             if ($trangThaiHienTai === 'Hoàn tất' || $trangThaiHienTai === "Đang giao hàng") {
-                if ($trangThaiHienTai === 'Hoàn tất'){
+                if ($trangThaiHienTai === 'Hoàn tất') {
                     return redirect()->back()->with('error', 'Không thể hủy đơn hàng đã hoàn tất.');
-                }
-                else {
+                } else {
                     return redirect()->back()->with('error', 'Không thể hủy đơn hàng đang giao.');
                 }
             }
@@ -142,14 +142,13 @@ class OrderController extends Controller
         event(new OrderStatusUpdated($donhang->MaHoaDon, $donhang->TrangThai));
         if ($trangThaiMoi === 'Hoàn tất') {
             app(\App\Http\Controllers\Home\InventoryController::class)->finalizeStock($donhang->MaHoaDon);
-
         }
         \Log::info('Gửi broadcast cho đơn hàng: ' . $donhang->MaHoaDon);
         return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
     }
     public function trackingHtml($id)
     {
-        $order = HoaDon::with('chitiethoadon.sach')->findOrFail($id);
+        $order = Hoadon::with('chitiethoadon.sach')->findOrFail($id);
 
         // Xử lý tương tự như trong account.blade.php
         $isCancelled = $order->TrangThai === 'Hủy đơn';
@@ -191,12 +190,11 @@ class OrderController extends Controller
 
         return response($html);
     }
-
     public function exportPdf($mahoadon)
     {
-        $donhang = HoaDon::with(['khachhang', 'chitiethoadon.sach'])
-                    ->where('MaHoaDon', $mahoadon)
-                    ->firstOrFail();
+        $donhang = Hoadon::with(['khachhang', 'chitiethoadon.sach'])
+            ->where('MaHoaDon', $mahoadon)
+            ->firstOrFail();
 
         $pdf = Pdf::loadView('admin.orders.invoice-pdf', compact('donhang'));
 
@@ -208,9 +206,9 @@ class OrderController extends Controller
     }
     public function viewPdf($mahoadon)
     {
-        $donhang = HoaDon::with(['khachhang', 'chitiethoadon.sach'])
-                    ->where('MaHoaDon', $mahoadon)
-                    ->firstOrFail();
+        $donhang = Hoadon::with(['khachhang', 'chitiethoadon.sach'])
+            ->where('MaHoaDon', $mahoadon)
+            ->firstOrFail();
 
         $pdf = Pdf::loadView('admin.orders.invoice-pdf', compact('donhang'));
 
@@ -221,5 +219,63 @@ class OrderController extends Controller
     public function showPdfPage($mahoadon)
     {
         return view('admin.orders.pdf-view', compact('mahoadon'));
+    }
+    public function cancelRequests(Request $request)
+    {
+        $query = Hoadon::with('khachhang')
+            ->where('TrangThai', 'Chờ duyệt hủy')
+            ->orderByDesc('NgayLap');
+
+        if ($request->filled('q')) {
+            $keyword = $request->q;
+
+            if (preg_match('/#?ORD-\d{4}-(\d+)/', $keyword, $matches)) {
+                $keyword = $matches[1]; // chỉ lấy số đơn
+            }
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('MaHoaDon', 'like', "%{$keyword}%")
+                    ->orWhere('SoDienThoai', 'like', "%{$keyword}%")
+                    ->orWhereHas('khachhang', function ($sub) use ($keyword) {
+                        $sub->whereRaw("CONCAT(Ho, ' ', Ten) LIKE ?", ["%{$keyword}%"]);
+                    });
+            });
+        }
+
+        $orders = $query->paginate(10);
+
+        return view('admin.orders.cancel-order', compact('orders'));
+    }
+
+    public function cancelApprove(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|exists:hoadon,MaHoaDon',
+            'action' => 'required|in:approve,reject',
+        ]);
+
+        $order = Hoadon::findOrFail($request->order_id);
+
+        if ($order->TrangThai !== 'Chờ duyệt hủy') {
+            return back()->with('error', 'Đơn hàng không còn trong trạng thái chờ huỷ.');
+        }
+
+        if ($request->action === 'approve') {
+            $order->TrangThai = 'Hủy đơn';
+            $message = 'Đã chấp thuận huỷ đơn.';
+            $notifyMessage = 'Yêu cầu hủy đơn hàng #ORD-2025-' . $order->MaHoaDon . ' của bạn đã được chấp thuận. Đơn hàng đã được hủy.';
+        } else {
+            $order->TrangThai = $order->PT_ThanhToan == 2 ? 'Đã xác nhận' : 'Đang chờ';
+            $order->LyDoHuy = null;
+            $message = 'Đã từ chối huỷ đơn.';
+            $notifyMessage = 'Yêu cầu hủy đơn hàng #ORD-2025-' . $order->MaHoaDon . ' của bạn đã bị từ chối. Đơn hàng sẽ tiếp tục được xử lý.';
+        }
+
+        $order->save();
+
+        if ($order->khachhang && $order->khachhang->email) {
+            $order->khachhang->notify(new ThongBaoHuyDon($notifyMessage));
+        }
+        return back()->with('success', $message);
     }
 }

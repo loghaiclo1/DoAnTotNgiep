@@ -36,7 +36,6 @@ class HomeController extends Controller
         ];
         $randomQuote = $quotes[array_rand($quotes)];
 
-
         $sachbanchay = $this->getBestSellerBooks();
         $excludeBookIds = $sachbanchay->pluck('MaSach')->toArray();
 
@@ -44,6 +43,7 @@ class HomeController extends Controller
         $mergedBooks = $sachGoiY['group1']->merge($sachGoiY['group2'])
         ->unique('MaSach') // loại trùng
         ->take(6);       // lấy tối đa 6 cuốn
+
         return view('homepage.home', compact(
             'demDMcha',
             'books',
@@ -81,6 +81,8 @@ class HomeController extends Controller
     private function getNewBooks(array $excludeIds = [])
     {
         return Book::with('category')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'SoSao')
             ->where('TrangThai', 1)
             ->where('SoLuong', '>', 0)
             ->when($excludeIds, fn($query) => $query->whereNotIn('MaSach', $excludeIds))
@@ -91,11 +93,13 @@ class HomeController extends Controller
 
     private function getBestSellerBooks(array $excludeIds = [])
     {
-        return Book::where('TrangThai', 1)
+        return Book::withCount('reviews')
+            ->where('TrangThai', 1)
             ->where('SoLuong', '>', 0)
+            ->withAvg('reviews', 'SoSao')
             ->when($excludeIds, fn($q) => $q->whereNotIn('MaSach', $excludeIds))
             ->orderByDesc('luotmua')
-            ->take(4)
+            ->take(6)
             ->get();
     }
 
@@ -123,7 +127,7 @@ class HomeController extends Controller
      * - Đã đăng nhập + đã mua → cùng danh mục + cùng tác giả
      * -Đăng nhập chưa mua → bán chạy + bán chạy theo danh mục phổ biến
 
-     */
+    */
     private function getSuggestedBooks(array $excludeBookIds = []): array
     {
         if (!auth()->check()) {
@@ -153,7 +157,7 @@ class HomeController extends Controller
 
 
         $categoryIds = Book::whereIn('MaSach', $bookIds)->pluck('category_id')->unique();
-        $authorNames = Book::whereIn('MaSach', $bookIds)->pluck('TacGia')->filter()->unique();
+        $authorNames = Book::whereIn('MaSach', $bookIds)->pluck('MaTacGia')->filter()->unique();
 
         $group1 = Book::where('TrangThai', 1)
             ->where('SoLuong', '>', 0)
@@ -167,7 +171,7 @@ class HomeController extends Controller
         if ($authorNames->isNotEmpty()) {
             $group2 = Book::where('TrangThai', 1)
                 ->where('SoLuong', '>', 0)
-                ->whereIn('TacGia', $authorNames)
+                ->whereIn('MaTacGia', $authorNames)
                 ->whereNotIn('MaSach', $bookIds)
                 ->inRandomOrder()
                 ->take(4)
@@ -179,7 +183,6 @@ class HomeController extends Controller
             'group2' => $group2
         ];
     }
-
 
     private function getBestSellerInPopularCategories(array $excludeIds = [])
     {

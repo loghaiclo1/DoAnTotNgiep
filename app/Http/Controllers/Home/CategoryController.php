@@ -50,6 +50,9 @@ class CategoryController extends Controller
                     break;
             }
         }
+        else {
+            $query->orderByDesc('created_at');
+        }
 
         $query->orderByRaw('SoLuong > 0 DESC');
 
