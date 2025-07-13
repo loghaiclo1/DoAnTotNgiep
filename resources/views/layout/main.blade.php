@@ -158,9 +158,19 @@
                                 @endguest
                             </div>
                         </div>
-
-                        <a href="{{ url('/cart') }}" class="header-action-btn">
-                            <i class="bi bi-cart3"></i>
+                        <a href="{{ url('/cart') }}" class="header-action-btn" style="position: relative;">
+                            <i class="bi bi-cart3" style="font-size: 24px;"></i>
+                            <span id="cart-count" style="
+                                position: absolute;
+                                top: -5px;
+                                right: -10px;
+                                background: red;
+                                color: white;
+                                font-size: 12px;
+                                padding: 2px 6px;
+                                border-radius: 50%;
+                                display: none;"> <!-- Ban đầu ẩn nếu không có số lượng -->
+                            </span>
                         </a>
 
                         <!-- Mobile Navigation Toggle -->
@@ -514,6 +524,54 @@
             });
         });
     </script>
+@push('scripts')
+<script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (!token) {
+            console.error('Không tìm thấy CSRF token!');
+            return;
+        }
+
+        // Khởi tạo Pusher
+        const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+            forceTLS: true
+        });
+
+        // Đăng ký kênh và sự kiện
+        const channel = pusher.subscribe('cart');
+        channel.bind('cart.updated', function (data) {
+            console.log('Sự kiện cart.updated nhận được:', data.cartTotalQuantity);
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.textContent = data.cartTotalQuantity || 0;
+                cartCount.style.display = (data.cartTotalQuantity > 0) ? 'inline-block' : 'none';
+            }
+        });
+
+        // Gọi lần đầu để lấy số lượng ban đầu (nếu cần)
+        fetch('/cart/quantity', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-Token': token,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.textContent = data.cart_total_quantity || 0;
+                cartCount.style.display = (data.cart_total_quantity > 0) ? 'inline-block' : 'none';
+            }
+        })
+        .catch(error => console.error('Lỗi lấy số lượng ban đầu:', error));
+    });
+</script>
+@endpush
     <style>
         .suggestions-list .suggestion-item {
             display: flex;
@@ -631,6 +689,7 @@
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script src="https://unpkg.com/laravel-echo/dist/echo.iife.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     @stack('scripts')
 </body>

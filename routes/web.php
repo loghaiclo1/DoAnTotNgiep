@@ -62,7 +62,7 @@ Route::get('/orders/{id}/tracking-html', [OrderController::class, 'trackingHtml'
 // Giỏ hàng
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/total-quantity', fn() => response()->json(['total_quantity' => session('cart_total_quantity', 0)]));
-    Route::get('/quantity', [CartController::class, 'getCartQuantity']);
+    Route::get('/quantity', [CartController::class, 'getCartQuantity'])->name('quantity');
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add', [CartController::class, 'add'])->name('add');
     Route::get('/clear', [CartController::class, 'clear'])->name('clear');

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
-
+use App\Events\CartUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
@@ -162,8 +162,9 @@ class CartController extends Controller
                 'SoLuong' => $book->SoLuong,
                 'identifier' => $identifier
             ]);
-
-            return response()->json(['status' => 'success', 'message' => 'Đã thêm vào giỏ hàng!', 'new_quantity' => $newQty])
+            $totalQuantity = collect($cart)->sum('quantity');
+            event(new CartUpdated($totalQuantity));
+            return response()->json(['status' => 'success', 'message' => 'Đã thêm vào giỏ hàng!', 'new_quantity' => $newQty, 'cart_count' => $totalQuantity])
                 ->header('Content-Type', 'application/json; charset=utf-8');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Book not found: ' . $e->getMessage(), ['book_id' => $bookId]);
@@ -303,13 +304,13 @@ class CartController extends Controller
             $total = collect($cart)->sum(function ($item) {
                 return $item['price'] * $item['quantity'];
             });
-
+            $totalQuantity = collect($cart)->sum('quantity');
             Log::info('Remove: New total calculated.', [
                 'book_id' => $bookId,
                 'total' => $total,
                 'updated_cart' => $cart
             ]);
-
+            event(new CartUpdated($totalQuantity));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Đã xóa sản phẩm khỏi giỏ hàng!',
@@ -368,7 +369,8 @@ class CartController extends Controller
                 $total = collect($cart)->sum(function ($item) {
                     return $item['price'] * $item['quantity'];
                 });
-
+                $totalQuantity = collect($cart)->sum('quantity');
+                event(new CartUpdated($totalQuantity));
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Cập nhật số lượng thành công!',
