@@ -25,7 +25,7 @@
         ['label' => 'Sản phẩm', 'value' => $totalProducts, 'icon' => 'fas fa-book', 'color' => 'warning', 'route' => 'admin.books.index'],
         ['label' => 'Sách đã bán', 'value' => $totalBooksSold, 'icon' => 'fas fa-book-open', 'color' => 'dark', 'route' => 'admin.books.index'],
         ['label' => 'Đánh giá', 'value' => $totalReviews, 'icon' => 'fas fa-star', 'color' => 'secondary', 'route' => 'admin.reviews.index'],
-        
+
     ] as $item)
         <div class="col-md-4 col-sm-6 mb-4">
             <div class="small-box bg-{{ $item['color'] }}">
@@ -106,6 +106,11 @@
     </x-adminlte-card>
 </div>
 
+<div class="mb-4">
+    <a href="{{ route('admin.dashboard.export') }}" target="_blank" class="btn btn-danger">
+        <i class="fas fa-file-pdf"></i> Xuất PDF báo cáo
+    </a>
+</div>
 @stop
 
 @push('css')

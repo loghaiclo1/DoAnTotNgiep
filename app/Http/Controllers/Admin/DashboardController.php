@@ -13,6 +13,7 @@ use App\Models\Contact as LienHe;
 use Illuminate\Support\Facades\DB;
 use App\Models\ChiTietPhieuNhap;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DashboardController extends Controller
 {
@@ -180,4 +181,180 @@ class DashboardController extends Controller
             'nhapToday', 'nhapThisWeek', 'nhapThisMonth', 'nhapThisYear'
         ));
     }
+    public function exportPDF()
+{
+    $totalOrders = Hoadon::count();
+    $totalRevenue = Hoadon::where('TrangThai', 'Hoan tat')->sum('TongTien');
+    $totalUsers = User::count();
+    $totalProducts = Sach::count();
+    $totalBooksSold = ChiTietHoaDon::join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+        ->where('hoadon.TrangThai', 'Hoan tat')
+        ->sum('chitiethoadon.SoLuong');
+    $totalReviews = DanhGiaSanPham::count();
+    $pendingContacts = LienHe::where('trang_thai', '0')->count();
+
+    $monthlyRevenue = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%m/%Y') as month"), DB::raw("SUM(TongTien) as total"))
+        ->where('TrangThai', 'Hoan tat')
+        ->whereNotNull('NgayLap')
+        ->groupBy('month')
+        ->orderByRaw("STR_TO_DATE(CONCAT('01/', month), '%d/%m/%Y') DESC")
+        ->take(6)->get()->reverse();
+    $labels = $monthlyRevenue->pluck('month');
+    $data = $monthlyRevenue->pluck('total');
+
+    $ordersByStatus = Hoadon::select('TrangThai', DB::raw('count(*) as total'))
+        ->groupBy('TrangThai')
+        ->pluck('total', 'TrangThai');
+
+    $monthlyOrders = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%m/%Y') as month"), DB::raw("COUNT(*) as total_orders"))
+        ->whereNotNull('NgayLap')
+        ->groupBy('month')
+        ->orderByRaw("STR_TO_DATE(CONCAT('01/', month), '%d/%m/%Y') DESC")
+        ->take(6)->get()->reverse();
+    $monthlyOrderLabels = $monthlyOrders->pluck('month');
+    $monthlyOrderData = $monthlyOrders->pluck('total_orders');
+
+    $dailyRevenue = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%d/%m/%Y') as day"), DB::raw("SUM(TongTien) as total"))
+        ->where('TrangThai', 'Hoan tat')
+        ->whereDate('NgayLap', '>=', now()->subDays(6))
+        ->groupBy('day')
+        ->orderByRaw("STR_TO_DATE(day, '%d/%m/%Y')")
+        ->get();
+        $dates = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $dates->push(Carbon::today()->subDays($i)->format('d/m/Y'));
+        }
+
+        $revenuePerDay = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%d/%m/%Y') as day"), DB::raw("SUM(TongTien) as total"))
+            ->where('TrangThai', 'Hoan tat')
+            ->whereDate('NgayLap', '>=', Carbon::today()->subDays(6))
+            ->groupBy('day')->pluck('total', 'day');
+
+        $dailyRevenueLabels = $dates;
+        $dailyRevenueData = $dates->map(fn($d) => $revenuePerDay[$d] ?? 0);
+
+    $yearlyRevenue = Hoadon::select(DB::raw("YEAR(NgayLap) as year"), DB::raw("SUM(TongTien) as total"))
+        ->where('TrangThai', 'Hoan tat')
+        ->groupBy('year')
+        ->orderByDesc('year')
+        ->take(3)->get()->reverse();
+    $yearLabels = $yearlyRevenue->pluck('year');
+    $yearlyRevenueData = $yearlyRevenue->pluck('total');
+
+    $dailyOrders = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%d/%m/%Y') as day"), DB::raw("COUNT(*) as total"))
+        ->whereDate('NgayLap', '>=', now()->subDays(6))
+        ->groupBy('day')
+        ->orderByRaw("STR_TO_DATE(day, '%d/%m/%Y')")
+        ->get();
+    $dailyOrderLabels = $dailyOrders->pluck('day');
+    $dailyOrderData = $dailyOrders->pluck('total');
+    $dates = $dailyOrderLabels; // cùng nhãn ngày với dailyOrderData
+
+    $dailyOrderSuccess = collect();
+    $dailyOrderFailed = collect();
+    $dailyOrderCancelled = collect();
+
+    foreach ($dates as $dateStr) {
+        $date = Carbon::createFromFormat('d/m/Y', $dateStr)->format('Y-m-d');
+        $dailyOrderSuccess->push(
+            Hoadon::whereDate('NgayLap', $date)->where('TrangThai', 'Hoan tat')->count()
+        );
+        $dailyOrderFailed->push(
+            Hoadon::whereDate('NgayLap', $date)->where('TrangThai', 'That bai')->count()
+        );
+        $dailyOrderCancelled->push(
+            Hoadon::whereDate('NgayLap', $date)->where('TrangThai', 'Da huy')->count()
+        );
+    }
+    $yearlyOrders = Hoadon::select(DB::raw("YEAR(NgayLap) as year"), DB::raw("COUNT(*) as total"))
+        ->groupBy('year')
+        ->orderByDesc('year')
+        ->take(3)->get()->reverse();
+    $yearlyOrderData = $yearlyOrders->pluck('total');
+
+    $monthlyUser = User::select(DB::raw("DATE_FORMAT(created_at, '%m/%Y') as month"), DB::raw("COUNT(*) as total"))
+        ->groupBy('month')
+        ->orderByRaw("STR_TO_DATE(CONCAT('01/', month), '%d/%m/%Y') DESC")
+        ->take(6)->get()->reverse();
+    $monthlyUserLabels = $monthlyUser->pluck('month');
+    $monthlyUserData = $monthlyUser->pluck('total');
+
+    $booksSoldMonthly = ChiTietHoaDon::join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+        ->select(DB::raw("DATE_FORMAT(hoadon.NgayLap, '%m/%Y') as month"), DB::raw("SUM(chitiethoadon.SoLuong) as total"))
+        ->where('hoadon.TrangThai', 'Hoan tat')
+        ->whereNotNull('hoadon.NgayLap')
+        ->groupBy('month')
+        ->orderByRaw("STR_TO_DATE(CONCAT('01/', month), '%d/%m/%Y') DESC")
+        ->take(6)->get()->reverse();
+    $booksSoldLabels = $booksSoldMonthly->pluck('month');
+    $booksSoldData = $booksSoldMonthly->pluck('total');
+
+    $booksCreated = Sach::select(DB::raw("DATE_FORMAT(created_at, '%m/%Y') as month"), DB::raw("COUNT(*) as total"))
+        ->whereNotNull('created_at')
+        ->groupBy('month')
+        ->orderByRaw("STR_TO_DATE(CONCAT('01/', month), '%d/%m/%Y') DESC")
+        ->take(6)->get()->reverse();
+    $booksCreatedLabels = $booksCreated->pluck('month');
+    $booksCreatedData = $booksCreated->pluck('total');
+
+    $booksImported = ChiTietPhieuNhap::select(DB::raw("DATE_FORMAT(created_at, '%m/%Y') as month"), DB::raw("SUM(SoLuong) as total"))
+        ->whereNotNull('created_at')
+        ->groupBy('month')
+        ->orderByRaw("STR_TO_DATE(CONCAT('01/', month), '%d/%m/%Y') DESC")
+        ->take(6)->get()->reverse();
+    $booksImportedLabels = $booksImported->pluck('month');
+    $booksImportedData = $booksImported->pluck('total');
+
+    $topProducts = ChiTietHoaDon::join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+        ->join('sach', 'sach.MaSach', '=', 'chitiethoadon.MaSach')
+        ->select('sach.TenSach', DB::raw('SUM(chitiethoadon.SoLuong) as total_sold'))
+        ->where('hoadon.TrangThai', 'Hoan tat')
+        ->groupBy('sach.TenSach')
+        ->orderByDesc('total_sold')
+        ->take(20)
+        ->get();
+    $topProductsLabels = $topProducts->pluck('TenSach');
+    $topProductsData = $topProducts->pluck('total_sold');
+
+
+    $topUsers = Hoadon::join('khachhang', 'khachhang.MaKhachHang', '=', 'hoadon.MaKhachHang')
+        ->select(DB::raw("CONCAT(khachhang.Ho, ' ', khachhang.Ten) as full_name"), DB::raw('SUM(hoadon.TongTien) as total_spent'))
+        ->where('hoadon.TrangThai', 'Hoan tat')
+        ->groupBy('full_name')
+        ->orderByDesc('total_spent')
+        ->take(20)
+        ->get();
+    $topUsersLabels = $topUsers->pluck('full_name');
+    $topUsersData = $topUsers->pluck('total_spent');
+
+    $today = Carbon::today();
+    $thisWeek = Carbon::now()->startOfWeek();
+    $thisMonth = Carbon::now()->startOfMonth();
+    $thisYear = Carbon::now()->startOfYear();
+    $booksToday = Sach::whereDate('created_at', $today)->count();
+    $booksThisWeek = Sach::whereBetween('created_at', [$thisWeek, now()])->count();
+    $booksThisMonth = Sach::whereBetween('created_at', [$thisMonth, now()])->count();
+    $booksThisYear = Sach::whereBetween('created_at', [$thisYear, now()])->count();
+    $nhapToday = ChiTietPhieuNhap::whereDate('created_at', $today)->sum('SoLuong');
+    $nhapThisWeek = ChiTietPhieuNhap::whereBetween('created_at', [$thisWeek, now()])->sum('SoLuong');
+    $nhapThisMonth = ChiTietPhieuNhap::whereBetween('created_at', [$thisMonth, now()])->sum('SoLuong');
+    $nhapThisYear = ChiTietPhieuNhap::whereBetween('created_at', [$thisYear, now()])->sum('SoLuong');
+
+    return Pdf::loadView('admin.dashboard.export', compact(
+        'totalOrders', 'totalRevenue', 'totalUsers', 'totalProducts', 'totalBooksSold', 'totalReviews', 'pendingContacts',
+        'labels', 'data', 'ordersByStatus',
+        'monthlyOrderLabels', 'monthlyOrderData',
+        'dailyRevenueLabels', 'dailyRevenueData',
+        'yearLabels', 'yearlyRevenueData',
+        'dailyOrderLabels', 'dailyOrderData', 'yearlyOrderData',
+        'monthlyUserLabels', 'monthlyUserData',
+        'booksSoldLabels', 'booksSoldData',
+        'booksCreatedLabels', 'booksCreatedData',
+        'booksImportedLabels', 'booksImportedData',
+        'topProductsLabels', 'topProductsData', 'topUsersLabels', 'topUsersData',
+        'booksToday', 'booksThisWeek', 'booksThisMonth', 'booksThisYear',
+        'nhapToday', 'nhapThisWeek', 'nhapThisMonth', 'nhapThisYear','dailyOrderSuccess', 'dailyOrderFailed', 'dailyOrderCancelled'
+    ))->setPaper('a4', 'portrait')->download('bao-cao-thong-ke.pdf');
+}
+
 }

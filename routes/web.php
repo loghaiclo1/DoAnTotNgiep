@@ -154,6 +154,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::delete('donviphathanh/{id}/hide', [DonViPhatHanhController::class, 'hide'])->name('donviphathanh.hide');
     Route::post('donviphathanh/{id}/restore', [DonViPhatHanhController::class, 'restore'])->name('donviphathanh.restore');
     Route::post('/tacgia/{id}/restore', [TacGiaController::class, 'restore'])->name('tacgia.restore');
+    Route::get('/admin/dashboard/export', [DashboardController::class, 'exportPDF'])->name('dashboard.export');
+
 
 
 
