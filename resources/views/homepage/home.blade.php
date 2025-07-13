@@ -224,7 +224,7 @@
                 </div>
             </div>
         </section>
-                    <!-- Gợi ý cho bạn -->
+                    {{-- <!-- Gợi ý cho bạn -->
                     @if(Auth::check() && $sachGoiY->count() > 0)
                         <section id="suggested-books" class="section" style="background-color: #f8f9fa;">
                             <div class="container">
@@ -250,7 +250,7 @@
                                 </div>
                             </div>
                         </section>
-                    @endif
+                    @endif --}}
 
                             <!-- Product List Section -->
         <section id="product-list" class="product-list section">

@@ -55,7 +55,7 @@ class CategoryController extends Controller
 
         // Số lượng mỗi trang
         $perPage = $request->input('per_page', 12);
-        
+
         $books = $query
             ->withCount(['reviews as reviews_count' => function ($query) {
                 $query->where('TrangThai', 1);
@@ -68,11 +68,20 @@ class CategoryController extends Controller
 
         return view('homepage.category', compact('categories', 'minPrice', 'maxPrice', 'books'));
     }
-    public function show($slug)
+    public function show($slug, Request $request)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
-        $books = $category->books()->where('TrangThai', 1)->get();
-
+        $books = $category->books()
+            ->where('TrangThai', 1)
+            ->withCount(['reviews as reviews_count' => function ($q) {
+                $q->where('TrangThai', 1);
+            }])
+            ->withAvg(['reviews as avg_rating' => function ($q) {
+                $q->where('TrangThai', 1);
+            }], 'SoSao')
+            ->paginate(12)
+            ->appends($request->query());
+            
         return view('homepage.categoryresult', compact('category', 'books'));
     }
 }
