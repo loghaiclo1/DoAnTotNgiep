@@ -26,7 +26,7 @@ use App\Http\Controllers\Auth\{
     ResetPasswordController,
     SocialController
 };
-
+use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\Admin\{
     DashboardController,
     PhieuNhapController,
@@ -54,7 +54,7 @@ Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('categ
 // Chi tiết sản phẩm
 Route::get('/sp/{slug}', [BookController::class, 'productdetail'])->name('product.detail');
 Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
-
+Route::get('/goi-y-sach', [SuggestionController::class, 'getSuggestions'])->name('sach.goi-y');
 // Liên hệ
 
 Route::get('/orders/{id}/tracking-html', [OrderController::class, 'trackingHtml']);

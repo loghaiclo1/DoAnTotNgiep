@@ -29,6 +29,7 @@ class HomeController extends Controller
         ];
 
         $randomQuote = $quotes[array_rand($quotes)];
+        $sachGoiY = $this->getSuggestedBooks();
 
         return view('homepage.home', compact(
             'demDMcha',
@@ -38,7 +39,8 @@ class HomeController extends Controller
             'sachbanchay',
             'dmCap2',
             'dmCap3',
-            'randomQuote'
+            'randomQuote',
+            'sachGoiY'
         ));
     }
     private function getFeaturedBooks()
@@ -146,4 +148,38 @@ private function getDmCap3($dmCap2)
     {
         return view('homepage.register');
     }
+    private function getSuggestedBooks()
+{
+    if (!auth()->check()) {
+        return collect(); // Nếu chưa đăng nhập thì không có gợi ý
+    }
+
+    $userId = auth()->id();
+
+    $bookIds = \DB::table('hoadon')
+        ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon') // chú ý khóa chính/phụ
+        ->where('hoadon.MaKhachHang', $userId) // 🔧 SỬA tên cột đúng
+        ->pluck('chitiethoadon.MaSach')
+        ->unique();
+
+    if ($bookIds->isEmpty()) {
+        return Book::where('TrangThai', 1)
+            ->where('SoLuong', '>', 0)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+    }
+
+    $categoryIds = Book::whereIn('MaSach', $bookIds)->pluck('category_id')->unique();
+
+    return Book::where('TrangThai', 1)
+        ->where('SoLuong', '>', 0)
+        ->whereIn('category_id', $categoryIds)
+        ->whereNotIn('MaSach', $bookIds)
+        ->inRandomOrder()
+        ->take(4)
+        ->get();
+}
+
+
 }

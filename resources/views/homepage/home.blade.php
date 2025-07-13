@@ -224,33 +224,10 @@
                 </div>
             </div>
         </section>
-                    {{-- <!-- Gợi ý cho bạn -->
-                    @if(Auth::check() && $sachGoiY->count() > 0)
-                        <section id="suggested-books" class="section" style="background-color: #f8f9fa;">
-                            <div class="container">
-                                <h2 class="mb-4">📚 Gợi ý cho bạn
-                                    <i class="bi bi-info-circle-fill text-muted" data-bs-toggle="tooltip" title="Dựa trên đơn hàng gần đây của bạn"></i>
-                                </h2>
-                                <div class="swiper suggested-swiper">
-                                    <div class="swiper-wrapper">
-                                        @foreach($sachGoiY as $book)
-                                            <div class="swiper-slide">
-                                                <div class="card" style="width: 180px;">
-                                                    <a href="{{ route('product.detail', $book->slug) }}">
-                                                        <img src="{{ asset('image/book/' . $book->HinhAnh) }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ $book->TenSach }}">
-                                                    </a>
-                                                    <div class="card-body p-2">
-                                                        <h6 class="card-title text-truncate">{{ $book->TenSach }}</h6>
-                                                        <p class="text-danger fw-bold mb-0">{{ number_format($book->GiaBan, 0, ',', '.') }}₫</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    @endif --}}
+
+
+        @include('homepage.partials.goi-y-sach', ['sachGoiY' => $sachGoiY])
+
 
                             <!-- Product List Section -->
         <section id="product-list" class="product-list section">
