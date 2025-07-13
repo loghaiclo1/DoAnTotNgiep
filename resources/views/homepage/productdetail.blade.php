@@ -38,6 +38,7 @@
 
                                 <h1 class="product-title">{{ $book->TenSach }}</h1>
 
+                                <p>{{ $book->tacgia->TenTacGia ?? 'Đang cập nhật' }}</p>
                                 <div class="product-price-container mb-4">
                                     <span class="current-price" data-book-id="{{ $book->MaSach }}">
                                         {{ number_format($book->GiaBan, 0, ',', '.') }}₫
@@ -132,7 +133,7 @@
 
                         <!-- Product Details Tabs -->
                         <div class="row mt-5" data-aos="fade-up">
-                            <div class="col-12" style="margin-top: -50px; height: 700px;">
+                            <div class="col-12" style="margin-top: -50px;">
                                 <div class="product-details-tabs">
                                     <ul class="nav nav-tabs" id="productTabs" role="tablist" style="margin-bottom: -10px">
                                         <li class="nav-item" role="presentation">
@@ -156,11 +157,6 @@
                                             aria-labelledby="description-tab">
                                             <div class="product-description">
                                                 <p style="margin-top: 20px">{!! nl2br(e($book->MoTa)) !!}</p>
-                                                <h4>Tính năng chính</h4>
-                                                <ul>
-                                                    <li>Lorem ipsum dolor sit amet</li>
-                                                    <li>Vestibulum at lacus congue</li>
-                                                </ul>
                                             </div>
                                         </div>
                                         <!-- Specifications Tab -->
@@ -200,10 +196,10 @@
                                                         <div class="specs-row">
                                                             <div class="specs-label">Đơn vị phát hành</div>
                                                             <div class="specs-value">
-                                                                @forelse ($book->dvph as $dv)
+                                                                @forelse ($book->dvph ?? [] as $dv)
                                                                     {{ $dv->TenDVPH }}@if (!$loop->last), @endif
                                                                 @empty
-                                                                    Đang cập nhật
+                                                                    Không có
                                                                 @endforelse
                                                             </div>
                                                         </div>

@@ -10,6 +10,7 @@ use App\Models\Footer;
 use App\Models\Category;
 use App\Models\Book;
 use Illuminate\Contracts\Foundation\Application as AppContract;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -42,9 +43,12 @@ class AppServiceProvider extends ServiceProvider
                     ->get()
                     ->groupBy('ten_muc'); // group theo tên menu lớn: Dịch Vụ, Hỗ Trợ...
 
+                $dmCap2 = Category::where('parent_id', 1)->get();
+                $dmCap3 = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get()->groupBy('parent_id');
+
                 $view->with([
-                    'dmWithTop3'       => $this->getDmWithTop3ByParent(1),
-                    'dmWithTop3QT'     => $this->getDmWithTop3ByParent(2),
+                    'dmCap2'       => $dmCap2,
+                    'dmCap3'     => $dmCap3,
                     'thongTinChung'    => $thongTinChung,
                     'duLieuChanTrang'  => $duLieuChanTrang,
                 ]);
@@ -52,32 +56,5 @@ class AppServiceProvider extends ServiceProvider
         } catch (\Exception $e) {
             \Log::error("View Composer Error: " . $e->getMessage());
         }
-    }
-
-    private function getDmWithTop3ByParent($parentId)
-    {
-        $dmCap2 = Category::where('parent_id', $parentId)->get();
-        $dmCap3All = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
-
-        $books1 = Book::select('category_id')
-            ->selectRaw('COUNT(*) as book_count')
-            ->groupBy('category_id')
-            ->pluck('book_count', 'category_id');
-
-        $dmCap3All = $dmCap3All->map(function ($cat) use ($books1) {
-            $cat->book_count = $books1[$cat->id] ?? 0;
-            return $cat;
-        });
-
-        $dmCap2 = $dmCap2->map(function ($dm2) use ($dmCap3All) {
-            $children = $dmCap3All->where('parent_id', $dm2->id)
-                ->sortByDesc('book_count')
-                ->take(4)
-                ->values();
-            $dm2->topChildren = $children;
-            return $dm2;
-        });
-
-        return $dmCap2->chunk(4);
     }
 }

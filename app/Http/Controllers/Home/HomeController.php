@@ -18,7 +18,7 @@ class HomeController extends Controller
         $sachbanchay = $this->getBestSellerBooks();
         $filterCategories = $this->getFilterCategories($books);
         $dmCap2 = $this->getDmCap2();
-        $dmWithTop3 = $this->getDmWithTop3($dmCap2);
+        $dmCap3 = $this->getDmCap3($dmCap2);
 
         $quotes = [
             'Mỗi cuốn sách là một người thầy im lặng.',
@@ -37,7 +37,7 @@ class HomeController extends Controller
             'featuredBooks',
             'sachbanchay',
             'dmCap2',
-            'dmWithTop3',
+            'dmCap3',
             'randomQuote'
         ));
     }
@@ -96,29 +96,15 @@ class HomeController extends Controller
         return Category::where('parent_id', 1)->get();
     }
 
-    private function getDmWithTop3($dmCap2)
-    {
-        $dmCap3All = Category::whereIn('parent_id', $dmCap2->pluck('id'))->get();
+private function getDmCap3($dmCap2)
+{
+    // Lấy danh sách ID của các danh mục cấp 2
+    $dmCap2Ids = $dmCap2->pluck('id');
 
-        $books1 = Book::select('category_id')
-            ->selectRaw('COUNT(*) as book_count')
-            ->groupBy('category_id')
-            ->pluck('book_count', 'category_id');
+    // Lấy tất cả danh mục cấp 3 có parent_id nằm trong danh sách ID cấp 2
+    return Category::whereIn('parent_id', $dmCap2Ids)->get()->groupBy('parent_id');
+}
 
-        $dmCap3All = $dmCap3All->map(function ($cat) use ($books1) {
-            $cat->book_count = $books1[$cat->id] ?? 0;
-            return $cat;
-        });
-
-        return $dmCap2->map(function ($dm2) use ($dmCap3All) {
-            $children = $dmCap3All->where('parent_id', $dm2->id)
-                ->sortByDesc('book_count')
-                ->take(4)
-                ->values();
-            $dm2->topChildren = $children;
-            return $dm2;
-        });
-    }
 
     public function about()
     {
