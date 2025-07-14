@@ -14,6 +14,8 @@ class ChiTietPhieuNhap extends Model
         'MaSach',
         'SoLuong',
         'DonGia',
+        'GiaNhapCu',
+        'GiaBanCu',
     ];
 
     public function phieuNhap()
