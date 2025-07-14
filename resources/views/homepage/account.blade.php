@@ -81,10 +81,6 @@
                                     </li>
                                 </ul>
                                 <div class="menu-footer">
-                                    <a href="{{ url('/contact') }}" class="help-link">
-                                        <i class="bi bi-question-circle"></i>
-                                        <span>Hỗ trợ khách hàng</span>
-                                    </a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                         style="display: none;">
                                         @csrf

@@ -28,7 +28,6 @@ class DashboardController extends Controller
             ->where('hoadon.TrangThai', 'Hoàn tất')
             ->sum('chitiethoadon.SoLuong');
         $totalReviews = DanhGiaSanPham::count();
-        $pendingContacts = LienHe::where('trang_thai', '0')->count();
 
         // Doanh thu theo tháng
         $monthlyRevenue = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%m/%Y') as month"), DB::raw("SUM(TongTien) as total"))
@@ -165,7 +164,7 @@ class DashboardController extends Controller
         $nhapThisYear = ChiTietPhieuNhap::whereBetween('created_at', [$thisYear, now()])->sum('SoLuong');
 
         return view('admin.dashboard', compact(
-            'totalOrders', 'totalRevenue', 'totalUsers', 'totalProducts', 'totalBooksSold', 'totalReviews', 'pendingContacts',
+            'totalOrders', 'totalRevenue', 'totalUsers', 'totalProducts', 'totalBooksSold', 'totalReviews',
             'labels', 'data', 'ordersByStatus',
             'monthlyOrderLabels', 'monthlyOrderData',
             'dailyRevenueLabels', 'dailyRevenueData',

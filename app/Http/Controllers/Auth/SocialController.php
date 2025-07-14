@@ -28,22 +28,36 @@ class SocialController extends Controller
             $firstName = $names[1];
         }
 
-        $user = User::updateOrCreate(
-            ['email' => $googleUser->getEmail()],
-            [
+        $existingUser = User::where('email', $googleUser->getEmail())->first();
+
+        if ($existingUser) {
+            // Người dùng đã tồn tại, cập nhật thông tin cần thiết (không cập nhật role)
+            $existingUser->update([
                 'Ho' => $lastName,
                 'Ten' => $firstName,
-                'avatar' => 'avatar.png', 
-                'role' => 'user', // Hoặc 'customer' tùy theo hệ thống của bạn
+                'email_verified_at' => now(),
+                'TrangThai' => 1,
+            ]);
+            $user = $existingUser;
+        } else {
+            // Người dùng mới, tạo mới với role mặc định
+            $user = User::create([
+                'Ho' => $lastName,
+                'Ten' => $firstName,
                 'email' => $googleUser->getEmail(),
                 'email_verified_at' => now(),
                 'TrangThai' => 1,
-                'password' => bcrypt(uniqid()) // Tạo password ngẫu nhiên nếu cần
-            ]
-        );
+                'avatar' => 'avatar.png',
+                'role' => 'user',
+                'password' => bcrypt(uniqid()),
+            ]);
+        }
 
         Auth::login($user);
 
+        if (in_array($user->role, ['admin', 'superadmin'])) {
+            return redirect()->route('admin.dashboard'); // hoặc route admin chính
+        }
         return redirect()->route('home')->with('success', 'Đăng nhập bằng Google thành công.');
     }
 }
