@@ -234,7 +234,7 @@
                                                 </a>
                                                 <div class="card-body">
                                                     <h5 class="card-title fw-bold">
-                                                        <a href="{{ route('product.detail', $related->TenSach) }}" style="color: #2d465e;">
+                                                        <a href="{{ route('product.detail', $related->slug) }}" style="color: #2d465e;">
                                                             {{$related->TenSach}}
                                                         </a>
                                                     </h5>
