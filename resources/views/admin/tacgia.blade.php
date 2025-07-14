@@ -69,6 +69,7 @@
                         <th>Số sách</th>
                         <th>Thông tin thêm về tác giả</th>
                         <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -92,6 +93,14 @@
                             <td>{{ $tacgia->sach->count() }}</td>
                             <td>{{ $tacgia->ghi_chu ?? 'Không có' }}</td>
                             <td>{{ $tacgia->created_at ? $tacgia->created_at->format('d/m/Y H:i') : 'Không có' }}</td>
+                            <td>
+                                @if ($tacgia->trashed())
+                                    <span class="badge bg-secondary">Đã ẩn</span>
+                                @else
+                                    <span class="badge bg-success">Đang hiển thị</span>
+                                @endif
+                            </td>
+
                             <td>
                                 <button type="button" class="btn btn-sm btn-outline-primary btn-edit"
                                     data-id="{{ $tacgia->MaTacGia }}">

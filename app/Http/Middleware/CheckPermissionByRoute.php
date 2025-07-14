@@ -33,7 +33,8 @@ class CheckPermissionByRoute
             'admin.categories.destroy'  => 'delete categories',
 
             // Đơn hàng
-            'admin.orders.update'       => 'update order status',
+            'admin.orders.update'       => 'update orders',
+            'admin.orders.cancel'       => 'cancel orders',
 
             // Phiếu nhập
             'admin.phieunhap.store'     => 'create phieunhaps',

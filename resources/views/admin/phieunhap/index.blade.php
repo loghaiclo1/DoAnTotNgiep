@@ -49,17 +49,18 @@
 
                             <a href="{{ route('admin.phieunhap.show', $phieu->MaPhieuNhap) }}" class="btn btn-info btn-sm">Chi tiết</a>
                             <a href="{{ route('admin.phieunhap.edit', $phieu->MaPhieuNhap) }}" class="btn btn-warning btn-sm">Sửa</a>
-        
+
 
                     </td>
                 </tr>
             @endforeach
         </tbody>
-        <div class="mt-3 d-flex justify-content-center">
-            {{ $phieuNhaps->appends(request()->query())->onEachSide(1)->links('vendor.pagination.bootstrap-4') }}
-        </div>
-        <div class="text-muted mb-2">
-            Hiển thị từ {{ $phieuNhaps->firstItem() }} đến {{ $phieuNhaps->lastItem() }} trong tổng số {{ $phieuNhaps->total() }} kết quả
-        </div>
+
     </table>
+    <div class="mt-3 d-flex justify-content-center">
+        {{ $phieuNhaps->appends(request()->query())->onEachSide(1)->links('vendor.pagination.bootstrap-4') }}
+    </div>
+    <div class="text-muted mb-2">
+        Hiển thị từ {{ $phieuNhaps->firstItem() }} đến {{ $phieuNhaps->lastItem() }} trong tổng số {{ $phieuNhaps->total() }} kết quả
+    </div>
 @stop

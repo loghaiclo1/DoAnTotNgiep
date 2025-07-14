@@ -80,7 +80,7 @@ class OrderController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!auth()->user()->can('update order status')) {
+        if (!auth()->user()->can('update orders')) {
             abort(403, 'Bạn không có quyền cập nhật trạng thái đơn hàng.');
         }
         $donhang = Hoadon::where('MaHoaDon', $id)->firstOrFail();

@@ -9,7 +9,6 @@ use App\Models\KhachHang as User;
 use App\Models\Book as Sach;
 use App\Models\ChiTietHoaDon;
 use App\Models\DanhGiaSanPham;
-use App\Models\Contact as LienHe;
 use Illuminate\Support\Facades\DB;
 use App\Models\ChiTietPhieuNhap;
 use Carbon\Carbon;
@@ -190,7 +189,7 @@ class DashboardController extends Controller
         ->where('hoadon.TrangThai', 'Hoan tat')
         ->sum('chitiethoadon.SoLuong');
     $totalReviews = DanhGiaSanPham::count();
-    $pendingContacts = LienHe::where('trang_thai', '0')->count();
+
 
     $monthlyRevenue = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%m/%Y') as month"), DB::raw("SUM(TongTien) as total"))
         ->where('TrangThai', 'Hoan tat')
@@ -340,7 +339,7 @@ class DashboardController extends Controller
     $nhapThisYear = ChiTietPhieuNhap::whereBetween('created_at', [$thisYear, now()])->sum('SoLuong');
 
     return Pdf::loadView('admin.dashboard.export', compact(
-        'totalOrders', 'totalRevenue', 'totalUsers', 'totalProducts', 'totalBooksSold', 'totalReviews', 'pendingContacts',
+        'totalOrders', 'totalRevenue', 'totalUsers', 'totalProducts', 'totalBooksSold', 'totalReviews',
         'labels', 'data', 'ordersByStatus',
         'monthlyOrderLabels', 'monthlyOrderData',
         'dailyRevenueLabels', 'dailyRevenueData',

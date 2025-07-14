@@ -73,6 +73,7 @@
                         <th>Tên danh mục</th>
                         <th>Slug</th>
                         <th>Danh mục cha</th>
+                        <th>Trạng thái</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -84,15 +85,34 @@
                             <td>{{ $dm->slug }}</td>
                             <td>{{ $dm->parent?->name ?? '—' }}</td>
                             <td>
-                                <a href="{{ route('admin.categories.edit', $dm->id) }}" class="btn btn-sm btn-warning">Sửa</a>
-                                <form action="{{ route('admin.categories.destroy', $dm->id) }}" method="POST"
-                                    class="d-inline-block"
-                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">Xóa</button>
-                                </form>
+                                @if ($dm->trangthai == 0)
+                                    <span class="badge bg-success">Đang hiển thị</span>
+                                @else
+                                    <span class="badge bg-secondary">Đã ẩn</span>
+                                @endif
                             </td>
+                            <td>
+                                <a href="{{ route('admin.categories.edit', $dm->id) }}" class="btn btn-sm btn-warning">Sửa</a>
+
+                                @if ($dm->trangthai == 0)
+                                    {{-- Nếu chưa bị ẩn, hiển thị nút xóa --}}
+                                    <form action="{{ route('admin.categories.destroy', $dm->id) }}" method="POST"
+                                        class="d-inline-block"
+                                        onsubmit="return confirm('Bạn có chắc chắn muốn ẩn danh mục này?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">Ẩn</button>
+                                    </form>
+                                @else
+                                    {{-- Nếu đã bị ẩn, hiển thị nút khôi phục --}}
+                                    <form action="{{ route('admin.categories.restore', $dm->id) }}" method="POST" class="d-inline-block">
+                                        @csrf
+                                        @method('PUT')
+                                        <button class="btn btn-sm btn-success">Phục hồi</button>
+                                    </form>
+                                @endif
+                            </td>
+
                         </tr>
                     @endforeach
                 </tbody>

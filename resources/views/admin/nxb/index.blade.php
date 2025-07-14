@@ -42,6 +42,7 @@
                 <th>Website</th>
                 <th>Slug</th>
                 <th>Ảnh</th>
+                <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -59,6 +60,13 @@
                             <img src="{{ asset('storage/' . $item->image) }}" alt="Ảnh" width="60">
                         @else
                             <span class="text-muted">Không có ảnh</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($item->trashed())
+                            <span class="badge bg-secondary">Đã bị ẩn</span>
+                        @else
+                            <span class="badge bg-success">Đang hiển thị</span>
                         @endif
                     </td>
                     <td>
