@@ -28,7 +28,6 @@ class DashboardController extends Controller
             ->sum('chitiethoadon.SoLuong');
         $totalReviews = DanhGiaSanPham::count();
 
-
         // Doanh thu theo tháng
         $monthlyRevenue = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%m/%Y') as month"), DB::raw("SUM(TongTien) as total"))
             ->where('TrangThai', 'Hoàn tất')

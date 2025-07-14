@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Models\KhachHang;
 
 class LoginController extends Controller
 {
@@ -42,7 +43,7 @@ class LoginController extends Controller
 
 
         // Tìm user theo email
-        $user = \App\Models\KhachHang::where('email', $credentials['email'])->first();
+        $user = KhachHang::where('email', $credentials['email'])->first();
 
         if (!$user) {
             return back()->withErrors(['email' => 'Email không tồn tại.'])->withInput();
