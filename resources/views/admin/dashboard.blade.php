@@ -21,7 +21,7 @@
     @foreach ([
         ['label' => 'Đơn hàng', 'value' => $totalOrders, 'icon' => 'fas fa-receipt', 'color' => 'info', 'route' => 'admin.orders.index'],
         ['label' => 'Doanh thu', 'value' => number_format($totalRevenue) . '₫', 'icon' => 'fas fa-coins', 'color' => 'success', 'route' => 'admin.orders.index'],
-        ['label' => 'Người dùng', 'value' => $totalUsers, 'icon' => 'fas fa-users', 'color' => 'primary', 'route' => 'admin.accounts.index'],
+        ['label' => 'Tài khoản người dùng', 'value' => $totalUsers, 'icon' => 'fas fa-users', 'color' => 'primary', 'route' => 'admin.accounts.index'],
         ['label' => 'Sản phẩm', 'value' => $totalProducts, 'icon' => 'fas fa-book', 'color' => 'warning', 'route' => 'admin.books.index'],
         ['label' => 'Sách đã bán', 'value' => $totalBooksSold, 'icon' => 'fas fa-book-open', 'color' => 'dark', 'route' => 'admin.books.index'],
         ['label' => 'Đánh giá', 'value' => $totalReviews, 'icon' => 'fas fa-star', 'color' => 'secondary', 'route' => 'admin.reviews.index'],

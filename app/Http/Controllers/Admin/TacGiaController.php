@@ -237,6 +237,6 @@ class TacGiaController extends Controller
     public function destroy($id)
     {
         TacGia::findOrFail($id)->delete();
-        return redirect()->route('admin.tacgia.index')->with('success', 'Xóa tác giả thành công!');
+        return redirect()->route('admin.tacgia.index')->with('success', 'Ẩn tác giả thành công!');
     }
 }

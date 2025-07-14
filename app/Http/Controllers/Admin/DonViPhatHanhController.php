@@ -9,35 +9,35 @@ use Illuminate\Support\Str;
 
 class DonViPhatHanhController extends Controller
 {
-    public function index(Request $request)
-    {
-        $status = $request->status;
+public function index(Request $request)
+{
+    $status = $request->status;
 
-        // Tạo query phù hợp trạng thái
-        if ($status === 'hidden') {
-            $query = DonViPhatHanh::onlyTrashed();
-        } elseif ($status === 'active') {
-            $query = DonViPhatHanh::withoutTrashed();
-        } else {
-            $query = DonViPhatHanh::withTrashed();
-        }
-
-        // Lọc theo keyword
-        if ($request->filled('keyword')) {
-            $keyword = $request->keyword;
-            $query->where(function ($q) use ($keyword) {
-                $q->where('TenDVPH', 'like', "%$keyword%")
-                  ->orWhere('Email', 'like', "%$keyword%")
-                  ->orWhere('DienThoai', 'like', "%$keyword%")
-                  ->orWhere('DiaChi', 'like', "%$keyword%");
-            });
-        }
-
-        $ds = $query->orderByRaw('deleted_at IS NOT NULL')->orderBy('created_at', 'desc')->paginate(10);
-        $hasHidden = DonViPhatHanh::onlyTrashed()->exists();
-
-        return view('admin.donviphathanh.index', compact('ds', 'hasHidden'));
+    // Tạo query phù hợp trạng thái
+    if ($status === 'hidden') {
+        $query = DonViPhatHanh::onlyTrashed();
+    } elseif ($status === 'active') {
+        $query = DonViPhatHanh::withoutTrashed();
+    } else {
+        $query = DonViPhatHanh::withTrashed();
     }
+
+    // Lọc theo keyword
+    if ($request->filled('keyword')) {
+        $keyword = $request->keyword;
+        $query->where(function ($q) use ($keyword) {
+            $q->where('TenDVPH', 'like', "%$keyword%")
+              ->orWhere('Email', 'like', "%$keyword%")
+              ->orWhere('DienThoai', 'like', "%$keyword%")
+              ->orWhere('DiaChi', 'like', "%$keyword%");
+        });
+    }
+
+    $ds = $query->orderByRaw('deleted_at IS NOT NULL')->orderBy('created_at', 'desc')->paginate(10);
+    $hasHidden = DonViPhatHanh::onlyTrashed()->exists();
+
+    return view('admin.donviphathanh.index', compact('ds', 'hasHidden'));
+}
 
 
 
