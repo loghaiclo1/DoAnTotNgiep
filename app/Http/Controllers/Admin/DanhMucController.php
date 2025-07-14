@@ -11,9 +11,11 @@ class DanhMucController extends Controller
 {
     public function index(Request $request)
     {
-        // Chỉ lấy danh mục không có con (leaf categories)
         $tatCaDanhMucCha = Category::whereHas('children')->get();
-        $query = Category::with(['children', 'parent']);
+
+        $query = Category::with(['children', 'parent'])
+        ->whereIn('trangthai', [0, 1])
+        ->orderByDesc('updated_at');
 
         if ($request->filled('filter_parent')) {
             $query->whereIn('parent_id', (array) $request->filter_parent);
@@ -102,13 +104,23 @@ class DanhMucController extends Controller
     {
         $danhMuc = Category::findOrFail($id);
 
+        // Kiểm tra nếu có danh mục con
         if ($danhMuc->children()->count() > 0) {
-            return redirect()->route('admin.categories.index')->with('error', 'Không thể xóa danh mục có danh mục con.');
+            return redirect()->route('admin.categories.index')
+                ->with('error', 'Không thể ẩn danh mục có danh mục con.');
         }
 
-        $danhMuc->delete();
+        // Kiểm tra nếu có sách thuộc danh mục
+        if ($danhMuc->books()->count() > 0) {
+            return redirect()->route('admin.categories.index')
+                ->with('error', 'Không thể ẩn danh mục có sách.');
+        }
 
-        return redirect()->route('admin.categories.index')->with('success', 'Xóa danh mục thành công!');
+        // Xóa mềm: cập nhật trạng thái
+        $danhMuc->update(['trangthai' => 1]);
+
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Danh mục đã được ẩn thành công!');
     }
 
     private function buildCategoryTree($categories, $parentId = null, $prefix = '')
@@ -125,4 +137,12 @@ class DanhMucController extends Controller
 
         return $result;
     }
+    public function restore($id)
+{
+    $danhMuc = Category::where('id', $id)->where('trangthai', 1)->firstOrFail();
+
+    $danhMuc->update(['trangthai' => 0]);
+
+    return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được khôi phục!');
+}
 }

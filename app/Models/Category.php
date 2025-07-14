@@ -14,6 +14,7 @@ class Category extends Model
         'parent_id',
         'image',
         'slug',
+        'trangthai',
     ];
 
     // Nếu bạn dùng timestamps (created_at, updated_at)
@@ -34,6 +35,6 @@ class Category extends Model
     // Mối quan hệ: sách thuộc danh mục này
     public function books()
     {
-        return $this->hasMany(Book::class, 'category_id'); 
+        return $this->hasMany(Book::class, 'category_id');
     }
 }

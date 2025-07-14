@@ -39,6 +39,7 @@
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Hình ảnh</th>
+                    <th>Trạng thái</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -57,6 +58,14 @@
                                 <span class="text-muted">Không có ảnh</span>
                             @endif
                         </td>
+                        <td>
+                            @if ($dv->trashed())
+                                <span class="badge bg-secondary">Đã bị ẩn</span>
+                            @else
+                                <span class="badge bg-success">Đang hiển thị</span>
+                            @endif
+                        </td>
+
                         <td>
 
                                 <a href="{{ route('admin.donviphathanh.edit', $dv->MaDVPH) }}" class="btn btn-sm btn-info">Sửa</a>

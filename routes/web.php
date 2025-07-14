@@ -158,6 +158,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin', CheckPer
     Route::post('donviphathanh/{id}/restore', [DonViPhatHanhController::class, 'restore'])->name('donviphathanh.restore');
     Route::post('/tacgia/{id}/restore', [TacGiaController::class, 'restore'])->name('tacgia.restore');
     Route::get('/admin/dashboard/export', [DashboardController::class, 'exportPDF'])->name('dashboard.export');
+    Route::put('/admin/categories/restore/{id}', [App\Http\Controllers\Admin\DanhMucController::class, 'restore'])->name('categories.restore');
 
     Route::get('phieunhap', [PhieuNhapController::class, 'index'])->name('phieunhap.index');
     Route::get('phieunhap/create', [PhieuNhapController::class, 'create'])->name('phieunhap.create');
