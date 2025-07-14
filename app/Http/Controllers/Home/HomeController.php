@@ -41,8 +41,20 @@ class HomeController extends Controller
 
         $sachGoiY = $this->getSuggestedBooks($excludeBookIds);
         $mergedBooks = $sachGoiY['group1']->merge($sachGoiY['group2'])
-        ->unique('MaSach') // loại trùng
-        ->take(6);       // lấy tối đa 6 cuốn
+        ->unique('MaSach') ;// loại trùng
+        if ($mergedBooks->count() < 6) {
+            $needed = 6 - $mergedBooks->count();
+
+            // Lấy thêm sách mới, không trùng với các sách đã có
+            $moreBooks = $this->getNewBooks(
+                array_merge($excludeBookIds, $mergedBooks->pluck('MaSach')->toArray())
+            )->take($needed);
+
+            $mergedBooks = $mergedBooks->merge($moreBooks)->unique('MaSach');
+        }
+
+        // Chốt lại đúng 6 cuốn
+        $mergedBooks = $mergedBooks->take(6);
 
         return view('homepage.home', compact(
             'demDMcha',
