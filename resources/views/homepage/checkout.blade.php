@@ -233,18 +233,6 @@
                                         </div>
                                     @endforeach
                                 </div>
-                                {{-- <div class="promo-code mb-3">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="promo_code"
-                                            id="promo_code_input" placeholder="Mã khuyến mãi" aria-label="Mã khuyến mãi">
-
-                                        <button class="btn btn-outline-primary" type="button"
-                                            onclick="applyPromoCode()">Áp dụng</button>
-                                    </div>
-                                    @error('promo_code')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div> --}}
 
                                 <div class="order-totals">
                                     <div class="order-subtotal d-flex justify-content-between">
@@ -255,26 +243,6 @@
                                         <span>Phí vận chuyển</span>
                                         <span>{{ number_format($shipping, 0, ',', '.') }} ₫</span>
                                     </div>
-                                    {{-- <div class="order-discount d-flex justify-content-between align-items-center"
-                                        id="promo_code_section"
-                                        style="{{ session('promo') ? '' : 'display: none;' }}">
-                                        <div>
-                                            Mã giảm giá - <span id="promo_code_label">{{ session('promo.MaCode') ?? '' }}</span>
-                                            <button type="button" class="btn btn-sm btn-outline-danger ms-2 p-1"
-                                                onclick="removePromoCode()" title="Hủy mã khuyến mãi">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                        <span id="promo_code_value">
-                                            @if (session('promo'))
-                                                @if (session('promo.Kieu') === 'percent')
-                                                    -{{ session('promo.GiaTri') }}%
-                                                @else
-                                                    -{{ number_format(session('promo.GiaTri'), 0, ',', '.') }} ₫
-                                                @endif
-                                            @endif
-                                        </span>
-                                    </div> --}}
                                     <div class="order-new-total d-flex justify-content-between fw-bold">
                                         <span>Tổng cộng</span>
                                         <span id="new_total_display">{{ number_format($total, 0, ',', '.') }} ₫</span>

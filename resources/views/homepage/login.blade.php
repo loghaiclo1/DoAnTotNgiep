@@ -4,13 +4,13 @@
 @section('content')
     <main class="main">
         @if (session('status'))
-    <div class="alert alert-success">{{ session('status') }}</div>
-@endif
+            <div class="alert alert-success">{{ session('status') }}</div>
+        @endif
 
-{{-- Hiển thị thông báo nếu bị khóa --}}
-<div id="account-locked-alert" style="display: none;" class="alert alert-danger">
-    Tài khoản của bạn đã bị khóa.
-</div>
+        {{-- Hiển thị thông báo nếu bị khóa --}}
+        <div id="account-locked-alert" style="display: none;" class="alert alert-danger">
+            Tài khoản của bạn đã bị khóa.
+        </div>
         <!-- Page Title -->
         <div class="page-title light-background">
             <div class="container d-lg-flex justify-content-between align-items-center">
@@ -23,11 +23,11 @@
                 </nav>
             </div>
         </div><!-- End Page Title -->
-@if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
 
         <section id="login-register" class="login-register section">
 
@@ -54,15 +54,15 @@
                                         @endif
                                         <div class="mb-4">
                                             <label for="email" class="form-label">Địa chỉ email</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Nhập địa chỉ email"
-                                                required>
+                                            <input type="email" class="form-control" id="email" name="email"
+                                                placeholder="Nhập địa chỉ email" required>
                                         </div>
 
                                         <div class="mb-4">
                                             <label for="password" class="form-label">Mật khẩu</label>
                                             <div class="input-group">
-                                                <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu"
-                                                    required>
+                                                <input type="password" class="form-control" id="password" name="password"
+                                                    placeholder="Nhập mật khẩu" required>
                                                 <button class="btn btn-outline-secondary" type="button"
                                                     onclick="togglePassword('password', this)">
                                                     <i class="fa fa-eye"></i>
@@ -76,7 +76,8 @@
                                                     name="remember">
                                                 <label class="form-check-label" for="remember">Lưu tài khoản</label>
                                             </div>
-                                            <a href="{{ route('password.request') }}" class="forgot-password">Quên mật khẩu</a>
+                                            <a href="{{ route('password.request') }}" class="forgot-password">Quên mật
+                                                khẩu</a>
                                         </div>
 
                                         <div class="d-grid">
@@ -87,7 +88,8 @@
                                 </div>
 
                                 <div class="col-12 mt-3 d-grid">
-                                    <a href="{{ route('auth.google') }}" class="btn btn-outline-danger btn-lg" style="font-size: 1.05rem">
+                                    <a href="{{ route('auth.google') }}" class="btn btn-outline-danger btn-lg"
+                                        style="font-size: 1.05rem">
                                         <i class="bi bi-google"></i> Đăng nhập bằng Google
                                     </a>
                                 </div>
@@ -104,14 +106,14 @@
         </section>
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        if (localStorage.getItem('account_locked') === 'true') {
-            document.getElementById('account-locked-alert').style.display = 'block';
-            localStorage.removeItem('account_locked'); // Xóa để tránh hiện lại lần sau
-        }
-    });
-</script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                if (localStorage.getItem('account_locked') === 'true') {
+                    document.getElementById('account-locked-alert').style.display = 'block';
+                    localStorage.removeItem('account_locked'); // Xóa để tránh hiện lại lần sau
+                }
+            });
+        </script>
 
     </main>
 
