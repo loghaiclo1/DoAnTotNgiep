@@ -161,12 +161,12 @@
                     <td>{{ $book->tacgia->TenTacGia ?? 'Chưa cập nhật' }}</td>
                     <td>{{ $book->nhaxuatban->TenNXB ?? 'Chưa cập nhật' }}</td>
                     <td>
-    @if ($book->donviphathanh)
-        {{ $book->donviphathanh->TenDVPH }}
-    @else
-        Không có
-    @endif
-</td>
+                        @if ($book->donviphathanh)
+                            {{ $book->donviphathanh->TenDVPH }}
+                        @else
+                            Không có
+                        @endif
+                    </td>
                     <td>{{ number_format($book->GiaNhap) }}₫</td>
                     <td>{{ number_format($book->GiaBan) }}₫</td>
                     <td>{{ $book->SoLuong }}</td>
@@ -199,10 +199,6 @@
                                     hoạt</button>
                             </form>
                         @endif
-                        {{-- <form action="{{ route('admin.books.forceDelete', $book->MaSach) }}" method="POST" style="display:inline;">
-                @csrf @method('DELETE')
-                <button onclick="return confirm('Bạn có chắc muốn XÓA VĨNH VIỄN sách này không?')" class="btn btn-sm btn-danger">Xóa</button>
-            </form> --}}
                     </td>
                 </tr>
 
@@ -218,7 +214,7 @@
                                     <button class="close" data-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
-@include('admin.books._form_edit', ['book' => $book])
+                                    @include('admin.books._form_edit', ['book' => $book])
                                 </div>
                                 <div class="modal-footer">
                                     <button class="btn btn-primary">Cập nhật</button>
@@ -252,7 +248,7 @@
                         <button class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-@include('admin.books._form_create')
+                        @include('admin.books._form_create')
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success">Lưu</button>
@@ -295,97 +291,95 @@
     </div>
 @stop
 @push('js')
-<script>
-    // Toggle filter checkbox
-    document.querySelectorAll('.filter-wrapper input[type="checkbox"]').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            this.parentElement.classList.toggle('active', this.checked);
+    <script>
+        // Toggle filter checkbox
+        document.querySelectorAll('.filter-wrapper input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                this.parentElement.classList.toggle('active', this.checked);
+            });
         });
-    });
 
-    // Xử lý mở lại modal khi quickAdd đóng
-    document.querySelectorAll('.btnAddTacGia').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const modalParent = btn.closest('.modal');
-            if (modalParent) {
-                $(modalParent).modal('hide');
-                modalParent.classList.add('was-opened');
+        // Xử lý mở lại modal khi quickAdd đóng
+        document.querySelectorAll('.btnAddTacGia').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const modalParent = btn.closest('.modal');
+                if (modalParent) {
+                    $(modalParent).modal('hide');
+                    modalParent.classList.add('was-opened');
+                }
+                $('#quickAddTacGiaModal').modal('show');
+            });
+        });
+
+        $('#quickAddTacGiaModal').on('hidden.bs.modal', function() {
+            const prevModal = document.querySelector('.modal.was-opened');
+            if (prevModal) {
+                prevModal.classList.remove('was-opened');
+                $(prevModal).modal('show');
             }
-            $('#quickAddTacGiaModal').modal('show');
         });
-    });
+    </script>
 
-    $('#quickAddTacGiaModal').on('hidden.bs.modal', function() {
-        const prevModal = document.querySelector('.modal.was-opened');
-        if (prevModal) {
-            prevModal.classList.remove('was-opened');
-            $(prevModal).modal('show');
-        }
-    });
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickForm = document.getElementById('quickAddTacGiaForm');
+            const errorBox = document.getElementById('quickAddError');
+            const selectTacGia = document.getElementById('MaTacGiaAdd');
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const quickForm = document.getElementById('quickAddTacGiaForm');
-    const errorBox = document.getElementById('quickAddError');
-    const selectTacGia = document.getElementById('MaTacGiaAdd');
+            quickForm.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-    quickForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+                const formData = new FormData(quickForm);
+                errorBox.classList.add('d-none');
+                errorBox.innerHTML = '';
 
-        const formData = new FormData(quickForm);
-        errorBox.classList.add('d-none');
-        errorBox.innerHTML = '';
+                fetch("{{ route('admin.tacgia.quick_add') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Tạo option mới
+                            const option = document.createElement('option');
+                            option.value = data.tacgia.MaTacGia;
+                            option.textContent = data.tacgia.TenTacGia;
+                            option.selected = true;
 
-        fetch("{{ route('admin.tacgia.quick_add') }}", {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Tạo option mới
-                const option = document.createElement('option');
-                option.value = data.tacgia.MaTacGia;
-                option.textContent = data.tacgia.TenTacGia;
-                option.selected = true;
+                            // Thêm vào select và chọn
+                            selectTacGia.appendChild(option);
+                            $('#quickAddTacGiaModal').modal('hide');
 
-                // Thêm vào select và chọn
-                selectTacGia.appendChild(option);
-                $('#quickAddTacGiaModal').modal('hide');
-
-                // Cập nhật các input thông tin
-                document.getElementById('infoNamSinh').value = data.tacgia.nam_sinh || '';
-                document.getElementById('infoQueQuan').value = data.tacgia.que_quan_text || '';
-                document.getElementById('infoGhiChu').value = data.tacgia.ghi_chu || '';
-                document.querySelector('.infoTacGiaBox').style.display = 'block';
-            } else {
-                errorBox.classList.remove('d-none');
-                errorBox.textContent = data.message || 'Đã có lỗi xảy ra';
-            }
-        })
-        .catch(err => {
-            errorBox.classList.remove('d-none');
-            errorBox.textContent = 'Lỗi hệ thống. Vui lòng thử lại.';
+                            // Cập nhật các input thông tin
+                            document.getElementById('infoNamSinh').value = data.tacgia.nam_sinh || '';
+                            document.getElementById('infoQueQuan').value = data.tacgia.que_quan_text ||
+                                '';
+                            document.getElementById('infoGhiChu').value = data.tacgia.ghi_chu || '';
+                            document.querySelector('.infoTacGiaBox').style.display = 'block';
+                        } else {
+                            errorBox.classList.remove('d-none');
+                            errorBox.textContent = data.message || 'Đã có lỗi xảy ra';
+                        }
+                    })
+                    .catch(err => {
+                        errorBox.classList.remove('d-none');
+                        errorBox.textContent = 'Lỗi hệ thống. Vui lòng thử lại.';
+                    });
+            });
         });
-    });
-});
-</script>
+    </script>
 
 
-@if (session('old_modal') && !$errors->has('GiaBan'))
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const oldModal = @json(session('old_modal'));
-        const modalId = oldModal === 'add' ? '#modalAdd' : '#modalEdit' + oldModal.replace('edit_', '');
-        $(modalId).modal('show');
-    });
-</script>
-
-
-@endif
+    @if (session('old_modal') && !$errors->has('GiaBan'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const oldModal = @json(session('old_modal'));
+                const modalId = oldModal === 'add' ? '#modalAdd' : '#modalEdit' + oldModal.replace('edit_', '');
+                $(modalId).modal('show');
+            });
+        </script>
+    @endif
 @endpush
-

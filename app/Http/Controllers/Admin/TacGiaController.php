@@ -90,7 +90,7 @@ class TacGiaController extends Controller
             'nam_sinh.between' => 'Năm sinh phải từ 1000 đến 2010',
         ]);
 
-        TacGia::create($request->only('TenTacGia', 'nam_sinh', 'que_quan_id', 'ghi_chu'));
+        TacGia::create($request->only('TenTacGia', 'nam_sinh', 'gioi_tinh', 'que_quan_id', 'ghi_chu'));
 
         return redirect()->route('admin.tacgia.index')->with('success', 'Thêm tác giả thành công!');
     }
@@ -139,8 +139,6 @@ class TacGiaController extends Controller
             'tacgia' => $tacgia
         ]);
     }
-
-
     public function update(Request $request, $id)
     {
         $currentYear = now()->year;
@@ -167,7 +165,7 @@ class TacGiaController extends Controller
         }
 
         $tacgia = TacGia::findOrFail($id);
-        $tacgia->update($request->only('TenTacGia', 'nam_sinh', 'que_quan_id', 'ghi_chu'));
+        $tacgia->update($request->only('TenTacGia', 'nam_sinh', 'gioi_tinh','que_quan_id', 'ghi_chu'));
 
         return redirect()->route('admin.tacgia.index')
             ->with('success', 'Cập nhật tác giả thành công!');

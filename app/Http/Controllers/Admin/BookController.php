@@ -29,10 +29,10 @@ class BookController extends Controller
         $nxb = NhaXuatBan::all();
         $donviphathanh = DonViPhatHanh::all();
 
-            $books = Book::with('category', 'nhaxuatban', 'tacgia')
-                ->when($query, function ($q) use ($query) {
-                    $nonAccentQuery = $this->removeAccents($query);
-                    $cleanedQuery = preg_replace('/[^0-9]/', '', $query); // loại bỏ ký tự không phải số
+        $books = Book::with('category', 'nhaxuatban', 'tacgia')
+            ->when($query, function ($q) use ($query) {
+                $nonAccentQuery = $this->removeAccents($query);
+                $cleanedQuery = preg_replace('/[^0-9]/', '', $query); // loại bỏ ký tự không phải số
 
                 $q->where(function ($q2) use ($query, $nonAccentQuery, $cleanedQuery) {
                     // Tìm theo tên sách hoặc mô tả gần đúng
@@ -101,7 +101,7 @@ class BookController extends Controller
                 'max:255',
                 Rule::unique('sach')->where(function ($query) use ($request) {
                     return $query->where('MaNXB', $request->MaNXB)
-                                 ->where('MaDVPH', $request->MaDVPH);
+                        ->where('MaDVPH', $request->MaDVPH);
                 }),
             ],
             'MaTacGia' => 'required|exists:tacgia,MaTacGia',
@@ -114,6 +114,8 @@ class BookController extends Controller
             'category_id' => 'required|exists:danhmuc,id',
             'HinhAnh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'MoTa' => 'nullable|string',
+        ], [
+            'TenSach.unique' => 'Sách này đã tồn tại với cùng nhà xuất bản và đơn vị phát hành.',
         ]);
         if ($data['GiaBan'] < $data['GiaNhap']) {
             return back()
@@ -149,7 +151,7 @@ class BookController extends Controller
                     ->ignore($book->MaSach, 'MaSach')
                     ->where(function ($query) use ($request) {
                         return $query->where('MaNXB', $request->MaNXB)
-                                     ->where('MaDVPH', $request->MaDVPH);
+                            ->where('MaDVPH', $request->MaDVPH);
                     }),
             ],
 
@@ -163,6 +165,8 @@ class BookController extends Controller
             'category_id' => 'required|exists:danhmuc,id',
             'HinhAnh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'MoTa' => 'nullable|string',
+        ], [
+            'TenSach.unique' => 'Sách này đã tồn tại với cùng nhà xuất bản và đơn vị phát hành.',
         ]);
         if ($data['GiaBan'] < $data['GiaNhap']) {
             return back()

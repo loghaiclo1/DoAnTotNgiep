@@ -181,8 +181,7 @@
                                 <option value="">-- Chọn giới tính --</option>
                                 <option value="Nam" {{ old('gioi_tinh') == 'Nam' ? 'selected' : '' }}>Nam</option>
                                 <option value="Nữ" {{ old('gioi_tinh') == 'Nữ' ? 'selected' : '' }}>Nữ</option>
-                                <option value="Không rõ" {{ old('gioi_tinh') == 'Không rõ' ? 'selected' : '' }}>Không rõ
-                                </option>
+                                <option value="Không rõ" {{ old('gioi_tinh', 'Không rõ') == 'Không rõ' ? 'selected' : '' }}>Không rõ</option>
                             </select>
                         </div>
                         <div class="form-group">
