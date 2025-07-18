@@ -45,6 +45,27 @@
             @endforeach
         </tbody>
     </table>
+    @if ($donhang->TrangThai === 'Hủy đơn')
+
+    @if (session()->has('refund_confirmed_' . $donhang->MaHoaDon))
+        <div class="alert alert-success mt-3">
+             Đã hoàn tiền cho khách hàng.
+        </div>
+    @else
+        <form action="{{ route('admin.orders.confirmRefund', ['id' => $donhang->MaHoaDon]) }}" method="POST">
+            @csrf
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="confirm_refund" id="confirm_refund" required>
+                <label class="form-check-label" for="confirm_refund">
+                    Tôi xác nhận đã hoàn tiền cho khách hàng.
+                </label>
+            </div>
+            <button type="submit" class="btn btn-danger mt-2">Xác nhận đã hoàn tiền</button>
+        </form>
+    @endif
+
+@endif
+
 
     <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary mt-3">← Quay lại danh sách</a>
 

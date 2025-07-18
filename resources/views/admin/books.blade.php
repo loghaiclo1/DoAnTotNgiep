@@ -159,7 +159,7 @@
                     <td><img src="{{ asset('image/book/' . $book->HinhAnh) }}" width="50"></td>
                     <td>{{ $book->TenSach }}</td>
                     <td>{{ $book->tacgia->TenTacGia ?? 'Chưa cập nhật' }}</td>
-                    <td>{{ $book->nxb->TenNXB ?? 'Chưa cập nhật' }}</td>
+                    <td>{{ $book->nhaxuatban->TenNXB ?? 'Chưa cập nhật' }}</td>
                     <td>
     @if ($book->donviphathanh)
         {{ $book->donviphathanh->TenDVPH }}

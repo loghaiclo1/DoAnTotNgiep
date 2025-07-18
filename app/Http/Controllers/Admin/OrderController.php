@@ -278,4 +278,14 @@ class OrderController extends Controller
         }
         return back()->with('success', $message);
     }
+    public function confirmRefund($id)
+{
+    $order = Hoadon::findOrFail($id);
+
+    if ($order->TrangThai !== 'Hủy đơn') {
+        return back()->with('error', 'Chỉ đơn đã hủy mới được xác nhận hoàn tiền.');
+    }
+    return back()->with('success', ' Bạn đã xác nhận đã hoàn tiền cho đơn hàng này.');
+}
+
 }

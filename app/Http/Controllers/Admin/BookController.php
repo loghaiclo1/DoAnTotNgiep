@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\TacGia;
 use App\Models\NhaXuatBan;
 use App\Models\DonViPhatHanh;
-
+use Illuminate\Validation\Rule;
 
 class BookController extends Controller
 {
@@ -95,7 +95,15 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'TenSach' => 'required|string|max:255|unique:sach,TenSach',
+            'TenSach' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('sach')->where(function ($query) use ($request) {
+                    return $query->where('MaNXB', $request->MaNXB)
+                                 ->where('MaDVPH', $request->MaDVPH);
+                }),
+            ],
             'MaTacGia' => 'required|exists:tacgia,MaTacGia',
             'MaNXB' => 'required|exists:nhaxuatban,MaNXB',
             'MaDVPH' => 'nullable|exists:donviphathanh,MaDVPH',
@@ -133,7 +141,18 @@ class BookController extends Controller
         $book = Book::findOrFail($id);
 
         $data = $request->validate([
-            'TenSach' => 'required|string|max:255|unique:sach,TenSach,' . $book->MaSach . ',MaSach',
+            'TenSach' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('sach', 'TenSach')
+                    ->ignore($book->MaSach, 'MaSach')
+                    ->where(function ($query) use ($request) {
+                        return $query->where('MaNXB', $request->MaNXB)
+                                     ->where('MaDVPH', $request->MaDVPH);
+                    }),
+            ],
+
             'MaTacGia' => 'required|exists:tacgia,MaTacGia',
             'MaNXB' => 'required|exists:nhaxuatban,MaNXB',
             'MaDVPH' => 'nullable|exists:donviphathanh,MaDVPH',
