@@ -196,11 +196,7 @@
                                                         <div class="specs-row">
                                                             <div class="specs-label">Đơn vị phát hành</div>
                                                             <div class="specs-value">
-                                                                @forelse ($book->dvph ?? [] as $dv)
-                                                                    {{ $dv->TenDVPH }}@if (!$loop->last), @endif
-                                                                @empty
-                                                                    Không có
-                                                                @endforelse
+                                                                <div class="specs-value">{{ $book->donviphathanh->TenDVPH ?? 'Đang cập nhật' }}</div>
                                                             </div>
                                                         </div>
                                                     </div>
