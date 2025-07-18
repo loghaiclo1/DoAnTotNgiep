@@ -75,7 +75,7 @@
             'monthlyOrderCard' => ['title' => 'Đơn hàng theo tháng', 'theme' => 'cyan', 'icon' => 'calendar', 'canvas' => 'monthlyOrderChart'],
             'yearlyOrderCard' => ['title' => 'Đơn hàng theo năm', 'theme' => 'warning', 'icon' => 'calendar-alt', 'canvas' => 'yearlyOrderChart'],
             'monthlyUserCard' => ['title' => 'Khách hàng mới theo tháng', 'theme' => 'indigo', 'icon' => 'user-plus', 'canvas' => 'monthlyUserChart'],
-            'booksSoldCard' => ['title' => 'Sách đã bán theo ngày', 'theme' => 'orange', 'icon' => 'book', 'canvas' => 'booksSoldChart'],
+            'booksSoldCard' => ['title' => 'Sách đã bán theo tháng', 'theme' => 'orange', 'icon' => 'book', 'canvas' => 'booksSoldChart'],
             'booksCreatedCard' => ['title' => 'Sách được thêm mới theo tháng', 'theme' => 'purple', 'icon' => 'plus-square', 'canvas' => 'booksCreatedChart'],
             'booksImportedCard' => ['title' => 'Sách nhập kho theo tháng', 'theme' => 'brown', 'icon' => 'truck-loading', 'canvas' => 'booksImportedChart'],
         ] as $id => $cfg)
@@ -172,7 +172,7 @@
                 labels: @json($dailyRevenueLabels),
                 data: @json($dailyRevenueData),
                 label: 'Doanh thu ngày',
-                type: 'line',
+                type: 'bar',
                 color: '#007bff'
             },
             {
@@ -188,7 +188,7 @@
                 labels: @json($dailyOrderLabels),
                 data: @json($dailyOrderData),
                 label: 'Đơn hàng ngày',
-                type: 'line',
+                type: 'bar',
                 color: '#343a40'
             },
             {
