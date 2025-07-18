@@ -116,6 +116,9 @@ class BookController extends Controller
             'MoTa' => 'nullable|string',
         ], [
             'TenSach.unique' => 'Sách này đã tồn tại với cùng nhà xuất bản và đơn vị phát hành.',
+            'MaTacGia.required' => 'Vui lòng chọn tác giả.',
+            'MaNXB.required' => 'Vui lòng chọn nhà xuất bản.',
+            'category_id.required' => 'Vui lòng chọn danh mục.',
         ]);
         if ($data['GiaBan'] < $data['GiaNhap']) {
             return back()
