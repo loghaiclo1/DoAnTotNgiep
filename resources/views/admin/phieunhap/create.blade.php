@@ -49,7 +49,8 @@
                             data-gianhap="{{ $book->GiaNhap ?? 0 }}"
                             data-giaban="{{ $book->GiaBan ?? 0 }}"
                             data-tacgia="{{ $book->tacgia->TenTacGia ?? 'Không rõ' }}"
-                            data-nxb="{{ $book->nhaxuatban->TenNXB ?? 'Không rõ' }}">
+                            data-nxb="{{ $book->nhaxuatban->TenNXB ?? 'Không rõ' }}"
+                            data-dvph="{{ $book->donviphathanh->TenDVPH ?? 'Không rõ' }}">
                             {{ $book->TenSach }}
                         </option>
                         @endforeach
@@ -60,7 +61,8 @@
                     </small>
                     <small class="text-muted tacgia-nxb">
                         Tác giả: <span class="tac-gia">-</span>,
-                        NXB: <span class="nxb">-</span>
+                        NXB: <span class="nxb">-</span>,
+                        ĐVPH: <span class="ten-dvph">-</span>
                     </small>
                 </td>
                 <td><input type="number" name="books[0][SoLuong]" class="form-control" min="1" required></td>
@@ -85,7 +87,8 @@
                     data-gianhap="{{ $book->GiaNhap ?? 0 }}"
                     data-giaban="{{ $book->GiaBan ?? 0 }}"
                     data-tacgia="{{ $book->tacgia->TenTacGia ?? 'Không rõ' }}"
-                    data-nxb="{{ $book->nhaxuatban->TenNXB ?? 'Không rõ' }}">
+                    data-nxb="{{ $book->nhaxuatban->TenNXB ?? 'Không rõ' }}"
+                    data-dvph="{{ $book->donviphathanh->TenDVPH ?? 'Không rõ' }}">
                     {{ $book->TenSach }}
                 </option>
                 @endforeach
@@ -96,7 +99,8 @@
             </small>
             <small class="text-muted tacgia-nxb">
                 Tác giả: <span class="tac-gia">-</span>,
-                NXB: <span class="nxb">-</span>
+                NXB: <span class="nxb">-</span>,
+                ĐVPH: <span class="ten-dvph">-</span>
             </small>
         </td>
         <td><input type="number" name="__soluong__" class="form-control" min="1" required></td>
@@ -158,21 +162,25 @@
     }
 
     function updateGiaCu(selectEl) {
-        const selectedOption = selectEl.options[selectEl.selectedIndex];
-        const giaNhap = selectedOption.getAttribute('data-gianhap') || 0;
-        const giaBan = selectedOption.getAttribute('data-giaban') || 0;
-        const tacGia = selectedOption.getAttribute('data-tacgia') || '-';
-        const nxb = selectedOption.getAttribute('data-nxb') || '-';
-        const row = selectEl.closest('tr');
-        row.querySelector('.gia-nhap-cu').textContent = Number(giaNhap).toLocaleString() + '₫';
-        row.querySelector('.gia-ban-cu').textContent = Number(giaBan).toLocaleString() + '₫';
-row.querySelector('.tac-gia').textContent = tacGia;
-row.querySelector('.nxb').textContent = nxb;
-        row.querySelector('input[name*="[DonGia]"]').value = giaNhap;
-        row.querySelector('input[name*="[GiaBan]"]').value = giaBan;
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    const giaNhap = selectedOption.getAttribute('data-gianhap') || 0;
+    const giaBan = selectedOption.getAttribute('data-giaban') || 0;
+    const tacGia = selectedOption.getAttribute('data-tacgia') || '-';
+    const nxb = selectedOption.getAttribute('data-nxb') || '-';
+    const dvph = selectedOption.getAttribute('data-dvph') || '-'; //
 
-        refreshBookOptions();
-    }
+    const row = selectEl.closest('tr');
+    row.querySelector('.gia-nhap-cu').textContent = Number(giaNhap).toLocaleString() + '₫';
+    row.querySelector('.gia-ban-cu').textContent = Number(giaBan).toLocaleString() + '₫';
+    row.querySelector('.tac-gia').textContent = tacGia;
+    row.querySelector('.nxb').textContent = nxb;
+    row.querySelector('.ten-dvph').textContent = dvph; //
+
+    row.querySelector('input[name*="[DonGia]"]').value = giaNhap;
+    row.querySelector('input[name*="[GiaBan]"]').value = giaBan;
+
+    refreshBookOptions();
+}
 
     function refreshBookOptions() {
         const selectedValues = Array.from(document.querySelectorAll('.select-book'))
@@ -191,7 +199,7 @@ row.querySelector('.nxb').textContent = nxb;
             });
         });
 
-        $('.select-book').select2(); // cần re-init select2 để reflect disabled
+        $('.select-book').select2(); 
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -213,7 +221,7 @@ row.querySelector('.nxb').textContent = nxb;
                 if (!inputGiaBan.value) inputGiaBan.value = giaBanCu;
             });
         });
-        
+
     });
 
 </script>
