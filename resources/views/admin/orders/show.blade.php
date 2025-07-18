@@ -46,8 +46,6 @@
         </tbody>
     </table>
 
-
-    @endif
     <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary mt-3">← Quay lại danh sách</a>
 
 @stop
