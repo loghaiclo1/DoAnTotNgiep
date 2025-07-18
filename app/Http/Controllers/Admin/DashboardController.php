@@ -53,14 +53,17 @@ class DashboardController extends Controller
         $monthlyOrderData = $monthlyOrders->pluck('total_orders');
 
         // Doanh thu theo ngày
-        $dailyRevenue = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%d/%m/%Y') as day"), DB::raw("SUM(TongTien) as total"))
-            ->where('TrangThai', 'Hoàn tất')
-            ->whereDate('NgayLap', '>=', now()->subDays(6))
-            ->groupBy('day')
-            ->orderByRaw("STR_TO_DATE(day, '%d/%m/%Y')")
-            ->get();
-        $dailyRevenueLabels = $dailyRevenue->pluck('day');
-        $dailyRevenueData = $dailyRevenue->pluck('total');
+        $dailyRevenue = Hoadon::select(
+            DB::raw("DATE_FORMAT(NgayLap, '%d/%m/%Y') as day"),
+            DB::raw("SUM(TongTien) as total")
+        )
+        ->where('TrangThai', 'Hoàn tất')
+        ->groupBy('day')
+        ->orderByRaw("STR_TO_DATE(day, '%d/%m/%Y')")
+        ->get();
+
+    $dailyRevenueLabels = $dailyRevenue->pluck('day');
+    $dailyRevenueData = $dailyRevenue->pluck('total');
 
         // Doanh thu theo năm
         $yearlyRevenue = Hoadon::select(DB::raw("YEAR(NgayLap) as year"), DB::raw("SUM(TongTien) as total"))
@@ -72,11 +75,14 @@ class DashboardController extends Controller
         $yearlyRevenueData = $yearlyRevenue->pluck('total');
 
         // Đơn hàng theo ngày
-        $dailyOrders = Hoadon::select(DB::raw("DATE_FORMAT(NgayLap, '%d/%m/%Y') as day"), DB::raw("COUNT(*) as total"))
-            ->whereDate('NgayLap', '>=', now()->subDays(6))
-            ->groupBy('day')
-            ->orderByRaw("STR_TO_DATE(day, '%d/%m/%Y')")
-            ->get();
+        $dailyOrders = Hoadon::select(
+            DB::raw("DATE_FORMAT(NgayLap, '%d/%m/%Y') as day"),
+            DB::raw("COUNT(*) as total")
+        )
+        ->groupBy('day')
+        ->orderByRaw("STR_TO_DATE(day, '%d/%m/%Y')")
+        ->get();
+
         $dailyOrderLabels = $dailyOrders->pluck('day');
         $dailyOrderData = $dailyOrders->pluck('total');
 
